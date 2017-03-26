@@ -9,4 +9,4 @@
  * in the user guide at https://docs.gradle.org/2.14/userguide/multi_project_builds.html
  */
 
-rootProject.name = 'unisinos-dev3-sistemapdv'
+rootProject.name = 'unisinos-dev3-sistemapdv-api'
