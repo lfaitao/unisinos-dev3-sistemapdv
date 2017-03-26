@@ -1,24 +1,17 @@
 <!DOCTYPE html>
 <html>
-<head>
+  <head>
     <meta charset="utf-8">
     <title>SistemaPDV</title>
-    <link href='https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons' rel="stylesheet"
-          type="text/css">
-    <link href="https://unpkg.com/animate.css@3.5.1/animate.min.css" rel="stylesheet" type="text/css">
-
-
-
     <% if (htmlWebpackPlugin.options.appModules) { %>
-    <!-- Add `app/node_modules` to global paths so `require` works properly in development -->
-    <script>
+      <!-- Add `app/node_modules` to global paths so `require` works properly in development -->
+      <script>
         require('module').globalPaths.push('<%= htmlWebpackPlugin.options.appModules.replace(/\\/g, '\\\\') %>')
-    </script>
+      </script>
     <% } %>
-
-</head>
-<body style="height: 100%;">
-<div id="app" style="height: 100%;"></div>
-<!-- webpack builds are automatically injected -->
-</body>
+  </head>
+  <body>
+    <div id="app"></div>
+    <!-- webpack builds are automatically injected -->
+  </body>
 </html>

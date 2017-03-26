@@ -1,34 +1,14 @@
 {
-  "name": "SistemaPDV",
-  "version": "1.0.0",
-  "description": "Software para caixas PDV.",
+  "name": "sistemapdv",
+  "version": "0.0.0",
+  "description": "Sistema PDV para caixas de pagamento.",
   "main": "./dist/main.js",
   "dependencies": {
-    "async": "^2.1.5",
-    "cleave.js": "^0.7.15",
-    "cron": "^1.2.1",
-    "electron-config": "^0.2.1",
-    "electron-log": "^2.0.0",
-    "font-awesome": "^4.7.0",
-    "mkdirp": "^0.5.1",
-    "moment": "^2.18.1",
-    "os": "^0.1.1",
-    "path": "^0.12.7",
-    "promise": "^7.1.1",
-    "request": "^2.81.0",
-    "sequelize": "^3.30.2",
-    "sqlite3": "^3.1.8",
     "vue": "^2.1.10",
     "vue-electron": "^1.0.6",
-    "vue-material": "^0.7.1",
-    "vue-moment": "^2.0.2",
     "vue-resource": "^1.0.3",
-    "vue-router": "^2.1.2",
-    "vue-toast": "^3.0.0",
-    "vue-toastr": "^2.0.5"
+    "vue-router": "^2.1.2"
   },
-  "devDependencies": {
-    "vuetify": "^0.8.10"
-  },
+  "devDependencies": {},
   "author": "DoWhile"
 }

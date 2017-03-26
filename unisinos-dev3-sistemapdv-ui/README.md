@@ -1,6 +1,6 @@
 # SistemaPDV
 
-> Software para caixas PDV.
+> Software para envio e recebimento de arquivos.
 
 ## Build Setup
 
