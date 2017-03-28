@@ -1,20 +1,20 @@
 package br.unisinos.sistemapdv.infrastructure.controller;
 
-import br.unisinos.sistemapdv.application.repository.UsuarioRepository;
-import br.unisinos.sistemapdv.domain.model.Usuario;
+import br.unisinos.sistemapdv.application.repository.CaixaRepository;
+import br.unisinos.sistemapdv.domain.model.Caixa;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * Created by Faitão on 26/03/2017.
+ * Created by lfaitao on 26/03/2017.
  */
 @RestController
-public class UsuarioController {
+public class CaixaController {
 
     @Autowired
-    private UsuarioRepository usuarioRepository;
+    private CaixaRepository caixaRepository;
 
     /**
      * GET /create  --> Create a new user and save it in the database.
@@ -24,14 +24,14 @@ public class UsuarioController {
     public String create(String email, String name) {
         String userId = "";
         try {
-            Usuario user = new Usuario(email, name);
-            usuarioRepository.save(user);
+            Caixa user = new Caixa(email, name);
+            caixaRepository.save(user);
             userId = String.valueOf(user.getId());
         }
         catch (Exception ex) {
             return "Error creating the user: " + ex.toString();
         }
-        return "Usuario succesfully created with id = " + userId;
+        return "Caixa succesfully created with id = " + userId;
     }
 
     /**
@@ -41,13 +41,13 @@ public class UsuarioController {
     @ResponseBody
     public String delete(long id) {
         try {
-            Usuario user = new Usuario(id);
-            usuarioRepository.delete(user);
+            Caixa user = new Caixa(id);
+            caixaRepository.delete(user);
         }
         catch (Exception ex) {
             return "Error deleting the user:" + ex.toString();
         }
-        return "Usuario succesfully deleted!";
+        return "Caixa succesfully deleted!";
     }
 
     /**
@@ -59,11 +59,11 @@ public class UsuarioController {
     public String getByEmail(String email) {
         String userId = "";
         try {
-            Usuario user = usuarioRepository.findByEmail(email);
+            Caixa user = caixaRepository.findByEmail(email);
             userId = String.valueOf(user.getId());
         }
         catch (Exception ex) {
-            return "Usuario not found";
+            return "Caixa not found";
         }
         return "The user id is: " + userId;
     }
@@ -76,15 +76,15 @@ public class UsuarioController {
     @ResponseBody
     public String updateUsuario(long id, String email, String name) {
         try {
-            Usuario user = usuarioRepository.findOne(id);
+            Caixa user = caixaRepository.findOne(id);
             user.setEmail(email);
             user.setName(name);
-            usuarioRepository.save(user);
+            caixaRepository.save(user);
         }
         catch (Exception ex) {
             return "Error updating the user: " + ex.toString();
         }
-        return "Usuario succesfully updated!";
+        return "Caixa succesfully updated!";
     }
 
 }

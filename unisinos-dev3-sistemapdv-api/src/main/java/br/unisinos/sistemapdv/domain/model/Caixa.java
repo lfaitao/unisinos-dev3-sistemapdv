@@ -8,11 +8,11 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 /**
- * Created by Fabio on 26/03/2017.
+ * Created by lfaitao on 26/03/2017.
  */
 @Entity
-@Table(name = "USUARIOS")
-public class Usuario {
+@Table(name = "CAIXAS")
+public class Caixa {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -24,13 +24,13 @@ public class Usuario {
     @NotNull
     private String name;
 
-    public Usuario() { }
+    public Caixa() { }
 
-    public Usuario(long id) {
+    public Caixa(long id) {
         this.id = id;
     }
 
-    public Usuario(String email, String name) {
+    public Caixa(String email, String name) {
         this.email = email;
         this.name = name;
     }

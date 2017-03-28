@@ -1,17 +1,17 @@
 package br.unisinos.sistemapdv.application.repository;
 
-import br.unisinos.sistemapdv.domain.model.Usuario;
+import br.unisinos.sistemapdv.domain.model.Caixa;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * Created by Faitão on 26/03/2017.
+ * Created by lfaitao on 26/03/2017.
  */
 @Transactional
 @Repository
-public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
+public interface CaixaRepository extends JpaRepository<Caixa, Long> {
 
-    Usuario findByEmail(String email);
+    Caixa findByEmail(String email);
 
 }
