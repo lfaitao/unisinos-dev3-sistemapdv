@@ -2,19 +2,22 @@ package br.unisinos.sistemapdv.infrastructure;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.orm.jpa.EntityScan;
-import org.springframework.context.annotation.ComponentScan;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * Created by lfaitao on 26/03/2017.
  */
 @SpringBootApplication
-@ComponentScan
-@EnableJpaRepositories("br.unisinos.sistemapdv.application.repository")
+//@Configuration
+//@EnableAutoConfiguration
+//@ComponentScan
 @EntityScan(basePackages = {"br.unisinos.sistemapdv.domain.model"})
+@EnableJpaRepositories("br.unisinos.sistemapdv.application.repository")
+@RestController
 public class Application {
 
     @RequestMapping("/")

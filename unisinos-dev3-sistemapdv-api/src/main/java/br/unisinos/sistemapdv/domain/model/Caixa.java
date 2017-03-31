@@ -1,10 +1,6 @@
 package br.unisinos.sistemapdv.domain.model;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -15,8 +11,8 @@ import javax.validation.constraints.NotNull;
 public class Caixa {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
+    @GeneratedValue(strategy = GenerationType.TABLE)
+    private Long id;
 
     @NotNull
     private String email;
@@ -35,7 +31,7 @@ public class Caixa {
         this.name = name;
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
