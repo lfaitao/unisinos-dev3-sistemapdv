@@ -4,11 +4,24 @@
   "description": "Sistema PDV para caixas de pagamento.",
   "main": "./dist/main.js",
   "dependencies": {
+    "auto-launch": "^5.0.1",
+    "cleave.js": "^0.7.15",
+    "cron": "^1.2.1",
+    "electron-config": "^0.2.1",
+    "electron-dl": "^1.7.0",
+    "electron-log": "^2.0.0",
+    "font-awesome": "^4.7.0",
     "vue": "^2.1.10",
     "vue-electron": "^1.0.6",
+    "vue-material": "^0.7.1",
+    "vue-moment": "^2.0.2",
     "vue-resource": "^1.0.3",
-    "vue-router": "^2.1.2"
+    "vue-router": "^2.1.2",
+    "vue-toast": "^3.0.0",
+    "vue-toastr": "^2.0.5"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "vuetify": "^0.8.10"
+  },
   "author": "DoWhile"
 }
