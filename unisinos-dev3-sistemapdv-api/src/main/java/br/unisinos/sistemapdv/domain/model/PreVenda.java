@@ -9,7 +9,7 @@ public class PreVenda {
     @Id
     @GeneratedValue(strategy = GenerationType.TABLE)
     private Long id;
-
+  
     public PreVenda() {
     }
 
