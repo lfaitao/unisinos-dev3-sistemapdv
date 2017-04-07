@@ -54,5 +54,4 @@ public class Caixa {
     public void setName(String name) {
         this.name = name;
     }
-
 }
