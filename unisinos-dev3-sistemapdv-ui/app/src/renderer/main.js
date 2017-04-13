@@ -28,7 +28,7 @@ Vue.material.registerTheme('default', {
   background: 'grey'
 })
 
-/* eslint-disable no-new */
+/* eslint-disable no-new  */
 new Vue({
   router,
   ...App
