@@ -9,7 +9,7 @@
             </md-card-header-text>
           </md-card-header>
           <md-card md-align="center" style="background-color: rgba(158, 158, 158, 0.35)">
-              <md-button class="md-raised md-primary">Gerenciar Caixa</md-button>
+              <md-button class="md-raised md-primary" @click.native="goTo('/gerir-caixa')">Gerenciar Caixa</md-button>
               <md-button class="md-raised md-primary">Gerenciar Vendas</md-button>
               <md-button class="md-raised md-primary">Gerenciar Pré-Vendas</md-button>
               <md-button class="md-raised md-primary">Gerenciar DAVs</md-button>
@@ -22,9 +22,23 @@
 </template>
 
 <script>
-  export default {
-    name: 'home-page'
-  }
+    import {router} from '../main'
+
+    export default {
+        data() {
+            return {
+            }
+        },
+        methods: {
+            goTo(route) {
+                alert(route);
+                router.push(route)
+            },
+        },
+        mounted() {
+        },
+        name: 'home-page'
+    }
 </script>
 
 <style scoped>
