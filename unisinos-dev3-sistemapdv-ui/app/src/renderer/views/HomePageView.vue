@@ -1,8 +1,8 @@
 <template>
-  <div>
-    <div style="height: 100%; background-color: #EEE;">
-      <md-layout md-gutter md-align="center" style="height: 100%">
-        <md-layout md-column md-align="center" style="height: 100%; align-items: center">
+  <div class="centered_div">
+    <div class="mainMenu">
+      <md-layout md-gutter md-align="center">
+        <md-layout md-column md-align="center" style="align-items: center">
           <md-card-header style="text-align: center; padding-bottom: 20px">
             <md-card-header-text>
               <h1>Sistema PDV</h1>
@@ -31,7 +31,6 @@
         },
         methods: {
             goTo(route) {
-                alert(route);
                 router.push(route)
             },
         },
@@ -43,7 +42,42 @@
 
 <style scoped>
   img {
-    margin-top: -25px;
-    width: 450px;
+      margin-top: -25px;
+      width: 450px;
+  }
+  .centered_div {
+      position: absolute;
+      top:  20%;
+      bottom:  50%;
+      left: 50%;
+      right: 50%;
+      /*transform: translate(-50%,-50%);*/
+  }
+  /*.centered_div {*/
+      /*width: Xu;*/
+      /*height: Yu;*/
+      /*position: absolute;*/
+      /*top: 50%;*/
+      /*left: 50%;*/
+      /*margin-left: -(X/2)u;*/
+      /*margin-top: -(Y/2)u;*/
+  /*}*/
+  /*body{*/
+      /*align-items: center;*/
+      /*background:*/
+              /*radial-gradient(*/
+                      /*ellipse at center,*/
+                      /*rgba(255, 255, 255, 1) 0%,*/
+                      /*rgba(229, 229, 229, .85) 100%*/
+              /*);*/
+      /*background-position: center;*/
+      /*display: flex;*/
+      /*font-family: Lato, Helvetica, sans-serif;*/
+      /*justify-content: center;*/
+      /*text-align: center;*/
+  /*}*/
+  .mainMenu {
+      height: 100%;
+      background-color: #EEE;
   }
 </style>

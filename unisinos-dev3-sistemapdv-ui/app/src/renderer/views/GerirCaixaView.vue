@@ -1,16 +1,6 @@
 <template>
-  <div style="width: 500px">
-      <md-toolbar>
-          <md-button class="md-icon-button">
-              <md-icon>menu</md-icon>
-          </md-button>
-
-          <h2 class="md-title" style="flex: 1">Default</h2>
-
-          <md-button class="md-icon-button">
-              <md-icon>favorite</md-icon>
-          </md-button>
-      </md-toolbar>
+  <div>
+      <navbar title="Gerir Caixa" previousPage="/"></navbar>
         <!--<div style="height: 100%; background-color: #EEE;">-->
           <!--<md-layout md-gutter md-align="center" style="height: 100%">-->
             <!--<md-layout md-column md-align="center" style="height: 100%; align-items: center">-->
@@ -30,7 +20,19 @@
 
 <script>
   export default {
-    name: 'gerir-caixa'
+      data() {
+          return {
+              title: 'Gerir Caixa'
+          }
+      },
+      methods: {
+          goTo(route) {
+              router.push(route)
+          },
+      },
+      mounted() {
+      },
+      name: 'gerir-caixa'
   }
 </script>
 

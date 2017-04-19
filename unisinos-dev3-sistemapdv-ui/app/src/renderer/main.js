@@ -14,6 +14,9 @@ Vue.use(Electron)
 Vue.use(Resource)
 Vue.use(Router)
 Vue.use(VueMaterial)
+
+Vue.component('navbar', require('./components/Navbar'))
+
 Vue.config.debug = true
 
 export const router = new Router({
