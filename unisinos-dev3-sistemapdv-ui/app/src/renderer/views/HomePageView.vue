@@ -10,7 +10,7 @@
           </md-card-header>
           <md-card md-align="center" style="background-color: rgba(158, 158, 158, 0.35)">
               <md-button class="md-raised md-primary" @click.native="goTo('/gerir-caixa')">Gerenciar Caixa</md-button>
-              <md-button class="md-raised md-primary" @click.native="">Gerenciar Vendas</md-button>
+              <md-button class="md-raised md-primary" @click.native="goTo('/iniciar-venda')">Gerenciar Vendas</md-button>
               <md-button class="md-raised md-primary" @click.native="">Gerenciar Pré-Vendas</md-button>
               <md-button class="md-raised md-primary" @click.native="">Gerenciar DAVs</md-button>
               <md-button class="md-raised md-primary" @click.native="">Gerenciar Usuários</md-button>
