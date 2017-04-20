@@ -1,5 +1,4 @@
 import {homedir} from 'os'
-import path from 'path'
 import Config from 'electron-config'
 import {app, ipcMain} from 'electron'
 

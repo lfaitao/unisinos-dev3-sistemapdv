@@ -96,7 +96,7 @@
         },
         methods: {
             openAlert() {
-                this.$refs.snackbar.open()
+//                this.$refs.snackbar.open()
             },
             submit(){
                 auth.login(this, this.credentials, 'home')
