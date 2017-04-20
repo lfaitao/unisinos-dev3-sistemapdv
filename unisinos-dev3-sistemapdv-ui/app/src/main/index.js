@@ -7,6 +7,9 @@ const winURL = process.env.NODE_ENV === 'development'
   ? `http://localhost:${require('../../../config').port}`
   : `file://${__dirname}/index.html`
 
+const cfg = require('./config')
+cfg.init()
+
 function createWindow () {
   /**
    * Initial window options

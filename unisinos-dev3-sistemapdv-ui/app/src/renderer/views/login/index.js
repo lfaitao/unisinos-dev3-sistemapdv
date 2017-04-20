@@ -5,22 +5,21 @@
 import {router} from '../../main'
 import request from 'request'
 import Config from 'electron-config'
-// import {ipcRenderer} from 'electron'
 const cfg = new Config()
 
 // Endpoints
-const LOGIN_URL = cfg.get('apiUrl') + '/login'
+const LOGIN_URL = cfg.get('apiUrl') + '/autenticar'
 
 export default {
     user: {
         authenticated: false
     },
     login(context, credentials, redirect) {
-        request.get({
+        request.post({
             url: LOGIN_URL,
-            auth: {
-                user: credentials.username,
-                pass: credentials.password
+            form: {
+                login: credentials.username,
+                senha: credentials.password
             }
         }, (err, res, body) => {
             if (err) {
@@ -38,12 +37,21 @@ export default {
 
             if (res.statusCode == 200) {
                 localStorage.setItem('user', credentials)
-                this.user.authenticated = true
-                // ipcRenderer.sendSync('login-success', credentials)
 
-                if (redirect) {
-                    router.push(redirect)
+                console.log(res.body)
+                console.log(credentials.username)
+                console.log(credentials.password)
+                if (res.body == 'true') {
+                    console.log("Ué")
+
+                    this.user.authenticated = true
+                    if (redirect) {
+                        router.push(redirect)
+                    }
+                } else {
+                    context.openAlert()
                 }
+
             } else if (res.statusCode == 400) {
                 console.log(body)
                 context.error = body.message
@@ -71,10 +79,4 @@ export default {
     checkAuth(){
         return cfg.get('authenticated')
     }
-    //
-    // getAuthHeader(){
-    //     return {
-    //         'Authorization': 'Bearer ' + localStorage.getItem('user').username
-    //     }
-    // }
 }

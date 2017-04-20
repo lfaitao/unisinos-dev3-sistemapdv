@@ -13,8 +13,13 @@ const DEFAULTS = {
     authenticated: false
 }
 
+const init = function () {
+    _cfg.store = DEFAULTS
+}
+
 const getConfig = function () {
     return _cfg
 }
 
+exports.init = init
 exports.getConfig = getConfig
