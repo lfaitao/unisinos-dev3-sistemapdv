@@ -7,11 +7,10 @@
                         <form novalidate @submit.prevent.stop="submit">
                             <md-card-header style="text-align: center;">
                                 <md-card-header-text>
-                                    <h2 class="md-title">Bem-vindo</h2>
+                                    <h2 class="md-title">Sistema PDV</h2>
                                 </md-card-header-text>
                             </md-card-header>
                             <md-card-content>
-
                                 <md-input-container>
                                     <label>Usuário</label>
                                     <md-input type="text" v-model="credentials.username" maxlength="45"></md-input>
@@ -20,7 +19,6 @@
                                     <label>Senha</label>
                                     <md-input type="password" v-model="credentials.password"></md-input>
                                 </md-input-container>
-
                             </md-card-content>
 
                             <md-card-actions>
@@ -82,12 +80,12 @@
 
 <script>
 
+    import auth from './login/index'
     import {router} from '../main'
 
     export default {
         data() {
             return {
-                isLogin: true,
                 credentials: {
                     username: '',
                     password: ''
@@ -98,13 +96,10 @@
         },
         methods: {
             openAlert() {
-//                this.$refs.snackbar.open()
+                this.$refs.snackbar.open()
             },
-            register() {
-//                this.isLogin = false
-            },
-            login() {
-//                this.isLogin = true
+            submit(){
+                auth.login(this, this.credentials, 'home')
             }
         },
         name: 'login-page'
