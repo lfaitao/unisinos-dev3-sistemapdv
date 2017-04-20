@@ -1,6 +1,6 @@
 <template>
     <div>
-        <navbar title="Gerir Caixa" previousPage="/"></navbar>
+        <navbar title="Gerir Caixa" previousPage="/home"></navbar>
         <div class="mainMenu centered_div">
             <md-layout md-gutter md-align="center">
                 <md-layout>
