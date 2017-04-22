@@ -103,6 +103,10 @@
 </template>
 
 <script>
+    import Config from 'electron-config'
+    const cfg = new Config()
+    const url = cfg.get('apiUrl') + '/usuarios/'
+
     export default {
         name: 'gerir-usuarios',
         data() {
@@ -123,7 +127,7 @@
                     }
                 };
 
-                this.$http.get('http://localhost:8080/usuarios', options)
+                this.$http.get(url, options)
                 .then(
                     response => {
                         this.itens = response.data;
@@ -144,7 +148,7 @@
             },
             excluir(usuario){
                 this.currentItem = usuario;
-                this.$http.delete('http://localhost:8080/usuarios/' + usuario.id).then(
+                this.$http.delete(url + usuario.id).then(
                     response => {
                         var indice = this.itens.indexOf(this.currentItem);
                         if(indice > -1)
@@ -160,7 +164,7 @@
             },
             salvar() {
                if(this.currentItem.id !== 0) { // Editar
-                    this.$http.put('http://localhost:8080/usuarios/', this.currentItem).then(
+                    this.$http.put(url, this.currentItem).then(
                         response => {
                             this.snackMessage = "Atualizado com sucesso";
                             this.$refs['dialog'].close();
@@ -174,7 +178,7 @@
                 }
                 else // Criar
                 {
-                   this.$http.post('http://localhost:8080/usuarios/', this.currentItem).then(
+                   this.$http.post(url, this.currentItem).then(
                         response => {
                             this.itens.push(response.data);
                             this.snackMessage = "Salvo com sucesso";
