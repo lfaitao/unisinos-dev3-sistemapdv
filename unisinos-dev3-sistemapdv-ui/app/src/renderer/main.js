@@ -26,9 +26,9 @@ export const router = new Router({
 
 Vue.material.registerTheme('default', {
   primary: 'blue',
-  accent: 'red',
+  accent: 'light-green',
   warn: 'red',
-  background: 'grey'
+  background: 'white'
 })
 
 /* eslint-disable no-new  */
