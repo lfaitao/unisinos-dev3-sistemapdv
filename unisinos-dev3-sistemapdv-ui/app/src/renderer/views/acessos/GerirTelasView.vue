@@ -113,7 +113,11 @@
 </template>
 
 <script>
-import routes from '../../routes'
+    import routes from '../../routes'
+    import Config from 'electron-config'
+    const cfg = new Config()
+    const url = cfg.get('apiUrl') + '/telas/'
+
     export default {
         name: 'gerir-telas',
         data() {
@@ -137,7 +141,7 @@ import routes from '../../routes'
                     }
                 };
 
-                this.$http.get('http://localhost:8080/telas', options)
+                this.$http.get(url, options)
                 .then(
                     response => {
                         this.itens = response.data;
@@ -158,7 +162,7 @@ import routes from '../../routes'
             },
             excluir(usuario){
                 this.currentItem = usuario;
-                this.$http.delete('http://localhost:8080/telas/' + usuario.id).then(
+                this.$http.delete(url + usuario.id).then(
                     response => {
                         var indice = this.itens.indexOf(this.currentItem);
                         if(indice > -1)
@@ -174,7 +178,7 @@ import routes from '../../routes'
             },
             salvar() {
                if(this.currentItem.id !== 0) { // Editar
-                    this.$http.put('http://localhost:8080/telas/', this.currentItem).then(
+                    this.$http.put(url, this.currentItem).then(
                         response => {
                             this.snackMessage = "Atualizado com sucesso";
                             this.$refs['dialog'].close();
@@ -188,7 +192,7 @@ import routes from '../../routes'
                 }
                 else // Criar
                 {
-                   this.$http.post('http://localhost:8080/telas/', this.currentItem).then(
+                   this.$http.post(url, this.currentItem).then(
                         response => {
                             this.itens.push(response.data);
                             this.snackMessage = "Salvo com sucesso";
