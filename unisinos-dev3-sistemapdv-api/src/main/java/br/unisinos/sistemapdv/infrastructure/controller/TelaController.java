@@ -14,6 +14,14 @@ public class TelaController {
     private TelaRepository telaController;
 
     @CrossOrigin("*")
+    @GetMapping("/telas/all")
+    @ResponseBody
+    public List<Tela> get() {
+
+        return telaController.findAll();
+    }
+
+    @CrossOrigin("*")
     @GetMapping("/telas/{id}")
     @ResponseBody
     public Tela get(@PathVariable Long id) {
@@ -26,7 +34,7 @@ public class TelaController {
     @ResponseBody
     public List<Tela> get(@RequestParam String path, @RequestParam String nome) {
 
-        return telaController.findAll();
+        return telaController.findByNomeOrPathContaining(nome, path);
     }
 
     @CrossOrigin("*")

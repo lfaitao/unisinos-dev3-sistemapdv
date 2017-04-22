@@ -60,12 +60,12 @@
                                 <md-table-cell>{{u.id}}</md-table-cell>
                                 <md-table-cell>{{u.nome}}</md-table-cell>
                                 <md-table-cell>
-                                    <md-button class="md-icon-button md-raised" @click.native="editar(u)">
+                                    <md-button class="md-icon-button md-raised md-primary" @click.native="editar(u)">
                                         <md-icon>edit</md-icon>
                                     </md-button>
                                 </md-table-cell>
                                 <md-table-cell>
-                                    <md-button class="md-icon-button md-raised" @click.native="excluir(u)">
+                                    <md-button class="md-icon-button md-raised md-accent" @click.native="excluir(u)">
                                         <md-icon>delete</md-icon>
                                     </md-button>
                                 </md-table-cell>
@@ -79,12 +79,12 @@
 
         <!-- dialog criar / editar -->
         <md-dialog ref="dialog">
-            <md-dialog-title>Gerir Usuario</md-dialog-title>
+            <md-dialog-title>{{currentItem && currentItem.id === 0 ? "Novo item" : "Editar item "}}</md-dialog-title>
             <md-dialog-content>
-                <form v-if="currentUser">
+                <form v-if="currentItem">
                     <md-input-container>
                         <label>Nome</label>
-                        <md-input maxlength="300" v-model="currentUser.nome"></md-input>
+                        <md-input maxlength="300" v-model="currentItem.nome"></md-input>
                     </md-input-container>
                 </form>
             </md-dialog-content>
@@ -111,7 +111,7 @@
                 nomeUsuario: '',
                 snackMessage: '',
                 itens:[],
-                currentUser:null
+                currentItem:null
             }
         },
         methods: {
@@ -131,7 +131,7 @@
                 );
             },
             criar(){
-                this.currentUser = {nome:"", id:0};
+                this.currentItem = {nome:"", id:0};
                 this.$refs['dialog'].open();
             },
             limpar(){
@@ -139,14 +139,14 @@
                 this.itens = [];
             },
             editar(usuario){
-                this.currentUser = usuario;
+                this.currentItem = usuario;
                 this.$refs['dialog'].open();
             },
             excluir(usuario){
-                this.currentUser = usuario;
+                this.currentItem = usuario;
                 this.$http.delete('http://localhost:8080/usuarios/' + usuario.id).then(
                     response => {
-                        var indice = this.itens.indexOf(this.currentUser);
+                        var indice = this.itens.indexOf(this.currentItem);
                         if(indice > -1)
                             this.itens.splice(indice, 1);
                         this.snackMessage = "Excluído com sucesso";
@@ -159,8 +159,8 @@
                 );
             },
             salvar() {
-               if(this.currentUser.id !== 0) { // Editar
-                    this.$http.put('http://localhost:8080/usuarios/', this.currentUser).then(
+               if(this.currentItem.id !== 0) { // Editar
+                    this.$http.put('http://localhost:8080/usuarios/', this.currentItem).then(
                         response => {
                             this.snackMessage = "Atualizado com sucesso";
                             this.$refs['dialog'].close();
@@ -174,7 +174,7 @@
                 }
                 else // Criar
                 {
-                   this.$http.post('http://localhost:8080/usuarios/', this.currentUser).then(
+                   this.$http.post('http://localhost:8080/usuarios/', this.currentItem).then(
                         response => {
                             this.itens.push(response.data);
                             this.snackMessage = "Salvo com sucesso";
@@ -206,5 +206,6 @@
     }
     .md-table .md-table-cell .md-button .md-icon {
         margin: auto;
+        color: white;
     }
 </style>

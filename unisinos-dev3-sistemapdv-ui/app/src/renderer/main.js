@@ -27,7 +27,7 @@ export const router = new Router({
 Vue.material.registerTheme('default', {
   primary: 'blue',
   accent: 'red',
-  warn: 'red',
+  warn: 'orange',
   background: 'white'
 })
 

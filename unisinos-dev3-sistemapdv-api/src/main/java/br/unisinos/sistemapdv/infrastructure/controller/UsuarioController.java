@@ -28,7 +28,7 @@ public class UsuarioController {
     @ResponseBody
     public List<Usuario> get(@RequestParam String nome) {
 
-        return usuarioRepository.findAll();
+        return usuarioRepository.findByNomeContaining(nome);
     }
 
     @CrossOrigin("*")

@@ -17,9 +17,9 @@
                     </md-layout>
 
                     <md-layout md-flex="33">
-                        <label for="path-select">Caminho da Tela</label>
-                        <md-select name="path-select" id="path-select" v-model="filtro.path" placeholder="Selecione...">
-                            <md-option v-for="p in paths" :value="p">{{p}}</md-option>
+                        <label for="path-select">Telas</label>
+                        <md-select multiple name="path-select" id="path-select" v-model="filtro.idsTelas" placeholder="Selecione...">
+                            <md-option v-for="p in telas" :value="p.id">{{p.nome}}</md-option>
                         </md-select>
                     </md-layout>
 
@@ -52,24 +52,26 @@
                             <md-table-row>
                                 <md-table-head>id</md-table-head>
                                 <md-table-head>Nome</md-table-head>
-                                <md-table-head>Caminho</md-table-head>
+                                <md-table-head>Telas</md-table-head>
                                 <md-table-head>Editar</md-table-head>
                                 <md-table-head>Deletar</md-table-head>
                             </md-table-row>
                         </md-table-header>
 
                         <md-table-body>
-                            <md-table-row v-for="u in itens">
-                                <md-table-cell>{{u.id}}</md-table-cell>
-                                <md-table-cell>{{u.nome}}</md-table-cell>
-                                <md-table-cell>{{u.path}}</md-table-cell>
+                            <md-table-row v-for="p in itens">
+                                <md-table-cell>{{p.id}}</md-table-cell>
+                                <md-table-cell>{{p.nome}}</md-table-cell>
                                 <md-table-cell>
-                                    <md-button class="md-icon-button md-raised md-primary"  @click.native="editar(u)">
+                                    <span v-for="t in p.telas">{{t.nome}}<br/></span>
+                                </md-table-cell>
+                                <md-table-cell>
+                                    <md-button class="md-icon-button md-raised md-primary" @click.native="editar(p)">
                                         <md-icon>edit</md-icon>
                                     </md-button>
                                 </md-table-cell>
                                 <md-table-cell>
-                                    <md-button class="md-icon-button md-raised md-accent" @click.native="excluir(u)">
+                                    <md-button class="md-icon-button md-raised md-accent" @click.native="excluir(p)">
                                         <md-icon>delete</md-icon>
                                     </md-button>
                                 </md-table-cell>
@@ -91,9 +93,9 @@
                         <md-input maxlength="300" v-model="currentItem.nome"></md-input>
                     </md-input-container>
                     <md-layout md-flex="33">
-                        <label for="path-select">Caminho da Tela</label>
-                        <md-select name="path-select" id="path-select" v-model="currentItem.path" placeholder="Selecione...">
-                            <md-option v-for="p in paths" :value="p">{{p}}</md-option>
+                        <label for="path-select">Telas</label>
+                        <md-select multiple name="path-select" id="path-select" v-model="currentItem.telas" placeholder="Selecione...">
+                            <md-option v-for="p in telas" :value="p">{{p.nome}}</md-option>
                         </md-select>
                     </md-layout>
                 </form>
@@ -115,42 +117,38 @@
 <script>
 import routes from '../../routes'
     export default {
-        name: 'gerir-telas',
+        name: 'gerir-permissoes',
         data() {
             return {
-                title: 'Gerir Telas',
-                nomeTela: '',
+                title: 'Gerir Permissões',
                 snackMessage: '',
                 itens:[],
                 currentItem:null,
-                filtro:{nome:"", path:""},
-                paths:[]
+                filtro:{nome:"", idsTelas:[]},
+                telas:[]
             }
         },
         methods: {
             buscar(){
 
                 var options = {
-                    params: {
-                        nome: this.filtro.nome,
-                        path: this.filtro.path
-                    }
+                    params: this.filtro
                 };
 
-                this.$http.get('http://localhost:8080/telas', options)
-                .then(
+                this.$http.get('http://localhost:8080/permissoes', options).then(
                     response => {
                         this.itens = response.data;
                     } 
                 );
             },
             criar(){
-                this.currentItem = {id:0, nome:"", path:""};
+                this.currentItem = {id:0, nome:"", telas: []};
                 this.$refs['dialog'].open();
             },
             limpar(){
-                this.filtro = {nome:"", path:""};
+                this.filtro = {nome:""};
                 this.itens = [];
+                this.telas = [];
             },
             editar(usuario){
                 this.currentItem = usuario;
@@ -158,7 +156,7 @@ import routes from '../../routes'
             },
             excluir(usuario){
                 this.currentItem = usuario;
-                this.$http.delete('http://localhost:8080/telas/' + usuario.id).then(
+                this.$http.delete('http://localhost:8080/permissoes/' + usuario.id).then(
                     response => {
                         var indice = this.itens.indexOf(this.currentItem);
                         if(indice > -1)
@@ -167,14 +165,15 @@ import routes from '../../routes'
                         this.$refs.snackbar.open();
                     },
                     response => {
-                        this.snackMessage = "Não foi possivel excluir. Contate o administrador.";
+                        this.snackMessage = "Não foi possivel excluir.";
                         this.$refs.snackbar.open();
                     } 
                 );
             },
             salvar() {
+               var body = JSON.stringify(this.currentItem);
                if(this.currentItem.id !== 0) { // Editar
-                    this.$http.put('http://localhost:8080/telas/', this.currentItem).then(
+                    this.$http.put('http://localhost:8080/permissoes/', body).then(
                         response => {
                             this.snackMessage = "Atualizado com sucesso";
                             this.$refs['dialog'].close();
@@ -188,7 +187,7 @@ import routes from '../../routes'
                 }
                 else // Criar
                 {
-                   this.$http.post('http://localhost:8080/telas/', this.currentItem).then(
+                   this.$http.post('http://localhost:8080/permissoes/', body).then(
                         response => {
                             this.itens.push(response.data);
                             this.snackMessage = "Salvo com sucesso";
@@ -207,10 +206,12 @@ import routes from '../../routes'
             }
         },
         mounted() {
-           for(var i = 0; i < routes.length; i++) {
-                var r = routes[i];
-                this.paths.push(r.path);
-            }
+             this.$http.get('http://localhost:8080/telas/all')
+                .then(
+                    response => {
+                        this.telas = response.data;
+                    } 
+                );
         }
     }
 </script>
