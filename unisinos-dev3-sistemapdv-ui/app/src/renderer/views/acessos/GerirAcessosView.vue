@@ -1,6 +1,6 @@
 <template>
     <div>
-        <navbar title="Gerir Acessos" previousPage="/"></navbar>
+        <navbar title="Gerir Acessos" previousPage="/home"></navbar>
 
         <md-layout md-flex>
             <md-tabs>
