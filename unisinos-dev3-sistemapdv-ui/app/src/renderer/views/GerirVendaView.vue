@@ -2,46 +2,53 @@
     <div >
         <navbar title="Gerir Venda" previousPage="/iniciar-venda"></navbar>
         <div  >
-<md-table-card style="background-color:white">
-  <md-toolbar  style="background-color:white">
-    <h1 class="md-title">Produtos</h1>
-<!--    <md-button class="md-icon-button">
-      <md-icon>filter_list</md-icon>
-    </md-button>
-
-    <md-button class="md-icon-button">
-      <md-icon>search</md-icon>
-    </md-button>-->
+<md-table-card>
+  <md-toolbar>
+    <h1 class="md-title">Nutrition</h1>
   </md-toolbar>
-<!--É exibido um formulário com uma grid de produtos, com ‘descrição’, ‘quantidade’, ‘percentual de desconto’.-->
-  <md-table md-sort="dessert" md-sort-type="desc" @select="onSelect" @sort="onSort">
+
+  <md-table md-sort="descricao">
     <md-table-header>
       <md-table-row>
-        <md-table-head md-sort-by="descricao">Descrição</md-table-head>
+        <md-table-head md-sort-by="descricao">Decrição</md-table-head>
         <md-table-head md-sort-by="quantidade" md-numeric>Quantidade</md-table-head>
-        <md-table-head md-sort-by="percentualDesconto" md-numeric>Percentual de desconto</md-table-head>
+        <md-table-head md-sort-by="percentualDesconto" md-numeric>% de Desconto</md-table-head>
       </md-table-row>
     </md-table-header>
 
     <md-table-body>
-      <md-table-row v-for="(row, rowIndex) in nutrition" :key="rowIndex" :md-item="row" md-auto-select md-selection>
-        <md-table-cell v-for="(column, columnIndex) in row" :key="columnIndex" :md-numeric="columnIndex !== 'descricao'" v-if="columnIndex !== 'type'">
-          {{ column }}
+      <md-table-row v-for="(row, rowIndex) in nutrition" :key="rowIndex" :md-item="row" >
+        <md-table-cell v-for="(column, columnIndex) in row" :key="columnIndex" :md-numeric="columnIndex !== 'descricao'">
+            <md-input-container v-if="columnIndex === 'quantidade'">
+                            <md-input
+                          type="number"                        
+                  placeholder="Quantidade"
+                  :name="'type' + columnIndex"
+                  :id="'type' + columnIndex"
+                  v-model="nutrition[rowIndex].quantidade"
+                  v-if="columnIndex === 'quantidade'">
+                </md-input>
+          </md-input-container v-if="columnIndex === 'quantidade'">
+
+                      <md-input-container v-if="columnIndex === 'percentualDesconto'">
+                            <md-input
+                          type="number"
+                  placeholder="% Desconto"
+                  :name="'type' + columnIndex"
+                  :id="'type' + columnIndex"
+                  v-model="nutrition[rowIndex].percentualDesconto"
+                  v-if="columnIndex === 'percentualDesconto'">
+                </md-input>
+          </md-input-container v-if="columnIndex === 'percentualDesconto'">
+
+          <span v-if="columnIndex === 'descricao'">{{ column }}</span>
         </md-table-cell>
-      </md-table-row>
+    
+        </md-table-row>
     </md-table-body>
   </md-table>
-
-  <md-table-pagination
-    md-size="5"
-    md-total="10"
-    md-page="1"
-    md-label="Rows"
-    md-separator="of"
-    :md-page-options="[5, 10, 25, 50]"
-    @pagination="onPagination"></md-table-pagination>
+  <md-button class="md-raised md-primary" @click.native="goTo('home-page')">Concretizar Venda</md-button>
 </md-table-card>
-<md-button class="md-raised md-primary" @click.native="goTo('/mesclar-pre-venda')">Mesclar Pré-Vendas</md-button>
         </div>
     </div>
 </template>
@@ -53,47 +60,42 @@ import {router} from '../main'
       data() {
           return {
               title: 'Gerir Venda',
-              nutrition: [
-      {
-        descricao: 'Meia',
-        quantidade: '2',
-        percentualDesconto: '0',
-      },
-            {
-        descricao: 'Prancha Funboard 7.6',
-        quantidade: '1',
-        percentualDesconto: '6.0',
-      },
-            {
-        descricao: 'Parafina',
-        quantidade: '5',
-        percentualDesconto: '0',
-      }
-    ]
+              nutrition: null
           }
       },
       methods: {
           goTo(route) {
               router.push(route)
           },
+          onSort(data){
+
+          },
+          onPagination(data){
+
+          }          
       },
       mounted() {
-          console.log("irairiairira") ;
+          
           console.log(this.$route.query.cpf) ;
+          console.log(this.$route.query.preVendas) ;
+
+          this.nutrition=this.$route.query.preVendas;
+          console.log(this.nutrition) ;
       },
       name: 'gerir-venda'
   }
 </script>
 
 <style scoped>
-    
-    .centered_div {
-        position: absolute;
-        top:  22%;
-        bottom:  50%;
-        left: 28%;
-        right: 50%;
-        min-width:600px;
-        min-height:400px;
-    }
+input{
+  text-align:right;
+}
+
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+    /* display: none; <- Crashes Chrome on hover */
+    -webkit-appearance: none;
+    margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
+}
+
 </style>

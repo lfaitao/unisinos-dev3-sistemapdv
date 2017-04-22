@@ -10,7 +10,7 @@
                         <span v-show="!isValid" class="md-error">CPF inválido ou inexistente</span>
                     </md-input-container>  
                     
-                    <md-button class="md-raised md-primary" @click.native="goTo({path:'/gerir-venda', query: {cpf:cpf}})">Iniciar Venda</md-button>
+                    <md-button class="md-raised md-primary" @click.native="goTo({path:'/mesclar-pre-venda', query: {cpf:cpf}})">Iniciar Venda</md-button>
                 </md-layout>
             </md-layout>
         </div>

@@ -13,7 +13,7 @@
   @import url(https://fonts.googleapis.com/css?family=Lato:300);
 
   body {
-    background-color: #EEE !important;
+    /*background-color: #EEE !important;*/
   }
   h1 {
     font-family: Lato, Helvetica, sans-serif;
