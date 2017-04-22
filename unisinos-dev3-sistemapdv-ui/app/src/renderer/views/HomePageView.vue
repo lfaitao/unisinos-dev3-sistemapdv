@@ -13,7 +13,7 @@
               <md-button class="md-raised md-primary" @click.native="">Gerenciar Vendas</md-button>
               <md-button class="md-raised md-primary" @click.native="">Gerenciar Pré-Vendas</md-button>
               <md-button class="md-raised md-primary" @click.native="">Gerenciar DAVs</md-button>
-              <md-button class="md-raised md-primary" @click.native="">Gerenciar Usuários</md-button>
+              <md-button class="md-raised md-primary" @click.native="goTo('/gerir-acessos')">Gerenciar Acessos</md-button>
           </md-card>
         </md-layout>
       </md-layout>

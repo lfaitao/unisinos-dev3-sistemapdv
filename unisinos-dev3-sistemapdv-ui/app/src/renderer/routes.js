@@ -10,6 +10,11 @@ export default [
     component: require('views/GerirCaixaView')
   },
   {
+    path: '/gerir-acessos',
+    name: 'gerir-acessos',
+    component: require('views/acessos/GerirAcessosView')
+  },
+  {
     path: '*',
     redirect: '/'
   }

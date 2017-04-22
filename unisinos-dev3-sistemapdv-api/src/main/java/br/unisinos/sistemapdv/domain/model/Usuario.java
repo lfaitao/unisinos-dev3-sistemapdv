@@ -1,6 +1,7 @@
 package br.unisinos.sistemapdv.domain.model;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Entity
@@ -10,6 +11,9 @@ public class Usuario {
     @Id
     @GeneratedValue(strategy = GenerationType.TABLE)
     private Long id;
+
+    @NotNull
+    private String nome;
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(name = "usuario_acesso", joinColumns = {
@@ -29,6 +33,9 @@ public class Usuario {
         return id;
     }
 
+    public  String getNome(){return nome;}
+
     public void atualizar(Usuario usuario) {
+        this.nome = usuario.nome;
     }
 }
