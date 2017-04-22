@@ -1,6 +1,6 @@
 <template>
     <div>
-        <navbar title="Gerir Pré-venda" previousPage="/"></navbar>
+        <navbar title="Gerir Pré-venda" previousPage="/home"></navbar>
         
         <!-- filtros pesquisa -->
         <md-layout md-flex class="padding">
@@ -117,6 +117,10 @@
     import produtoSelect from '../../components/produto/produto.select'
     import clienteSelect from '../../components/cliente/cliente.select'
 
+    import Config from 'electron-config'
+    const cfg = new Config()
+    const url = cfg.get('apiUrl') + '/prevendas/'
+    
     export default {
         name: 'gerir-pre-venda',
         components:{
@@ -142,7 +146,7 @@
                     params: this.filtro
                 };
 
-                this.$http.get('http://localhost:8080/prevendas', options)
+                this.$http.get(url, options)
                 .then(
                     response => {
                         this.itens = response.data;
@@ -168,7 +172,7 @@
             },
             excluir(item){
                 this.currentItem = item;
-                this.$http.delete('http://localhost:8080/prevendas/' + item.id).then(
+                this.$http.delete(url + item.id).then(
                     response => {
                         var indice = this.itens.indexOf(this.currentItem);
                         if(indice > -1)
@@ -184,7 +188,7 @@
             },
             salvar() {
                if(this.currentItem.id !== 0) { // Editar
-                    this.$http.put('http://localhost:8080/prevendas/', this.currentItem).then(
+                    this.$http.put(url, this.currentItem).then(
                         response => {
                             this.snackMessage = "Atualizado com sucesso";
                             this.$refs['dialog'].close();
@@ -198,7 +202,7 @@
                 }
                 else // Criar
                 {
-                   this.$http.post('http://localhost:8080/prevendas/', this.currentItem).then(
+                   this.$http.post(url, this.currentItem).then(
                         response => {
                             this.itens.push(response.data);
                             this.snackMessage = "Salvo com sucesso";

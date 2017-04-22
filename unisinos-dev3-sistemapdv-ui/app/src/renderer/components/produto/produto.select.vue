@@ -12,6 +12,10 @@
 </template>
 
 <script>
+    import Config from 'electron-config'
+    const cfg = new Config()
+    const url = cfg.get('apiUrl') + '/produtos/all'
+    
     export default {
         name: 'produto-select',
         data() { 
@@ -21,7 +25,7 @@
             }
         },
         mounted(){
-            this.$http.get('http://localhost:8080/produtos/all' ).then(
+            this.$http.get(url).then(
                 response => { 
                     this.produtos = response.data;
                 }

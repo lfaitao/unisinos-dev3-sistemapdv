@@ -12,6 +12,11 @@
 </template>
 
 <script>
+
+    import Config from 'electron-config'
+    const cfg = new Config()
+    const url = cfg.get('apiUrl') + '/clientes/all'
+    
     export default {
         name: 'cliente-select',
         data() { 
@@ -21,7 +26,7 @@
             }
         },
         mounted(){
-            this.$http.get('http://localhost:8080/clientes/all' ).then(
+            this.$http.get(url).then(
                 response => { 
                     this.clientes = response.data;
                 }

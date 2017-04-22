@@ -1,6 +1,5 @@
 <template>
 <div>
-         <navbar title="Gerir Produtos" previousPage="/home"></navbar>
         <!-- filtros pesquisa -->
         <md-layout md-flex class="padding">
 
@@ -9,8 +8,8 @@
 
                     <md-layout md-flex="33">
                         <md-input-container>
-                            <label>Descrição</label>
-                            <md-input maxlength="300" v-model="filtro.descricao"></md-input>
+                            <label>Nome</label>
+                            <md-input maxlength="300" v-model="filtro.nome"></md-input>
                         </md-input-container>
                     </md-layout>
 
@@ -18,8 +17,12 @@
                     </md-layout>
 
                     <md-layout md-flex="33">
+                        <label for="path-select">Telas</label>
+                        <md-select multiple name="path-select" id="path-select" v-model="filtro.idsTelas" placeholder="Selecione...">
+                            <md-option v-for="p in telas" :value="p.id">{{p.nome}}</md-option>
+                        </md-select>
                     </md-layout>
-                        
+
                     <!-- ações -->
                     <md-layout class="padding">
                         <md-button class="md-raised md-primary" @click.native="buscar()">
@@ -40,20 +43,16 @@
             </md-card>
 
         </md-layout>
-
         <!-- resultado pesquisa -->
         <md-layout class="padding" v-if="itens.length > 0">
-
             <md-card class="fill">
                 <md-card-content>
-
                     <md-table class="fill">
                         <md-table-header>
                             <md-table-row>
                                 <md-table-head>id</md-table-head>
-                                <md-table-head>Descrição</md-table-head>
-                                <md-table-head>Estoque</md-table-head>
-                                <md-table-head>Valor</md-table-head>
+                                <md-table-head>Nome</md-table-head>
+                                <md-table-head>Telas</md-table-head>
                                 <md-table-head>Editar</md-table-head>
                                 <md-table-head>Deletar</md-table-head>
                             </md-table-row>
@@ -62,9 +61,10 @@
                         <md-table-body>
                             <md-table-row v-for="p in itens">
                                 <md-table-cell>{{p.id}}</md-table-cell>
-                                <md-table-cell>{{p.descricao}}</md-table-cell>
-                                <md-table-cell>{{p.estoque}}</md-table-cell>
-                                <md-table-cell>{{p.valor}}</md-table-cell>
+                                <md-table-cell>{{p.nome}}</md-table-cell>
+                                <md-table-cell>
+                                    <span v-for="t in p.telas">{{t.nome}}<br/></span>
+                                </md-table-cell>
                                 <md-table-cell>
                                     <md-button class="md-icon-button md-raised md-primary" @click.native="editar(p)">
                                         <md-icon>edit</md-icon>
@@ -85,21 +85,19 @@
 
         <!-- dialog criar / editar -->
         <md-dialog ref="dialog">
-            <md-dialog-title>{{currentItem && currentItem.id === 0 ? 'Novo item' : 'Editar item '}}</md-dialog-title>
+            <md-dialog-title>{{currentItem && currentItem.id === 0 ? "Novo item" : "Editar item "}}</md-dialog-title>
             <md-dialog-content>
                 <form v-if="currentItem">
                     <md-input-container>
-                        <label>Descrição</label>
-                        <md-input maxlength="300" v-model="currentItem.descricao"></md-input>
+                        <label>Nome</label>
+                        <md-input maxlength="300" v-model="currentItem.nome"></md-input>
                     </md-input-container>
-                     <md-input-container>
-                        <label>Estoque</label>
-                        <md-input maxlength="50" type="number" v-model="currentItem.estoque"></md-input>
-                    </md-input-container>
-                    <md-input-container>
-                        <label>Valor</label>
-                        <md-input maxlength="50" type="number" v-model="currentItem.valor"></md-input>
-                    </md-input-container>
+                    <md-layout md-flex="33">
+                        <label for="path-select">Telas</label>
+                        <md-select multiple name="path-select" id="path-select" v-model="currentItem.telas" placeholder="Selecione...">
+                            <md-option v-for="p in telas" :value="p">{{p.nome}}</md-option>
+                        </md-select>
+                    </md-layout>
                 </form>
             </md-dialog-content>
 
@@ -112,57 +110,58 @@
         <md-snackbar ref="snackbar" :md-duration="3000">
             <span>{{snackMessage}}</span>
             <md-button class="md-accent" @click.native="$refs.snackbar.close()">Ok</md-button>
-        </md-snackbar>
+        </md-snackbar>    
     </div>
 </template>
 
 <script>
+    import routes from '../../routes'
     import Config from 'electron-config'
     const cfg = new Config()
-    const url = cfg.get('apiUrl') + '/produtos/'
+    const url = cfg.get('apiUrl') + '/permissoes/'
+    const url_telas = cfg.get('apiUrl') + '/telas/'
     
     export default {
-        name: 'gerir-produtos',
+        name: 'gerir-permissoes',
         data() {
             return {
-                title: 'Gerir Usuários',
+                title: 'Gerir Permissões',
                 snackMessage: '',
-                showCards: true,
                 itens:[],
-                currentItem: null,
-                filtro: { descricao: ''}
+                currentItem:null,
+                filtro:{nome:"", idsTelas:[]},
+                telas:[]
             }
         },
         methods: {
             buscar(){
+
                 var options = {
-                    params: {
-                        descricao: this.filtro.descricao
-                    }
+                    params: this.filtro
                 };
 
-                this.$http.get(url, options)
-                .then(
+                this.$http.get(url, options).then(
                     response => {
                         this.itens = response.data;
                     } 
                 );
             },
             criar(){
-                this.currentItem = {nome:"", id:0};
+                this.currentItem = {id:0, nome:"", telas: []};
                 this.$refs['dialog'].open();
             },
             limpar(){
+                this.filtro = {nome:""};
                 this.itens = [];
-                this.filtro.descricao = '';
+                this.telas = [];
             },
-            editar(item){
-                this.currentItem = item;
+            editar(usuario){
+                this.currentItem = usuario;
                 this.$refs['dialog'].open();
             },
-            excluir(item){
-                this.currentItem = item;
-                this.$http.delete(url + item.id).then(
+            excluir(usuario){
+                this.currentItem = usuario;
+                this.$http.delete(url + usuario.id).then(
                     response => {
                         var indice = this.itens.indexOf(this.currentItem);
                         if(indice > -1)
@@ -171,14 +170,15 @@
                         this.$refs.snackbar.open();
                     },
                     response => {
-                        this.snackMessage = "Erro excluir.";
+                        this.snackMessage = "Não foi possivel excluir.";
                         this.$refs.snackbar.open();
                     } 
                 );
             },
             salvar() {
+               var body = JSON.stringify(this.currentItem);
                if(this.currentItem.id !== 0) { // Editar
-                    this.$http.put(url, this.currentItem).then(
+                    this.$http.put(url, body).then(
                         response => {
                             this.snackMessage = "Atualizado com sucesso";
                             this.$refs['dialog'].close();
@@ -192,7 +192,7 @@
                 }
                 else // Criar
                 {
-                   this.$http.post(url, this.currentItem).then(
+                   this.$http.post(url, body).then(
                         response => {
                             this.itens.push(response.data);
                             this.snackMessage = "Salvo com sucesso";
@@ -211,6 +211,12 @@
             }
         },
         mounted() {
+             this.$http.get(url_telas + "all")
+                .then(
+                    response => {
+                        this.telas = response.data;
+                    } 
+                );
         }
     }
 </script>

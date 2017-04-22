@@ -1,6 +1,6 @@
 <template>
 <div>
-         <navbar title="Gerir Clientes" previousPage="/"></navbar>
+         <navbar title="Gerir Clientes" previousPage="/home"></navbar>
         <!-- filtros pesquisa -->
         <md-layout md-flex class="padding">
 
@@ -121,6 +121,10 @@
 </template>
 
 <script>
+    import Config from 'electron-config'
+    const cfg = new Config()
+    const url = cfg.get('apiUrl') + '/clientes/'
+    
     export default {
         name: 'gerir-clientes',
         data() {
@@ -139,7 +143,7 @@
                     params: this.filtro
                 };
 
-                this.$http.get('http://localhost:8080/clientes', options)
+                this.$http.get(url, options)
                 .then(
                     response => {
                         this.itens = response.data;
@@ -161,7 +165,7 @@
             },
             excluir(item){
                 this.currentItem = item;
-                this.$http.delete('http://localhost:8080/clientes/' + item.id).then(
+                this.$http.delete(url + item.id).then(
                     response => {
                         var indice = this.itens.indexOf(this.currentItem);
                         if(indice > -1)
@@ -177,7 +181,7 @@
             },
             salvar() {
                if(this.currentItem.id !== 0) { // Editar
-                    this.$http.put('http://localhost:8080/clientes/', this.currentItem).then(
+                    this.$http.put(url, this.currentItem).then(
                         response => {
                             this.snackMessage = "Atualizado com sucesso";
                             this.$refs['dialog'].close();
@@ -191,7 +195,7 @@
                 }
                 else // Criar
                 {
-                   this.$http.post('http://localhost:8080/clientes/', this.currentItem).then(
+                   this.$http.post(url, this.currentItem).then(
                         response => {
                             this.itens.push(response.data);
                             this.snackMessage = "Salvo com sucesso";

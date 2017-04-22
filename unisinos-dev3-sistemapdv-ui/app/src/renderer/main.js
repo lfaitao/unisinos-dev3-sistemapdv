@@ -5,6 +5,7 @@ import Router from 'vue-router'
 
 import App from './App'
 import routes from './routes'
+import auth from './views/login/index'
 
 import VueMaterial from 'vue-material'
 import 'vue-material/dist/vue-material.css'

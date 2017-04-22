@@ -1,6 +1,5 @@
 <template>
 <div>
-         <navbar title="Gerir Produtos" previousPage="/home"></navbar>
         <!-- filtros pesquisa -->
         <md-layout md-flex class="padding">
 
@@ -9,8 +8,8 @@
 
                     <md-layout md-flex="33">
                         <md-input-container>
-                            <label>Descrição</label>
-                            <md-input maxlength="300" v-model="filtro.descricao"></md-input>
+                            <label>Nome</label>
+                            <md-input maxlength="300" v-model="nomeUsuario"></md-input>
                         </md-input-container>
                     </md-layout>
 
@@ -43,7 +42,6 @@
 
         <!-- resultado pesquisa -->
         <md-layout class="padding" v-if="itens.length > 0">
-
             <md-card class="fill">
                 <md-card-content>
 
@@ -51,27 +49,23 @@
                         <md-table-header>
                             <md-table-row>
                                 <md-table-head>id</md-table-head>
-                                <md-table-head>Descrição</md-table-head>
-                                <md-table-head>Estoque</md-table-head>
-                                <md-table-head>Valor</md-table-head>
+                                <md-table-head>Nome</md-table-head>
                                 <md-table-head>Editar</md-table-head>
                                 <md-table-head>Deletar</md-table-head>
                             </md-table-row>
                         </md-table-header>
 
                         <md-table-body>
-                            <md-table-row v-for="p in itens">
-                                <md-table-cell>{{p.id}}</md-table-cell>
-                                <md-table-cell>{{p.descricao}}</md-table-cell>
-                                <md-table-cell>{{p.estoque}}</md-table-cell>
-                                <md-table-cell>{{p.valor}}</md-table-cell>
+                            <md-table-row v-for="u in itens">
+                                <md-table-cell>{{u.id}}</md-table-cell>
+                                <md-table-cell>{{u.nome}}</md-table-cell>
                                 <md-table-cell>
-                                    <md-button class="md-icon-button md-raised md-primary" @click.native="editar(p)">
+                                    <md-button class="md-icon-button md-raised md-primary" @click.native="editar(u)">
                                         <md-icon>edit</md-icon>
                                     </md-button>
                                 </md-table-cell>
                                 <md-table-cell>
-                                    <md-button class="md-icon-button md-raised md-accent" @click.native="excluir(p)">
+                                    <md-button class="md-icon-button md-raised md-accent" @click.native="excluir(u)">
                                         <md-icon>delete</md-icon>
                                     </md-button>
                                 </md-table-cell>
@@ -85,20 +79,12 @@
 
         <!-- dialog criar / editar -->
         <md-dialog ref="dialog">
-            <md-dialog-title>{{currentItem && currentItem.id === 0 ? 'Novo item' : 'Editar item '}}</md-dialog-title>
+            <md-dialog-title>{{currentItem && currentItem.id === 0 ? "Novo item" : "Editar item "}}</md-dialog-title>
             <md-dialog-content>
                 <form v-if="currentItem">
                     <md-input-container>
-                        <label>Descrição</label>
-                        <md-input maxlength="300" v-model="currentItem.descricao"></md-input>
-                    </md-input-container>
-                     <md-input-container>
-                        <label>Estoque</label>
-                        <md-input maxlength="50" type="number" v-model="currentItem.estoque"></md-input>
-                    </md-input-container>
-                    <md-input-container>
-                        <label>Valor</label>
-                        <md-input maxlength="50" type="number" v-model="currentItem.valor"></md-input>
+                        <label>Nome</label>
+                        <md-input maxlength="300" v-model="currentItem.nome"></md-input>
                     </md-input-container>
                 </form>
             </md-dialog-content>
@@ -119,25 +105,25 @@
 <script>
     import Config from 'electron-config'
     const cfg = new Config()
-    const url = cfg.get('apiUrl') + '/produtos/'
-    
+    const url = cfg.get('apiUrl') + '/usuarios/'
+
     export default {
-        name: 'gerir-produtos',
+        name: 'gerir-usuarios',
         data() {
             return {
                 title: 'Gerir Usuários',
+                nomeUsuario: '',
                 snackMessage: '',
-                showCards: true,
                 itens:[],
-                currentItem: null,
-                filtro: { descricao: ''}
+                currentItem:null
             }
         },
         methods: {
             buscar(){
+
                 var options = {
                     params: {
-                        descricao: this.filtro.descricao
+                        nome: this.nomeUsuario
                     }
                 };
 
@@ -153,16 +139,16 @@
                 this.$refs['dialog'].open();
             },
             limpar(){
+                this.filtro = {nome:"", path:""};
                 this.itens = [];
-                this.filtro.descricao = '';
             },
-            editar(item){
-                this.currentItem = item;
+            editar(usuario){
+                this.currentItem = usuario;
                 this.$refs['dialog'].open();
             },
-            excluir(item){
-                this.currentItem = item;
-                this.$http.delete(url + item.id).then(
+            excluir(usuario){
+                this.currentItem = usuario;
+                this.$http.delete(url + usuario.id).then(
                     response => {
                         var indice = this.itens.indexOf(this.currentItem);
                         if(indice > -1)
@@ -171,7 +157,7 @@
                         this.$refs.snackbar.open();
                     },
                     response => {
-                        this.snackMessage = "Erro excluir.";
+                        this.snackMessage = "Não foi possivel excluir. Contate o administrador.";
                         this.$refs.snackbar.open();
                     } 
                 );
