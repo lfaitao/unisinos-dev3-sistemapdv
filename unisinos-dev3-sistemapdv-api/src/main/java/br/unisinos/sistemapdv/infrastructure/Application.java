@@ -12,9 +12,6 @@ import org.springframework.web.bind.annotation.RestController;
  * Created by lfaitao on 26/03/2017.
  */
 @SpringBootApplication
-//@Configuration
-//@EnableAutoConfiguration
-//@ComponentScan
 @EntityScan(basePackages = {"br.unisinos.sistemapdv.domain.model"})
 @EnableJpaRepositories("br.unisinos.sistemapdv.application.repository")
 @RestController

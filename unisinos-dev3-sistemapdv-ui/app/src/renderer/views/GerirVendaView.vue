@@ -1,8 +1,8 @@
 <template>
     <div >
         <navbar title="Gerir Venda" previousPage="/iniciar-venda"></navbar>
-        <div  >
-<md-table-card>
+         <md-layout md-flex class="padding">
+<md-table-card class="fill">
   <md-toolbar>
     <h1 class="md-title">Nutrition</h1>
   </md-toolbar>
@@ -17,7 +17,7 @@
     </md-table-header>
 
     <md-table-body>
-      <md-table-row v-for="(row, rowIndex) in nutrition" :key="rowIndex" :md-item="row" >
+      <md-table-row v-for="(row, rowIndex) in produtos" :key="rowIndex" :md-item="row" >
         <md-table-cell v-for="(column, columnIndex) in row" :key="columnIndex" :md-numeric="columnIndex !== 'descricao'">
             <md-input-container v-if="columnIndex === 'quantidade'">
                             <md-input
@@ -25,7 +25,7 @@
                   placeholder="Quantidade"
                   :name="'type' + columnIndex"
                   :id="'type' + columnIndex"
-                  v-model="nutrition[rowIndex].quantidade"
+                  v-model="produtos[rowIndex].quantidade"
                   v-if="columnIndex === 'quantidade'">
                 </md-input>
           </md-input-container v-if="columnIndex === 'quantidade'">
@@ -36,7 +36,7 @@
                   placeholder="% Desconto"
                   :name="'type' + columnIndex"
                   :id="'type' + columnIndex"
-                  v-model="nutrition[rowIndex].percentualDesconto"
+                  v-model="produtos[rowIndex].percentualDesconto"
                   v-if="columnIndex === 'percentualDesconto'">
                 </md-input>
           </md-input-container v-if="columnIndex === 'percentualDesconto'">
@@ -49,7 +49,7 @@
   </md-table>
   <md-button class="md-raised md-primary" @click.native="goTo('home-page')">Concretizar Venda</md-button>
 </md-table-card>
-        </div>
+         </md-layout>
     </div>
 </template>
 
@@ -60,7 +60,7 @@ import {router} from '../main'
       data() {
           return {
               title: 'Gerir Venda',
-              nutrition: null
+              produtos: null
           }
       },
       methods: {
@@ -75,18 +75,22 @@ import {router} from '../main'
           }          
       },
       mounted() {
-          
-          console.log(this.$route.query.cpf) ;
-          console.log(this.$route.query.preVendas) ;
-
-          this.nutrition=this.$route.query.preVendas;
-          console.log(this.nutrition) ;
+          debugger;
+          this.produtos=this.$route.query.produtosSelecionados
+            .map(produto => { return { descricao: produto.descricao, quantidade: 0, percentualDesconto: 0 } });
+          console.log(this.produtos) ;
       },
       name: 'gerir-venda'
   }
 </script>
 
 <style scoped>
+    .fill {
+        width:100%;
+    }
+    .padding {
+        padding: 16px;
+    }
 input{
   text-align:right;
 }

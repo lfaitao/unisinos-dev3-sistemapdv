@@ -1,6 +1,6 @@
 <template>
     <div>
-        <navbar title="Iniciar Venda" previousPage="/"></navbar>
+        <navbar title="Iniciar Venda" previousPage="/home"></navbar>
         <div class="centered_div">
             <md-layout md-align="center">
                 <md-layout style="min-width:300px">         
@@ -10,31 +10,51 @@
                         <span v-show="!isValid" class="md-error">CPF inválido ou inexistente</span>
                     </md-input-container>  
                     
-                    <md-button class="md-raised md-primary" @click.native="goTo({path:'/mesclar-pre-venda', query: {cpf:cpf}})">Iniciar Venda</md-button>
+                    <md-button class="md-raised md-primary" @click.native="iniciarMesclagem()">Iniciar Venda</md-button>
                 </md-layout>
             </md-layout>
         </div>
+                                <md-snackbar ref="snackbar" :md-duration="3000">
+            <span>{{snackMessage}}</span>
+            <md-button class="md-accent" @click.native="$refs.snackbar.close()">Ok</md-button>
+        </md-snackbar>
     </div>
 </template>
 
 <script>
   import {router} from '../main'
-
+  import Config from 'electron-config'
+const cfg = new Config()
+    const url = cfg.get('apiUrl') + '/cliente/'
   export default {
       data() {
           return {
               cpf: null,
               isValid: true,
-              title: 'Iniciar Venda'
+              title: 'Iniciar Venda',
+              snackMessage:""
           }
       },
       methods: {
-          goTo(route) {
-              console.log(this.cpf);
-              this.isValid = this.cpfIsValid(this.cpf);
+          iniciarMesclagem() {
 
-              if(this.isValid)
-                router.push(route);
+          var options = {
+            params: this.cpf
+          };
+
+                              this.$http.get(url+this.cpf, null).then(
+                        response => {
+                            debugger;
+                            this.isValid = this.cpfIsValid(this.cpf) && response.data.id != undefined;
+                             if(this.isValid)
+                                router.push({path:'/mesclar-pre-venda', query: {cliente:response.data}});
+                        },
+                        response => {
+                            debugger;
+                            this.snackMessage = "Erro ao pesquisar o cliente.";
+                            this.$refs.snackbar.open();
+                        } 
+                    );
           },
           cpfIsValid(cpf) {  
                 cpf = cpf.replace(/[^\d]+/g,'');    
