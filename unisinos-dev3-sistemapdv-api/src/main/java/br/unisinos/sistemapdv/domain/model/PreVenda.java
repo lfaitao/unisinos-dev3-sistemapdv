@@ -22,6 +22,9 @@ public class PreVenda {
                     @JoinColumn(name = "ID_PRODUTO", nullable = false, updatable = false) })
     private List<Produto> produtos;
 
+    public PreVenda()
+    {}
+
     public PreVenda(Long id) {
         this.id = id;
     }

@@ -11,4 +11,6 @@ import java.util.List;
 @Repository
 public interface ClienteRepository extends JpaRepository<Cliente, Long> {
     List<Cliente> findByNomeOrCpfContaining(String nome, String cpf);
+
+    Cliente findOneByCpf(String cpf);
 }

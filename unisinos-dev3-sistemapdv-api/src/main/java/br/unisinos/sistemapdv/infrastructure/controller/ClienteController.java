@@ -30,6 +30,13 @@ public class ClienteController {
 
     @ResponseBody
     @CrossOrigin(origins = "*")
+    @GetMapping(value = "/cliente/{cpf}")
+    public Cliente get(@PathVariable String cpf) {
+        return clienteRepository.findOneByCpf(cpf);
+    }
+
+    @ResponseBody
+    @CrossOrigin(origins = "*")
     @PostMapping("/clientes")
     public Cliente post(@RequestBody Cliente cliente) {
         Cliente clienteSalvo = clienteRepository.save(cliente);
