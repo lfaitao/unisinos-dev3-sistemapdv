@@ -11,26 +11,30 @@ public class VendaController {
     @Autowired
     private VendaRepository vendaRepository;
 
-    @RequestMapping(value = "/venda/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/vendas/{id}", method = RequestMethod.GET)
+    @CrossOrigin(origins = "*")
     @ResponseBody
     public Venda get(@PathVariable Long id) {
         return vendaRepository.findOne(id);
     }
 
-    @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
+    @CrossOrigin(origins = "*")
+    @PostMapping("/vendas")
     public Long post(@RequestBody Venda venda) {
         Venda vendaSalva = vendaRepository.save(venda);
         return vendaSalva.getId();
     }
 
-    @RequestMapping(value = "/venda/{id}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/vendas/{id}", method = RequestMethod.DELETE)
+    @CrossOrigin(origins = "*")
     @ResponseBody
     public void delete(@PathVariable long id) {
         vendaRepository.delete(id);
     }
 
-    @RequestMapping(value = "/venda/{id}", method = RequestMethod.PUT)
+    @RequestMapping(value = "/vendas/{id}", method = RequestMethod.PUT)
+    @CrossOrigin(origins = "*")
     @ResponseBody
     public void put(@PathVariable long id, @RequestBody Venda venda) {
         Venda vendaExistente = vendaRepository.findOne(id);
