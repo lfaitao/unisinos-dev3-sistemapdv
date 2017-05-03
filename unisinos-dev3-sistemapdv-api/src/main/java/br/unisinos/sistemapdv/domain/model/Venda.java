@@ -13,21 +13,22 @@ public class Venda {
     private Long id;
 
     @NotNull
+    @Column(name = "valor_total")
     private float valorTotal;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne()
     private Funcionario vendedor;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "venda_produto", joinColumns = {
             @JoinColumn(name = "ID_VENDA", nullable = false, updatable = false) }, inverseJoinColumns = {
                     @JoinColumn(name = "ID_PRODUTO", nullable = false, updatable = false) })
     private List<Produto> produtos;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "venda_prevenda", joinColumns = {
             @JoinColumn(name = "ID_VENDA", nullable = false, updatable = false) }, inverseJoinColumns = {
-                    @JoinColumn(name = "ID_PRODUTO", nullable = false, updatable = false) })
+                    @JoinColumn(name = "ID_PREVENDA", nullable = false, updatable = false) })
     private List<PreVenda> preVendas;
 
     public Venda() {
@@ -43,6 +44,42 @@ public class Venda {
 
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public float getValorTotal() {
+        return valorTotal;
+    }
+
+    public void setValorTotal(float valorTotal) {
+        this.valorTotal = valorTotal;
+    }
+
+    public Funcionario getVendedor() {
+        return vendedor;
+    }
+
+    public void setVendedor(Funcionario vendedor) {
+        this.vendedor = vendedor;
+    }
+
+    public List<Produto> getProdutos() {
+        return produtos;
+    }
+
+    public void setProdutos(List<Produto> produtos) {
+        this.produtos = produtos;
+    }
+
+    public List<PreVenda> getPreVendas() {
+        return preVendas;
+    }
+
+    public void setPreVendas(List<PreVenda> preVendas) {
+        this.preVendas = preVendas;
     }
 
     public void atualizar(Venda venda) {
