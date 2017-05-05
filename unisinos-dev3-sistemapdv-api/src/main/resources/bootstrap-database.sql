@@ -30,4 +30,5 @@ insert into produtos(id, descricao, estoque, valor) values(5, "Saia", 500, 400);
 
 insert into prevendas values(1,1);
 insert into prevenda_produto values(1,1);
+insert into prevenda_produto values(1,2);
 commit;
