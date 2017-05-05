@@ -65,6 +65,7 @@ public class PreVenda {
     }
 
     public void atualizar(PreVenda preVenda) {
-
+        this.setCliente(preVenda.cliente);
+        this.setProdutos(preVenda.produtos);
     }
 }
