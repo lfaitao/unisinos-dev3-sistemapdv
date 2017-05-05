@@ -208,13 +208,17 @@
             },
             close() {
                  this.$refs['dialog'].close();
+            },
+            
+            loadData() {
+                for(var i = 0; i < routes.length; i++) {
+                var r = routes[i];
+                this.paths.push(r.path);
+                }
             }
         },
         mounted() {
-           for(var i = 0; i < routes.length; i++) {
-                var r = routes[i];
-                this.paths.push(r.path);
-            }
+           this.loadData();
         }
     }
 </script>

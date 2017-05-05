@@ -1,6 +1,8 @@
 package br.unisinos.sistemapdv.infrastructure.controller;
 
 import br.unisinos.sistemapdv.application.repository.UsuarioRepository;
+import br.unisinos.sistemapdv.domain.model.Credencial;
+import br.unisinos.sistemapdv.domain.model.Permissao;
 import br.unisinos.sistemapdv.domain.model.Usuario;
 import java.util.List;
 
@@ -23,12 +25,13 @@ public class UsuarioController {
         return usuarioRepository.findOne(id);
     }
 
+
     @CrossOrigin("*")
     @GetMapping("/usuarios")
     @ResponseBody
-    public List<Usuario> get(@RequestParam String nome) {
+    public List<Usuario> get(@RequestParam String nome, @RequestParam String login) {
 
-        return usuarioRepository.findByNomeContaining(nome);
+        return usuarioRepository.findByNomeOrCredencialLoginContaining(nome, login);
     }
 
     @CrossOrigin("*")
@@ -36,6 +39,8 @@ public class UsuarioController {
     @ResponseBody
     public Usuario post(@RequestBody Usuario usuario) {
         Usuario usuarioSalva = usuarioRepository.save(usuario);
+        if(usuarioSalva != null)
+        return usuarioSalva;
         return usuarioSalva;
     }
 

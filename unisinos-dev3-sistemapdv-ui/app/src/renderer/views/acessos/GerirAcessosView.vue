@@ -3,18 +3,18 @@
         <navbar title="Gerir Acessos" previousPage="/home"></navbar>
 
         <md-layout md-flex>
-            <md-tabs>
+            <md-tabs @change="tabChange">
             
             <md-tab id="usuarios" md-label="Usuários">
-               <gerirUsuarios />
+               <gerirUsuarios ref="usuarios" />
             </md-tab>
 
              <md-tab id="permissoes" md-label="Permissões">
-                <gerirPermissoes />
+                <gerirPermissoes ref="permissoes" />
             </md-tab>
 
             <md-tab id="telas" md-label="Telas">
-                <gerirTelas />
+                <gerirTelas ref="telas" />
             </md-tab>
             </md-tabs>
         </md-layout>
@@ -31,6 +31,26 @@
             gerirUsuarios,
             gerirPermissoes,
             gerirTelas
+        },
+        methods: {
+            tabChange(valor){
+                switch(valor){
+
+                    case 0:
+                        this.$refs.usuarios.loadData();
+                    break;
+
+                    case 1:
+                        this.$refs.permissoes.loadData();
+                    break;
+
+                    case 2:
+                        this.$refs.telas.loadData();
+                    break;
+
+                }
+                
+            }
         }
     }
 </script>

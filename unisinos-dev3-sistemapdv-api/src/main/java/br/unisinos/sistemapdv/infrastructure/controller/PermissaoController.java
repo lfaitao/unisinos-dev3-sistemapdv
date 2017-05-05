@@ -24,6 +24,14 @@ public class PermissaoController {
     }
 
     @CrossOrigin("*")
+    @GetMapping("/permissoes/all")
+    @ResponseBody
+    public List<Permissao> get() {
+
+        return permissaoController.findAll();
+    }
+
+    @CrossOrigin("*")
     @GetMapping("/permissoes")
     @ResponseBody
     public List<Permissao> get(@RequestParam String nome) {
