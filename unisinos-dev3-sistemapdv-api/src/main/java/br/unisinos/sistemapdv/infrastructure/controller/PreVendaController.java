@@ -6,7 +6,6 @@ import br.unisinos.sistemapdv.domain.model.Produto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import java.util.stream.Collectors;
-
 import java.util.List;
 
 @RestController

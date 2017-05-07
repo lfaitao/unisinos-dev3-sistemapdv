@@ -15,6 +15,7 @@
               <md-button class="md-raised md-primary" @click.native="goTo('/gerir-clientes')">Gerenciar Clientes</md-button>
               <md-button class="md-raised md-primary" @click.native="goTo('/gerir-produtos')">Gerenciar Produtos</md-button>
               <md-button class="md-raised md-primary" @click.native="goTo('/gerir-acessos')">Gerenciar Acessos</md-button>
+              <md-button class="md-raised md-primary" @click.native="goTo('/gerir-davs')">Gerenciar DAVs</md-button>
           </md-card>
         </md-layout>
       </md-layout>
