@@ -25,7 +25,7 @@ public class Venda {
                     @JoinColumn(name = "ID_PRODUTO", nullable = false, updatable = false) })
     private List<Produto> produtos;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "venda_prevenda", joinColumns = {
             @JoinColumn(name = "ID_VENDA", nullable = false, updatable = false) }, inverseJoinColumns = {
                     @JoinColumn(name = "ID_PREVENDA", nullable = false, updatable = false) })
