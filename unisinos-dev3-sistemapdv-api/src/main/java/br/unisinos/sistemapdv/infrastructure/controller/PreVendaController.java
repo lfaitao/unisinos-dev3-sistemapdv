@@ -6,7 +6,6 @@ import br.unisinos.sistemapdv.domain.model.Produto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import java.util.stream.Collectors;
-
 import java.util.List;
 
 @RestController
@@ -29,14 +28,20 @@ public class PreVendaController {
         List<PreVenda> preVendas = preVendaRepository.findAll();
 
         //TODO: Ter paciencia de descobrir como faz no hibernate
-        return preVendas.stream()
-                    .filter((entry) -> entry
-                                        .getCliente()
-                                        .getId() == clienteId || 
-                                    entry
-                                    .getProdutos()
-                                    .stream()
-                                    .anyMatch((produto) -> produto.getId() == produtoId)).collect(Collectors.toList());
+        return preVendas.stream().filter(
+                (pv) ->
+                    (
+                        clienteId == null
+                        ||
+                        pv.getCliente().getId() == clienteId
+                    )
+                    &&
+                    (
+                        produtoId == null
+                        ||
+                        pv.getProdutos().stream().anyMatch((p) -> p.getId() == produtoId)
+                    )
+                ).collect(Collectors.toList());
     }
 
     @ResponseBody

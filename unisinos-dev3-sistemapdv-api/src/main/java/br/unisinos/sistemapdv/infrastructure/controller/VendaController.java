@@ -4,6 +4,8 @@ import br.unisinos.sistemapdv.application.repository.VendaRepository;
 import br.unisinos.sistemapdv.domain.model.Venda;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 public class VendaController {
@@ -11,26 +13,49 @@ public class VendaController {
     @Autowired
     private VendaRepository vendaRepository;
 
-    @RequestMapping(value = "/venda/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/vendas/{id}", method = RequestMethod.GET)
+    @CrossOrigin(origins = "*")
     @ResponseBody
     public Venda get(@PathVariable Long id) {
+        System.out.println("bye!");
         return vendaRepository.findOne(id);
     }
 
-    @RequestMapping(method = RequestMethod.POST)
+    @GetMapping(value = "/vendas")
+    @CrossOrigin(origins = "*")
     @ResponseBody
+    public List<Venda> get(@RequestParam("cpfCliente") String cpfCliente) {
+        System.out.println("hello!");
+        List<Venda> vendas = vendaRepository.findAll();
+System.out.println("quantas vendas: " + vendas.size());
+        // TODO: Passar p/ hibernate
+        return vendas.stream()
+                .filter((venda) -> {
+                    System.out.println("quantas pre-vendas: " + venda.getPreVendas().size());
+                    
+                    return venda.getPreVendas().stream()
+                            .anyMatch((prevenda) -> prevenda.getCliente().getCpf().equals(cpfCliente));
+                })
+                .collect(Collectors.toList());
+    }
+
+    @ResponseBody
+    @CrossOrigin(origins = "*")
+    @PostMapping("/vendas")
     public Long post(@RequestBody Venda venda) {
         Venda vendaSalva = vendaRepository.save(venda);
         return vendaSalva.getId();
     }
 
-    @RequestMapping(value = "/venda/{id}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/vendas/{id}", method = RequestMethod.DELETE)
+    @CrossOrigin(origins = "*")
     @ResponseBody
     public void delete(@PathVariable long id) {
         vendaRepository.delete(id);
     }
 
-    @RequestMapping(value = "/venda/{id}", method = RequestMethod.PUT)
+    @RequestMapping(value = "/vendas/{id}", method = RequestMethod.PUT)
+    @CrossOrigin(origins = "*")
     @ResponseBody
     public void put(@PathVariable long id, @RequestBody Venda venda) {
         Venda vendaExistente = vendaRepository.findOne(id);

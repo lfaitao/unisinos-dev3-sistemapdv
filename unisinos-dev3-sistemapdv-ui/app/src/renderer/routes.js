@@ -50,6 +50,11 @@ export default [
     component: require('views/acessos/GerirAcessosView')
   },
   {
+    path: '/gerir-davs',
+    name: 'gerir-davs',
+    component: require('views/dav/GerirDavView')
+  },
+  {
     path: '*',
     redirect: '/'
   }

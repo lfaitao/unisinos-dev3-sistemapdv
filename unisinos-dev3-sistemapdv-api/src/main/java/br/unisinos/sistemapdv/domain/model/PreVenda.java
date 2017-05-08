@@ -11,7 +11,7 @@ public class PreVenda {
     @GeneratedValue(strategy = GenerationType.TABLE)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "ID_CLIENTE")
     private Cliente cliente;
 
@@ -65,6 +65,7 @@ public class PreVenda {
     }
 
     public void atualizar(PreVenda preVenda) {
-
+        this.setCliente(preVenda.cliente);
+        this.setProdutos(preVenda.produtos);
     }
 }
