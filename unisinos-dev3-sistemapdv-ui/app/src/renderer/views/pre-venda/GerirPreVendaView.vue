@@ -9,16 +9,16 @@
                 <md-card-content>
 
                     <md-layout md-flex="33">
-                        <produtoSelect ref="produtoSelect" />
+                        <select-cliente v-model="filtro.cliente" />
                     </md-layout>
 
                     <md-layout md-flex="33">
-                        <clienteSelect ref="clienteSelect" />
+                        <select-produto v-model="filtro.produto" ref="selectProduto" />
                     </md-layout>
 
                     <md-layout md-flex="33">
                     </md-layout>
-                        
+
                     <!-- ações -->
                     <md-layout class="padding">
                         <md-button class="md-raised md-primary" @click.native="buscar()">
@@ -63,9 +63,9 @@
                                 <md-table-cell>{{p.id}}</md-table-cell>
                                 <md-table-cell>{{p.cliente.nome}}</md-table-cell>
                                 <md-table-cell>
-                                    <span v-for="prod in p.produtos">{{prod.nome}}</span>
+                                    <span v-for="prod in p.produtos">{{prod.descricao}}<br/></span>
                                 </md-table-cell>
-                                <md-table-cell>{{p.subtotal}}</md-table-cell>
+                                <md-table-cell>{{p.subTotal}}</md-table-cell>
                                 <md-table-cell>
                                     <md-button class="md-icon-button md-raised md-primary" @click.native="editar(p)">
                                         <md-icon>edit</md-icon>
@@ -89,12 +89,20 @@
         <md-dialog ref="dialog">
             <md-dialog-title>Pre-Venda</md-dialog-title>
             <md-dialog-content>
-                <form>
+                <form v-if="currentItem">
+                
+                    <select-cliente v-model="currentItem.cliente" />
+
                     <md-input-container>
-                        <clienteSelect />
-                    </md-input-container>
-                    <md-input-container>
-                        <produtoSelect multiple />
+                        <label for="produto-select">Produto</label>
+                        <md-select multiple id="produto-select" name="produto-select" placeholder="Selecione..." 
+                            v-model="currentItem.produtos">
+                            <md-option 
+                                v-for="p in produtos" 
+                                :value="p">
+                                    {{p.descricao}}
+                            </md-option>
+                        </md-select>
                     </md-input-container>
                 </form>
             </md-dialog-content>
@@ -109,62 +117,59 @@
             <span>{{snackMessage}}</span>
             <md-button class="md-accent" @click.native="$refs.snackbar.close()">Ok</md-button>
         </md-snackbar>
-        {{filtro.produto}}
     </div>
 </template>
 
 <script>
-    import produtoSelect from '../../components/produto/produto.select'
-    import clienteSelect from '../../components/cliente/cliente.select'
+    import selectProduto from '../../components/produto/selectProduto'
+    import selectCliente from '../../components/cliente/selectCliente'
 
     import Config from 'electron-config'
     const cfg = new Config()
     const url = cfg.get('apiUrl') + '/prevendas/'
-    
+    const urlProdutos = cfg.get('apiUrl') + '/produtos/all';
+
     export default {
         name: 'gerir-pre-venda',
         components:{
-            produtoSelect,
-            clienteSelect
+            selectProduto,
+            selectCliente
         },
         data() {
             return {
                 title: 'Gerir Pré-Venda',
                 snackMessage: '',
-                filtro:{produtoId:null, clienteId:null},
+                filtro:{},
+                produtos:[],
                 itens: [],
                 currentItem : null
             }
         },
         methods: {
             buscar(){
-                this.filtro.produtoId = this.$refs['produtoSelect'].produtoId;
-                this.filtro.clientId = this.$refs['clienteSelect'].clienteId;
+
                 this.itens = [];
                 
                 var options = {
-                    params: this.filtro
+                    params: { 
+                       clienteId : this.filtro.cliente ? this.filtro.cliente.id : null,
+                       produtoId : this.filtro.produto ? this.filtro.produto.id : null
+                    }
                 };
 
-                this.$http.get(url, options)
-                .then(
-                    response => {
+                this.$http.get(url, options).then(response => {
                         this.itens = response.data;
                     } 
                 );
             },
             limpar(){
-                this.$refs['produtoSelect'].produtoId = null;
-                this.$refs['clienteSelect'].clienteId = null;
                 this.itens = [];
+                this.filtro.cliente = null;
+                this.filtro.produto = null;
             },            
              criar(){
-                this.currentItem = {nome:"", id:0};
+                this.currentItem = {id:0};
                 this.$refs['dialog'].open();
-            },
-            limpar(){
-                this.itens = [];
-                this.filtro.descricao = '';
             },
             editar(item){
                 this.currentItem = item;
@@ -187,11 +192,12 @@
                 );
             },
             salvar() {
+
                if(this.currentItem.id !== 0) { // Editar
                     this.$http.put(url, this.currentItem).then(
                         response => {
                             this.snackMessage = "Atualizado com sucesso";
-                            this.$refs['dialog'].close();
+                            this.$refs.dialog.close();
                             this.$refs.snackbar.open();
                         },
                         response => {
@@ -206,7 +212,7 @@
                         response => {
                             this.itens.push(response.data);
                             this.snackMessage = "Salvo com sucesso";
-                            this.$refs['dialog'].close();
+                            this.$refs.dialog.close();
                             this.$refs.snackbar.open();
                         },
                         response => {
@@ -220,7 +226,11 @@
                  this.$refs['dialog'].close();
             }
         },
-        mounted() {
+        mounted(){
+            this.$http.get(urlProdutos).then(response => { 
+                    this.produtos = response.data;
+                }
+            );
         }
     }
 </script>
