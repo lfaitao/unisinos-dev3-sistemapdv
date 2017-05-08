@@ -8,12 +8,16 @@
 
                     <md-layout md-flex="33">
                         <md-input-container>
-                            <label>Nome</label>
+                            <label>Nome do Usuário</label>
                             <md-input maxlength="300" v-model="nomeUsuario"></md-input>
                         </md-input-container>
                     </md-layout>
 
                     <md-layout md-flex="33">
+                    <md-input-container>
+                            <label>Login</label>
+                            <md-input maxlength="300" v-model="login"></md-input>
+                        </md-input-container>
                     </md-layout>
 
                     <md-layout md-flex="33">
@@ -50,6 +54,8 @@
                             <md-table-row>
                                 <md-table-head>id</md-table-head>
                                 <md-table-head>Nome</md-table-head>
+                                <md-table-head>Login</md-table-head>
+                                <md-table-head>Permissões</md-table-head>
                                 <md-table-head>Editar</md-table-head>
                                 <md-table-head>Deletar</md-table-head>
                             </md-table-row>
@@ -59,6 +65,10 @@
                             <md-table-row v-for="u in itens">
                                 <md-table-cell>{{u.id}}</md-table-cell>
                                 <md-table-cell>{{u.nome}}</md-table-cell>
+                                <md-table-cell>{{u.credencial.login}}</md-table-cell>
+                                <md-table-cell>
+                                    <span v-for="p in u.permissao">{{p.nome}}<br/></span>
+                                </md-table-cell>
                                 <md-table-cell>
                                     <md-button class="md-icon-button md-raised md-primary" @click.native="editar(u)">
                                         <md-icon>edit</md-icon>
@@ -86,6 +96,22 @@
                         <label>Nome</label>
                         <md-input maxlength="300" v-model="currentItem.nome"></md-input>
                     </md-input-container>
+                     <md-input-container>
+                        <label>Login</label>
+                        <md-input maxlength="300" v-model="currentItem.credencial.login"></md-input>
+                    </md-input-container>
+                    <md-input-container md-has-password>
+                        <label>Senha</label>
+                        <md-input type="password" maxlength="300" v-model="currentItem.credencial.senha"></md-input>
+                    </md-input-container>
+                     <md-layout md-flex="33">
+                     <md-input-container>
+                        <label for="permissao-select">Permissões</label>
+                        <md-select multiple name="permissao-select" id="permissao-select" v-model="currentItem.permissao" placeholder="Selecione...">
+                            <md-option v-for="p in permissao" :value="p">{{p.nome}}</md-option>
+                        </md-select>
+                        </md-input-container>
+                    </md-layout>
                 </form>
             </md-dialog-content>
 
@@ -113,9 +139,11 @@
             return {
                 title: 'Gerir Usuários',
                 nomeUsuario: '',
+                login: '',
                 snackMessage: '',
                 itens:[],
-                currentItem:null
+                currentItem:null,
+                permissao:{}
             }
         },
         methods: {
@@ -123,23 +151,25 @@
 
                 var options = {
                     params: {
-                        nome: this.nomeUsuario
+                        nome: this.nomeUsuario,
+                        login: this.login
                     }
                 };
 
                 this.$http.get(url, options)
                 .then(
                     response => {
-                        this.itens = response.data;
+                        this.itens = response.data;              
                     } 
                 );
             },
             criar(){
-                this.currentItem = {nome:"", id:0};
+                this.currentItem = {nome:"", id:0, credencial: {login:"", senha:""}, permissao: {id:0, nome:"", telas:[]}};
                 this.$refs['dialog'].open();
             },
             limpar(){
-                this.filtro = {nome:"", path:""};
+                this.nomeUsuario = "";
+                this.login = "";
                 this.itens = [];
             },
             editar(usuario){
@@ -194,9 +224,17 @@
             },
             close() {
                  this.$refs['dialog'].close();
+            },
+            loadData(){
+                this.$http.get(cfg.get('apiUrl') + '/permissoes/all')
+                .then(
+                    response => {
+                        this.permissao = response.data;              
+                    })
             }
         },
         mounted() {
+            this.loadData();
         }
     }
 </script>

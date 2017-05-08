@@ -14,4 +14,5 @@ import java.util.List;
 public interface PermissaoRepository extends JpaRepository<Permissao, Long> {
 
     List<Permissao> findByNomeContaining(String nome);
+    List<Permissao> findAll();
 }

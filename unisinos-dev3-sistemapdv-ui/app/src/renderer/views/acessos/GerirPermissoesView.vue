@@ -208,15 +208,19 @@
             },
             close() {
                  this.$refs['dialog'].close();
-            }
-        },
-        mounted() {
-             this.$http.get(url_telas + "all")
+            },
+            
+            loadData(){
+                this.$http.get(url_telas + "all")
                 .then(
                     response => {
                         this.telas = response.data;
                     } 
                 );
+            }
+        },
+        mounted() {
+            this.loadData(); 
         }
     }
 </script>
