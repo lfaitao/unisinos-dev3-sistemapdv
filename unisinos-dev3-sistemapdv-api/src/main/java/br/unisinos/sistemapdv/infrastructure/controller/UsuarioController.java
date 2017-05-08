@@ -39,7 +39,7 @@ public class UsuarioController {
     @ResponseBody
     public Usuario post(@RequestBody Usuario usuario) {
         Usuario usuarioSalva = usuarioRepository.save(usuario);
-        if(usuarioSalva != null)
+        if(usuarioSalva.getNome() != null)
         return usuarioSalva;
         return usuarioSalva;
     }

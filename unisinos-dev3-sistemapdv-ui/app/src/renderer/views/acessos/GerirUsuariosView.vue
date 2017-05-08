@@ -100,9 +100,9 @@
                         <label>Login</label>
                         <md-input maxlength="300" v-model="currentItem.credencial.login"></md-input>
                     </md-input-container>
-                    <md-input-container>
+                    <md-input-container md-has-password>
                         <label>Senha</label>
-                        <md-input maxlength="300" v-model="currentItem.credencial.senha"></md-input>
+                        <md-input type="password" maxlength="300" v-model="currentItem.credencial.senha"></md-input>
                     </md-input-container>
                      <md-layout md-flex="33">
                      <md-input-container>
