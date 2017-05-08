@@ -4,7 +4,7 @@
         <md-layout md-flex class="padding">
             <md-table-card class="fill">
                 <md-toolbar>
-                    <h1 class="md-title">Nutrition</h1>
+                    <h1 class="md-title">Itens</h1>
                 </md-toolbar>
 
                 <md-table md-sort="descricao">

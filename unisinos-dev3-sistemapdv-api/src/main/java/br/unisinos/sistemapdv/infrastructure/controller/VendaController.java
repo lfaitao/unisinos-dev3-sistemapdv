@@ -4,6 +4,8 @@ import br.unisinos.sistemapdv.application.repository.VendaRepository;
 import br.unisinos.sistemapdv.domain.model.Venda;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 public class VendaController {
@@ -15,7 +17,26 @@ public class VendaController {
     @CrossOrigin(origins = "*")
     @ResponseBody
     public Venda get(@PathVariable Long id) {
+        System.out.println("bye!");
         return vendaRepository.findOne(id);
+    }
+
+    @GetMapping(value = "/vendas")
+    @CrossOrigin(origins = "*")
+    @ResponseBody
+    public List<Venda> get(@RequestParam("cpfCliente") String cpfCliente) {
+        System.out.println("hello!");
+        List<Venda> vendas = vendaRepository.findAll();
+System.out.println("quantas vendas: " + vendas.size());
+        // TODO: Passar p/ hibernate
+        return vendas.stream()
+                .filter((venda) -> {
+                    System.out.println("quantas pre-vendas: " + venda.getPreVendas().size());
+                    
+                    return venda.getPreVendas().stream()
+                            .anyMatch((prevenda) -> prevenda.getCliente().getCpf().equals(cpfCliente));
+                })
+                .collect(Collectors.toList());
     }
 
     @ResponseBody
