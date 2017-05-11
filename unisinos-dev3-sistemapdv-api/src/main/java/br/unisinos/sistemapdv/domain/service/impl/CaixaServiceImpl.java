@@ -29,14 +29,9 @@ public class CaixaServiceImpl implements CaixaService {
     /*
      * Métodos
      */
-
     @Override
-    public void iniciarCaixa(Caixa caixa) {
+    public void abrirCaixa(Caixa caixa) {
         this.caixa = caixa;
-    }
-
-    @Override
-    public void abrirCaixa() {
         caixa.setCaixaAberto(CAIXA_ABERTO);
     }
 

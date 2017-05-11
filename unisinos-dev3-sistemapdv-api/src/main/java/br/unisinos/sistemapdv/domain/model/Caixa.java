@@ -40,7 +40,7 @@ public class Caixa {
     @NotNull
     private boolean diaFiscalFechado;
 
-    @Transient
+    @NotNull
     private boolean caixaAberto;
 
     /*

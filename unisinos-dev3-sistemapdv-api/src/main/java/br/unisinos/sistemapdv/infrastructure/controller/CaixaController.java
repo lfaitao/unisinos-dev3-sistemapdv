@@ -25,15 +25,15 @@ public class CaixaController {
     /**
      * GET /create  --> Create a new user and save it in the database.
      */
-    @RequestMapping("/iniciar/{numeroCaixa}")
+    @RequestMapping("/abrir/{numeroCaixa}")
     @ResponseBody
-    public String iniciarCaixa(@PathVariable Integer numeroCaixa) {
+    public String abrirCaixa(@PathVariable Integer numeroCaixa) {
         String feedback;
 
         if (numeroCaixa == null) {
             feedback = "O número do caixa é obrigatório!";
         } else {
-            feedback = gerenciarCaixaService.iniciarCaixa(numeroCaixa);
+            feedback = gerenciarCaixaService.abrirCaixa(numeroCaixa);
         }
 
         return feedback;

@@ -23,47 +23,28 @@ public class GerenciarCaixaServiceImpl implements GerenciarCaixaService {
     @Autowired
     private CaixaService caixaService;
 
-    private boolean caixaIniciado;
-
     /*
      * Métodos
      */
 
     @Override
-    public String iniciarCaixa(Integer numeroCaixa) {
+    public String abrirCaixa(Integer numeroCaixa) {
         String feedback;
 
-        if (!caixaIniciado) {
-            Caixa caixa = caixaRepository.findByNumeroCaixa(numeroCaixa);
-            if (caixa == null) {
-                caixa = caixaRepository.save(new Caixa(numeroCaixa));
-            }
-            caixaService.iniciarCaixa(caixa);
-            caixaIniciado = true;
-            feedback = "Caixa iniciado com sucesso!";
-        } else {
-            feedback = "O caixa já está iniciado!";
+        Caixa caixa = caixaRepository.findByNumeroCaixa(numeroCaixa);
+        if (caixa == null) {
+            caixa = caixaRepository.save(new Caixa(numeroCaixa));
         }
 
-        return feedback;
-    }
-
-    @Override
-    public String abrirCaixa() {
-        String feedback;
-
-        if (!caixaService.isCaixaAberto()) {
-            caixaService.abrirCaixa();
+        if (!caixa.isCaixaAberto()) {
+            caixaService.abrirCaixa(caixa);
+            caixaRepository.save(caixa);
             feedback = "Caixa aberto com sucesso!";
         } else {
-            feedback = "O caixa já está aberto!";
+            feedback = "Este caixa já está aberto!";
         }
 
         return feedback;
     }
 
-    @Override
-    public boolean verificarEstadoCaixa() {
-        return caixaService.isCaixaAberto();
-    }
 }

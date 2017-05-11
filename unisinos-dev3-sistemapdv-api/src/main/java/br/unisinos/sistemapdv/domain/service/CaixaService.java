@@ -9,8 +9,7 @@ import org.springframework.stereotype.Service;
 @Service
 public interface CaixaService {
 
-    void iniciarCaixa(Caixa caixa);
-    void abrirCaixa();
+    void abrirCaixa(Caixa caixa);
     boolean isCaixaAberto();
 
 }

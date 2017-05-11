@@ -8,8 +8,6 @@ import org.springframework.stereotype.Service;
 @Service
 public interface GerenciarCaixaService {
 
-    String iniciarCaixa(Integer numeroCaixa);
-    String abrirCaixa();
-    boolean verificarEstadoCaixa();
+    String abrirCaixa(Integer numeroCaixa);
 
 }
