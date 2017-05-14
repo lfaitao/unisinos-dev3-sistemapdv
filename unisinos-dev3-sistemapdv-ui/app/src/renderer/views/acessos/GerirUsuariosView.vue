@@ -210,8 +210,13 @@
                 {
                    this.$http.post(url, this.currentItem).then(
                         response => {
+                            if(!response.data){
+                                this.snackMessage = "Usuario já existe";
+                            }
+                            else{
                             this.itens.push(response.data);
                             this.snackMessage = "Salvo com sucesso";
+                            }
                             this.$refs['dialog'].close();
                             this.$refs.snackbar.open();
                         },
