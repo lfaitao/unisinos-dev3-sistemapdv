@@ -35,7 +35,7 @@ public class PreVendaController {
                         ||
                         pv.getCliente().getId() == clienteId
                     )
-                    &&
+                    ||
                     (
                         produtoId == null
                         ||
