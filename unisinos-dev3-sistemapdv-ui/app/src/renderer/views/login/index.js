@@ -42,8 +42,6 @@ export default {
                 console.log(credentials.username)
                 console.log(credentials.password)
                 if (res.body == 'true') {
-                    console.log("Ué")
-
                     this.user.authenticated = true
                     if (redirect) {
                         router.push(redirect)

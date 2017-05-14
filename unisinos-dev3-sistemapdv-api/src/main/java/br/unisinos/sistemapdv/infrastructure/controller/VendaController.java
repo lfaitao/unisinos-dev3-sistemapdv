@@ -25,9 +25,8 @@ public class VendaController {
     @CrossOrigin(origins = "*")
     @ResponseBody
     public List<Venda> get(@RequestParam("cpfCliente") String cpfCliente) {
-        System.out.println("hello!");
+
         List<Venda> vendas = vendaRepository.findAll();
-System.out.println("quantas vendas: " + vendas.size());
         // TODO: Passar p/ hibernate
         return vendas.stream()
                 .filter((venda) -> {
