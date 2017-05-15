@@ -2,12 +2,9 @@ package br.unisinos.sistemapdv.infrastructure.controller;
 
 import br.unisinos.sistemapdv.application.repository.CaixaRepository;
 import br.unisinos.sistemapdv.application.service.GerenciarCaixaService;
-import br.unisinos.sistemapdv.domain.model.Caixa;
+import br.unisinos.sistemapdv.infrastructure.dto.FeedbackDTO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * Created by lfaitao on 26/03/2017.
@@ -23,20 +20,29 @@ public class CaixaController {
     private GerenciarCaixaService gerenciarCaixaService;
 
     /**
-     * GET /create  --> Create a new user and save it in the database.
+     * GET /abrir/{numeroCaixa}  --> Abre o caixa e salva estado no banco.
      */
-    @RequestMapping("/abrir/{numeroCaixa}")
+    @RequestMapping("/abrir/{caixaNumero}")
     @ResponseBody
-    public String abrirCaixa(@PathVariable Integer numeroCaixa) {
-        String feedback;
+    public FeedbackDTO abrirCaixa(@PathVariable Integer caixaNumero) {
+        FeedbackDTO feedback;
 
-        if (numeroCaixa == null) {
-            feedback = "O número do caixa é obrigatório!";
+        if (caixaNumero == null || caixaNumero <= 0) {
+            feedback = new FeedbackDTO(false, "O número do caixa é obrigatório e deve ser maior que zero!");
         } else {
-            feedback = gerenciarCaixaService.abrirCaixa(numeroCaixa);
+            feedback = gerenciarCaixaService.abrirCaixa(caixaNumero);
         }
 
         return feedback;
+    }
+
+    /**
+     * GET /isAberto/{numeroCaixa}  --> Verifica no banco se o respectivo caixa está aberto.
+     */
+    @GetMapping(value="/isAberto/{numeroCaixa}")
+    @ResponseBody
+    public boolean isCaixaAberto(@PathVariable Integer numeroCaixa) {
+        return gerenciarCaixaService.isCaixaAberto(numeroCaixa);
     }
 
 }

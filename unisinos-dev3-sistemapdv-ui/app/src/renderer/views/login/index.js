@@ -5,9 +5,8 @@
 import {router} from '../../main'
 import request from 'request'
 import Config from 'electron-config'
-const cfg = new Config()
 
-// Endpoints
+const cfg = new Config()
 const LOGIN_URL = cfg.get('apiUrl') + '/autenticar'
 
 export default {

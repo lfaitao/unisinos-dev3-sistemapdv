@@ -1,5 +1,6 @@
 package br.unisinos.sistemapdv.application.service;
 
+import br.unisinos.sistemapdv.infrastructure.dto.FeedbackDTO;
 import org.springframework.stereotype.Service;
 
 /**
@@ -8,6 +9,8 @@ import org.springframework.stereotype.Service;
 @Service
 public interface GerenciarCaixaService {
 
-    String abrirCaixa(Integer numeroCaixa);
+    FeedbackDTO abrirCaixa(Integer numeroCaixa);
+
+    boolean isCaixaAberto(Integer numeroCaixa);
 
 }

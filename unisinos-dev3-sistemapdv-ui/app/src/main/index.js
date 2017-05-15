@@ -10,6 +10,8 @@ const winURL = process.env.NODE_ENV === 'development'
 const cfg = require('./config')
 cfg.init()
 
+require('./caixa')
+
 function createWindow () {
   /**
    * Initial window options
@@ -24,7 +26,8 @@ function createWindow () {
   mainWindow.loadURL(winURL)
 
   mainWindow.on('closed', () => {
-    mainWindow = null
+      mainWindow = null
+
   })
 
   // eslint-disable-next-line no-console

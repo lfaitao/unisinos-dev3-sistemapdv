@@ -6,6 +6,14 @@
 
         <h2 class="md-title" style="flex: 1">{{ title }}</h2>
 
+        <div v-if="caixaAberto" style="padding: 5px 10px;">
+            <md-icon>power_settings_new</md-icon>
+            <md-tooltip md-direction="bottom">Caixa Aberto</md-tooltip>
+        </div>
+        <div v-if="caixaAberto === false" style="padding: 5px 10px;">
+            <md-icon>power_settings_new</md-icon>
+            <md-tooltip md-direction="bottom">Caixa Fechado</md-tooltip>
+        </div>
         <md-button class="md-icon-button md-raised" @click.native="logout">
             <md-icon>power_settings_new</md-icon>
             <md-tooltip md-direction="bottom">Logout</md-tooltip>
@@ -14,10 +22,16 @@
 </template>
 
 <script>
+    import {ipcRenderer} from 'electron'
     import {router} from '../main'
     import auth from '../views/login/index'
 
     export default {
+        data() {
+            return {
+                caixaAberto: false
+            }
+        },
         methods: {
             goTo(route) {
                 router.push(route)
@@ -34,6 +48,12 @@
             previousPage: {
                 type: String,
                 required: true
+            }
+        },
+        mounted() {
+            let isCaixaAberto = ipcRenderer.sendSync('caixa-getAberto')
+            if (isCaixaAberto !== null) {
+                this.caixaAberto= isCaixaAberto
             }
         },
         name: 'navbar'

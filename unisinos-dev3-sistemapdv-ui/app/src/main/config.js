@@ -6,6 +6,8 @@ const _cfg = new Config()
 
 const DEFAULTS = {
     apiUrl: 'http://localhost:8080/sistemapdv/api',
+    caixaNumero: 0,
+    caixaAberto: false,
     credentials: {
         username: '',
         password: ''
