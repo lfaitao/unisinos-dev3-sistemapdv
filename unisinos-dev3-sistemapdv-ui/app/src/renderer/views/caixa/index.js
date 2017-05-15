@@ -3,6 +3,7 @@
  */
 
 import {ipcRenderer} from 'electron'
+import {router} from '../../main'
 import request from 'request'
 import Config from 'electron-config'
 
@@ -31,9 +32,13 @@ export default {
                 // Seta se o caixa está aberto
                 context.caixaAberto = response.status
                 ipcRenderer.sendSync('caixa-setAberto', response.status)
-
                 context.error = response.message
                 context.openAlert()
+
+                context.$forceUpdate();
+                // if (response.status) {
+                //     router.push('home')
+                // }
             })
         }
     },

@@ -1,6 +1,6 @@
 <template>
     <div>
-        <navbar title="Gerir Caixa" previousPage="/home"></navbar>
+        <navbar ref="navbar" title="Gerir Caixa" previousPage="/home"></navbar>
         <div class="mainMenu centered_div">
             <md-layout md-gutter md-align="center">
                 <md-layout>
@@ -78,6 +78,7 @@
                 })
                 this.closeDialog('dialog-abrirCaixa')
                 this.errors.clear()
+                this.$refs['navbar'].toggleIcon()
             },
             isCaixaAberto() {
                 backend.isCaixaAberto(this, this.caixaNumero)
