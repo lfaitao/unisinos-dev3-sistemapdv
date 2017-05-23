@@ -34,8 +34,13 @@
                         </md-table-row>
                     </md-table-body>
                 </md-table>
-                <md-button class="md-raised md-primary" @click.native="concretizar()">Concretizar Venda</md-button>
             </md-table-card>
+            <md-layout>
+                <md-button class="md-raised md-primary fill" @click.native="concretizar()">Concretizar Venda</md-button>
+            </md-layout>
+            <md-layout>
+                <md-button class="md-raised md-warn fill white" @click.native="cancelar()">Cancelar Venda</md-button>
+            </md-layout>
         </md-layout>
         <md-dialog ref="dialog3">
             <md-dialog-content>
@@ -67,6 +72,9 @@
             }
         },
         methods: {
+            cancelar() {
+                router.push('/home');
+            },
             concretizar() {
 
                 let percentuaisValidos = this.produtos.reduce((valido, produto) => valido && (produto.percentualDesconto <= 100 && produto.percentualDesconto >= 0), true);
@@ -157,6 +165,10 @@
 
     .padding {
         padding: 16px;
+    }
+
+    .white {
+        color: white!important;
     }
 
     input {
