@@ -51,7 +51,7 @@
                             <md-table-row>
                                 <md-table-head>id</md-table-head>
                                 <md-table-head>Cliente</md-table-head>
-                                <md-table-head>Produtos</md-table-head>
+                                <md-table-head>Produto - Quantidade</md-table-head>
                                 <md-table-head>Sub-total</md-table-head>
                                 <md-table-head>Editar</md-table-head>
                                 <md-table-head>Excluir</md-table-head>
@@ -63,7 +63,7 @@
                                 <md-table-cell>{{p.id}}</md-table-cell>
                                 <md-table-cell>{{p.cliente.nome}}</md-table-cell>
                                 <md-table-cell>
-                                    <span v-for="prod in p.produtos">{{prod.descricao}}<br/></span>
+                                    <span v-for="prod in p.preVendaProdutos">{{prod.produto.descricao + " - " + prod.quantidade}}<br/></span>
                                 </md-table-cell>
                                 <md-table-cell>{{p.subTotal}}</md-table-cell>
                                 <md-table-cell>

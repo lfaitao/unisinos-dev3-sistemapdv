@@ -35,10 +35,6 @@ public class PreVendaProduto {
         this.id = id;
     }
 
-    public PreVenda getPreVenda() {
-        return preVenda;
-    }
-
     public void setPreVenda(PreVenda preVenda) {
         this.preVenda = preVenda;
     }
