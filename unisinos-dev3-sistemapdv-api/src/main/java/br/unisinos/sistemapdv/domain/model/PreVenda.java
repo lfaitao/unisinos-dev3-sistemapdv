@@ -2,9 +2,10 @@ package br.unisinos.sistemapdv.domain.model;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Set;
 
 @Entity
-@Table(name = "PREVENDAS")
+@Table(name = "PREVENDA")
 public class PreVenda {
 
     @Id
@@ -15,12 +16,8 @@ public class PreVenda {
     @JoinColumn(name = "ID_CLIENTE")
     private Cliente cliente;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinTable(name = "PREVENDA_PRODUTO", joinColumns = {
-            @JoinColumn(name = "ID_PREVENDA", nullable = false, updatable = false) },
-            inverseJoinColumns = {
-                    @JoinColumn(name = "ID_PRODUTO", nullable = false, updatable = false) })
-    private List<Produto> produtos;
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "preVenda")
+    private List<PreVendaProduto> preVendaProdutos;
 
     public PreVenda()
     {}
@@ -45,20 +42,20 @@ public class PreVenda {
         this.cliente = cliente;
     }
 
-    public List<Produto> getProdutos() {
-        return produtos;
+    public List<PreVendaProduto> getPreVendaProdutos() {
+        return preVendaProdutos;
     }
 
-    public void setProdutos(List<Produto> produtos) {
-        this.produtos = produtos;
+    public void setPreVendaProdutos(List<PreVendaProduto> preVendaProdutos) {
+        this.preVendaProdutos = preVendaProdutos;
     }
 
     public float getSubTotal() {
         float subTotal = 0;
 
-        for (Produto p : produtos)
+        for (PreVendaProduto p : preVendaProdutos)
         {
-            subTotal += p.getValor();
+            subTotal += p.getProduto().getValor() * p.getQuantidade();
         }
 
         return subTotal;
@@ -66,6 +63,6 @@ public class PreVenda {
 
     public void atualizar(PreVenda preVenda) {
         this.setCliente(preVenda.cliente);
-        this.setProdutos(preVenda.produtos);
+        this.setPreVendaProdutos(preVenda.preVendaProdutos);
     }
 }

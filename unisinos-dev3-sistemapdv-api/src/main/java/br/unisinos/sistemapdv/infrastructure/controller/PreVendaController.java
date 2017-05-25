@@ -2,7 +2,6 @@ package br.unisinos.sistemapdv.infrastructure.controller;
 
 import br.unisinos.sistemapdv.application.repository.PreVendaRepository;
 import br.unisinos.sistemapdv.domain.model.PreVenda;
-import br.unisinos.sistemapdv.domain.model.Produto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import java.util.stream.Collectors;
@@ -39,7 +38,7 @@ public class PreVendaController {
                     (
                         produtoId == null
                         ||
-                        pv.getProdutos().stream().anyMatch((p) -> p.getId() == produtoId)
+                        pv.getPreVendaProdutos().stream().anyMatch((p) -> p.getProduto().getId() == produtoId)
                     )
                 ).collect(Collectors.toList());
     }
