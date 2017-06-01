@@ -9,7 +9,7 @@
               <h1>Sistema PDV</h1>
             </md-card-header-text>
           </md-card-header>
-          <md-card md-align="center" style="background-color: rgba(200, 200, 200, 0.35)">
+          <md-card md-align="center">
             <button-auth text="Gerenciar Caixa" path="/gerir-caixa" />
             <button-auth text="Gerenciar Vendas" path="/iniciar-venda" />
             <button-auth text="Gerenciar Pré-Vendas" path="/gerir-pre-venda" />

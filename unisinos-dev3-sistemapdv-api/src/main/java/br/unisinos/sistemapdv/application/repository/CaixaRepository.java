@@ -12,6 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Repository
 public interface CaixaRepository extends JpaRepository<Caixa, Long> {
 
-    Caixa findByEmail(String email);
+    Caixa findByNumeroCaixa(Integer numeroCaixa);
 
 }
