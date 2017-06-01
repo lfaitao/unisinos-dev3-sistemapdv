@@ -55,5 +55,7 @@ public class Permissao {
 
     public void atualizar(Permissao permissao) {
         this.nome = permissao.nome;
+        this.setTelas(permissao.getTelas());
+
     }
 }
