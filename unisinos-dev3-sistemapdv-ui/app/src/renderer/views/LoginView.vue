@@ -60,11 +60,12 @@
                 <!--</md-card>-->
             <!--</md-layout>-->
         <!--</md-layout>-->
-        <!--<md-snackbar md-position="bottom center" ref="snackbar" md-duration="4000">-->
-            <!--<span>{{ error }}</span>-->
-            <!--<md-button class="md-accent" md-theme="light-blue" @click.native="$refs.snackbar.close()">Ok-->
-            <!--</md-button>-->
-        <!--</md-snackbar>-->
+        
+        <md-snackbar md-position="bottom center" ref="snackbar" md-duration="4000">
+            <span>{{ error }}</span>
+            <md-button class="md-accent" md-theme="light-blue" @click.native="$refs.snackbar.close()">Ok
+            </md-button>
+        </md-snackbar>
     </div>
 </template>
 
@@ -91,12 +92,18 @@
                     password: ''
                 },
                 user: {},
-                error: ''
+                error: '',
+                permissoes: [{
+                    id: '',
+                    nome: '',
+                    telas: [{id:'', path: '', nome: '' }]
+                }
+                ]
             }
         },
         methods: {
             openAlert() {
-//                this.$refs.snackbar.open()
+                this.$refs.snackbar.open()
             },
             submit(){
                 auth.login(this, this.credentials, 'home')

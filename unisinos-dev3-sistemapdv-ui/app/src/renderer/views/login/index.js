@@ -36,17 +36,16 @@ export default {
             }
 
             if (res.statusCode == 200) {
-                localStorage.setItem('user', credentials)
+                localStorage.setItem('teste',res.body)
 
                 console.log(res.body)
-                console.log(credentials.username)
-                console.log(credentials.password)
-                if (res.body == 'true') {
+                if (res.body != null && res.body !="") {
                     this.user.authenticated = true
                     if (redirect) {
                         router.push(redirect)
                     }
                 } else {
+                    context.error = 'Credenciais informadas invalidas.'
                     context.openAlert()
                 }
 
