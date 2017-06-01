@@ -21,17 +21,33 @@ export default {
                 senha: credentials.password
             }
         }, (err, res, body) => {
-            localStorage.setItem('user', credentials)
-
-            if (res.body == 'true') {
-                this.user.authenticated = true
-                if (redirect) {
-                    router.push(redirect)
+            if (err) {
+                if (err.code == 'ECONNREFUSED') {
+                    context.error = 'Não foi possível se conectar com o servidor ' + cfg.get('apiUrl')
+                    context.openAlert()
+                    return;
+                } else {
+                    console.log(err)
+                    context.error = 'Ocorreu um erro inesperado, por favor entre em contato com um Administrador do Sistema'
+                    context.openAlert()
+                    return;
                 }
-            } else {
-                context.error = 'Credenciais informadas invalidas.'
-                context.openAlert()
             }
+
+            if (res.statusCode == 200) {
+                localStorage.setItem('teste',res.body)
+
+                if (res.body != null && res.body !="") {
+                    this.user.authenticated = true
+                    if (redirect) {
+                        router.push(redirect)
+                    }
+                } else {
+                    context.error = 'Credenciais informadas invalidas.'
+                    context.openAlert()
+                }
+           
+        }
         })
     },
 
