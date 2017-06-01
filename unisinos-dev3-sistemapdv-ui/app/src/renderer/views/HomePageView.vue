@@ -1,5 +1,6 @@
 <template>
   <div>
+    <navbar title="Main Menu"></navbar>
     <div class="mainMenu centered_div">
       <md-layout md-gutter md-align="center">
         <md-layout md-column md-align="center" style="align-items: center">
@@ -8,7 +9,7 @@
               <h1>Sistema PDV</h1>
             </md-card-header-text>
           </md-card-header>
-          <md-card md-align="center" style="background-color: rgba(200, 200, 200, 0.35)">
+          <md-card md-align="center">
               <md-button class="md-raised md-primary" @click.native="goTo('/gerir-caixa')">Gerenciar Caixa</md-button>
               <md-button class="md-raised md-primary" @click.native="goTo('/iniciar-venda')">Gerenciar Vendas</md-button>
               <md-button class="md-raised md-primary" @click.native="goTo('/gerir-pre-venda')">Gerenciar Pré-Vendas</md-button>

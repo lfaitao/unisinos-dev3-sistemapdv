@@ -2,7 +2,7 @@ export default [
   {
     path: '/',
     name: 'login-page',
-    component: require('views/LoginView')
+    component: require('views/login/LoginView')
   },
   {
     path: '/home',
@@ -12,7 +12,7 @@ export default [
   {
     path: '/gerir-caixa',
     name: 'gerir-caixa',
-    component: require('views/GerirCaixaView')
+    component: require('views/caixa/GerirCaixaView')
   },
   {
     path: '/gerir-venda',
