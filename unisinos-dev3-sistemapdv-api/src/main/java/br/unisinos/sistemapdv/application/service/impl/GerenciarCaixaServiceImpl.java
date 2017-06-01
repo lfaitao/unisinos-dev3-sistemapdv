@@ -1,5 +1,6 @@
 package br.unisinos.sistemapdv.application.service.impl;
 
+import br.unisinos.sistemapdv.domain.exception.ValidationException;
 import br.unisinos.sistemapdv.application.repository.CaixaRepository;
 import br.unisinos.sistemapdv.application.service.GerenciarCaixaService;
 import br.unisinos.sistemapdv.domain.model.Caixa;
@@ -50,6 +51,26 @@ public class GerenciarCaixaServiceImpl implements GerenciarCaixaService {
             feedback = new FeedbackDTO(true, "Caixa aberto com sucesso!");
         } else {
             feedback = new FeedbackDTO(false, "O caixa " + caixa.getNumeroCaixa() + " já está aberto!");
+        }
+
+        return feedback;
+    }
+
+    /**
+     * Fecha o caixa e salva estado no banco.
+     *
+     * @return feedback
+     */
+    @Override
+    public FeedbackDTO fecharCaixa() {
+        FeedbackDTO feedback;
+
+        try {
+            Caixa caixa = caixaService.fecharCaixa();
+            caixaRepository.save(caixa);
+            feedback = new FeedbackDTO(true, "Caixa fechado com sucesso!");
+        } catch (ValidationException e) {
+            feedback = e.getFeedback();
         }
 
         return feedback;
