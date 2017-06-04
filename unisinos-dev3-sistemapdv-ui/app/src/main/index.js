@@ -32,7 +32,7 @@ function createWindow () {
   mainWindow.on('closed', () => {
       mainWindow = null
 
-      if (getConfig().get('caixaAberto')) {
+      if (getConfig().get('caixaAbertoStatus')) {
           request.get({
               url: BACKEND_CAIXA_URL + 'fechar'
           }, (err, res, body) => {
