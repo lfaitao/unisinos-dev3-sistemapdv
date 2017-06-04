@@ -1,8 +1,8 @@
 <template>
-  <md-button class="md-raised md-primary" 
-        @click.native="navigate()" 
-        v-if='hasPermission'>
-            {{text}}
+    <md-button class="md-raised md-primary"
+               @click.native="navigate()"
+               v-if='hasPermission'>
+        {{text}}
     </md-button>
 </template>
 
@@ -12,47 +12,41 @@
     export default {
         name: 'button-auth',
         props: ['text', 'path', 'canNavigateIf'],
-        data() { 
-           return {
-               hasPermission: false
-           };
+        data() {
+            return {
+                hasPermission: false
+            };
         },
-        methods:{
-           navigate() {
-               if(this.path !== ""){
-                    if(this.canNavigateIf){
-                      
-                            router.push(this.path)
-                        
-                    } 
-                    else{
+        methods: {
+            navigate() {
+                if (this.path !== "") {
+                    if (this.canNavigateIf) {
                         router.push(this.path)
                     }
-               }
-           }
+                }
+            }
         },
         mounted(){
-             var permissoes = JSON.parse(window.localStorage.getItem('teste'));
+            let permissoes = JSON.parse(window.localStorage.getItem('teste'));
 
-                if(permissoes){
-                    var i; var j; var hasPermission = false;
-                    
-                    for(i in permissoes){
+            if (permissoes) {
+                let i;
+                let j;
+                let hasPermission = false;
 
-                        for(j in permissoes[i].telas){
-                            
-                            if(this.path === permissoes[i].telas[j].path){
+                for (i in permissoes) {
+                    for (j in permissoes[i].telas) {
+
+                        if (this.path === permissoes[i].telas[j].path) {
                             this.hasPermission = true;
                             break;
-                            }
-
                         }
-
-                        if(this.hasPermission)
+                    }
+                    if (this.hasPermission) {
                         break;
                     }
                 }
-
+            }
         }
     }
 </script>
