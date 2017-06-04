@@ -87,23 +87,30 @@
 
         <!-- dialog criar / editar -->
         <md-dialog ref="dialog">
-            <md-dialog-title>Pre-Venda</md-dialog-title>
+            <md-dialog-title>Pré-Venda</md-dialog-title>
             <md-dialog-content>
                 <form v-if="currentItem">
                 
                     <select-cliente v-model="currentItem.cliente" />
 
-                    <md-input-container>
-                        <label for="produto-select">Produto</label>
-                        <md-select multiple id="produto-select" name="produto-select" placeholder="Selecione..." 
-                            v-model="currentItem.produtos">
-                            <md-option 
-                                v-for="p in produtos" 
-                                :value="p">
-                                    {{p.descricao}}
-                            </md-option>
-                        </md-select>
-                    </md-input-container>
+                    <md-card v-for="pvp in currentItem.preVendaProdutos">
+                        <md-card-content>
+                            <select-produto v-model="pvp.produto" />
+                            <md-input-container>
+                                <label>Quantidade</label>
+                                <md-input type="number" placeholder="Quantidade" v-model="pvp.quantidade"></md-input>
+                            </md-input-container>
+                        </md-card-content>
+                            <md-card-actions>
+                            <md-button @click.native="removerProdutoPrevenda(pvp)">
+                                Excluir
+                            </md-button>
+                        </md-card-actions>
+                    </md-card>
+
+                    <md-button class="md-icon-button md-raised md-primary" @click.native="adicionarProdutoPrevenda()">
+                        <md-icon>add</md-icon>
+                    </md-button>
                 </form>
             </md-dialog-content>
 
@@ -168,7 +175,7 @@
                 this.filtro.produto = null;
             },            
              criar(){
-                this.currentItem = {id:0};
+                this.currentItem = {id:0, cliente:{}, preVendaProdutos:[]};
                 this.$refs['dialog'].open();
             },
             editar(item){
@@ -190,6 +197,15 @@
                         this.$refs.snackbar.open();
                     } 
                 );
+            },
+            removerProdutoPrevenda(pvp){
+                const i = this.currentItem.preVendaProdutos.indexOf(pvp);
+
+                if(i >= 0)
+                    this.currentItem.preVendaProdutos.splice(i,1);
+            },
+            adicionarProdutoPrevenda(pvp){
+                this.currentItem.preVendaProdutos.push({produto:{}, quantidade:0});
             },
             salvar() {
 

@@ -1,8 +1,8 @@
 package br.unisinos.sistemapdv.domain.model;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Table(name = "PREVENDA")
@@ -12,11 +12,12 @@ public class PreVenda {
     @GeneratedValue(strategy = GenerationType.TABLE)
     private Long id;
 
+    @NotNull
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "ID_CLIENTE")
     private Cliente cliente;
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "preVenda")
+    @OneToMany(cascade = {CascadeType.ALL},orphanRemoval = true, fetch = FetchType.EAGER, mappedBy = "preVenda")
     private List<PreVendaProduto> preVendaProdutos;
 
     public PreVenda()
@@ -63,6 +64,28 @@ public class PreVenda {
 
     public void atualizar(PreVenda preVenda) {
         this.setCliente(preVenda.cliente);
-        this.setPreVendaProdutos(preVenda.preVendaProdutos);
-    }
+
+        this.getPreVendaProdutos().stream().forEach(p ->
+        {
+            if(! preVenda.getPreVendaProdutos().stream().anyMatch(pp -> pp.getProduto().getId() == p.getProduto().getId()))
+            {
+                this.getPreVendaProdutos().remove(p);
+            }
+            else
+            {
+                PreVendaProduto pvpUpdate = preVenda.preVendaProdutos.stream().filter(pp ->
+                        pp.getProduto().getId() == p.getProduto().getId() ).findFirst().get();
+
+                p.setQuantidade(pvpUpdate.getQuantidade());
+
+                preVenda.getPreVendaProdutos().remove(pvpUpdate);
+            }
+        });
+/*
+        preVenda.getPreVendaProdutos().stream().forEach(p ->
+        {
+            p.setPreVenda(this);
+            this.getPreVendaProdutos().add(p);
+        });
+*/    }
 }
