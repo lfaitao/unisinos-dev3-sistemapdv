@@ -54,12 +54,13 @@
                 this.error = message
                 this.$refs.snackbar.open()
             },
-            goToGerirVendas() {
+            verificarEstadoCaixa() {
                 let isCaixaAberto = ipcRenderer.sendSync('caixa-getAberto');
                 if (isCaixaAberto) {
-                    router.push('/gerir-venda')
+                    return true;
                 } else {
                     this.openAlert("O caixa precisa estar aberto para gerir vendas!")
+                    return false;
                 }
             }
         },
