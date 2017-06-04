@@ -10,13 +10,13 @@
                         </md-card-header-text>
                     </md-card-header>
                     <md-card md-align="center">
-                        <button-auth text="Gerenciar Caixa" path="/gerir-caixa" :canNavigateIf="true"></button-auth>
+                        <button-auth text="Gerenciar Caixa" path="/gerir-caixa"></button-auth>
                         <button-auth text="Gerenciar Vendas" path="/iniciar-venda" :canNavigateIf="isCaixaAberto" @click.native="verificarEstadoCaixa(MOMENTO_CLICANDO) && navigate()"></button-auth>
-                        <button-auth text="Gerenciar Pré-Vendas" path="/gerir-pre-venda" :canNavigateIf="true"></button-auth>
-                        <button-auth text="Gerenciar Clientes" path="/gerir-clientes" :canNavigateIf="true"></button-auth>
-                        <button-auth text="Gerenciar Produtos" path="/gerir-produtos" :canNavigateIf="true"></button-auth>
-                        <button-auth text="Gerenciar DAVs" path="/gerir-davs" :canNavigateIf="true"></button-auth>
-                        <button-auth text="Gerenciar Acessos" path="/gerir-acessos" :canNavigateIf="true"></button-auth>
+                        <button-auth text="Gerenciar Pré-Vendas" path="/gerir-pre-venda"></button-auth>
+                        <button-auth text="Gerenciar Clientes" path="/gerir-clientes"></button-auth>
+                        <button-auth text="Gerenciar Produtos" path="/gerir-produtos"></button-auth>
+                        <button-auth text="Gerenciar DAVs" path="/gerir-davs"></button-auth>
+                        <button-auth text="Gerenciar Acessos" path="/gerir-acessos"></button-auth>
                     </md-card>
                 </md-layout>
             </md-layout>

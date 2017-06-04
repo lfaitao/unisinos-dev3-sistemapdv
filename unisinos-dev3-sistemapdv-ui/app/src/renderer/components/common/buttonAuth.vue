@@ -20,7 +20,11 @@
         methods: {
             navigate() {
                 if (this.path !== "") {
-                    if (this.canNavigateIf) {
+                    if(this.canNavigateIf !== null && this.canNavigateIf !== undefined){
+                        if (this.canNavigateIf) {
+                            router.push(this.path)
+                        }
+                    } else {
                         router.push(this.path)
                     }
                 }
