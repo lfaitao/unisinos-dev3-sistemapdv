@@ -6,7 +6,7 @@
                 <md-layout>
                     <md-card md-align="center">
                         <md-button class="md-raised md-primary" @click.native="abrirCaixa()">Abrir Caixa</md-button>
-                        <md-button class="md-raised md-primary" @click.native="">Fechar Caixa</md-button>
+                        <md-button class="md-raised md-primary" @click.native="fecharCaixa()">Fechar Caixa</md-button>
                         <md-button class="md-raised md-primary" @click.native="">Bloquear Caixa</md-button>
                         <md-button class="md-raised md-primary" @click.native="">Desbloquear Caixa</md-button>
                         <md-button class="md-raised md-primary" @click.native="">Realizar Sangria</md-button>
@@ -79,6 +79,15 @@
                 this.closeDialog('dialog-abrirCaixa')
                 this.errors.clear()
                 this.$refs['navbar'].toggleIcon()
+            },
+            fecharCaixa() {
+                if (this.caixaAberto) {
+                    backend.fecharCaixa(this)
+                    this.$refs['navbar'].toggleIcon()
+                } else {
+                    this.error = 'Este caixa já está fechado!'
+                    this.openAlert()
+                }
             },
             isCaixaAberto() {
                 backend.isCaixaAberto(this, this.caixaNumero)

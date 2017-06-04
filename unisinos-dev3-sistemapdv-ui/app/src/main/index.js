@@ -1,6 +1,8 @@
 'use strict'
 
 import { app, BrowserWindow } from 'electron'
+import request from 'request'
+import {getConfig} from './config'
 
 let mainWindow
 const winURL = process.env.NODE_ENV === 'development'
@@ -9,6 +11,8 @@ const winURL = process.env.NODE_ENV === 'development'
 
 const cfg = require('./config')
 cfg.init()
+
+const BACKEND_CAIXA_URL = getConfig().get('apiUrl') + '/caixa/'
 
 require('./caixa')
 
@@ -28,6 +32,12 @@ function createWindow () {
   mainWindow.on('closed', () => {
       mainWindow = null
 
+      if (getConfig().get('caixaAberto')) {
+          request.get({
+              url: BACKEND_CAIXA_URL + 'fechar'
+          }, (err, res, body) => {
+          })
+      }
   })
 
   // eslint-disable-next-line no-console

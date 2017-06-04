@@ -40,7 +40,7 @@ public class CaixaServiceImpl implements CaixaService {
 
     @Override
     public Caixa fecharCaixa() throws ValidationException {
-        if (isCaixaAberto()) {
+        if (!isCaixaAberto()) {
             throw new ValidationException("O Caixa já está fechado!");
         } else {
             caixa.setCaixaAberto(CAIXA_FECHADO);
