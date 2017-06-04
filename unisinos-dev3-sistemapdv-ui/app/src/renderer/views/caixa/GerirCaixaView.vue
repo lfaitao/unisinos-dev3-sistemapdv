@@ -7,7 +7,7 @@
                     <md-card md-align="center">
                         <md-button class="md-raised md-primary" @click.native="abrirCaixa()">Abrir Caixa</md-button>
                         <md-button class="md-raised md-primary" @click.native="fecharCaixa()">Fechar Caixa</md-button>
-                        <md-button class="md-raised md-primary" @click.native="">Bloquear Caixa</md-button>
+                        <md-button class="md-raised md-primary" @click.native="bloquearCaixa()">Bloquear Caixa</md-button>
                         <md-button class="md-raised md-primary" @click.native="">Desbloquear Caixa</md-button>
                         <md-button class="md-raised md-primary" @click.native="">Realizar Sangria</md-button>
                         <md-button class="md-raised md-primary" @click.native="">Realizar Suprimento</md-button>
@@ -57,6 +57,7 @@
                 title: 'Gerir Caixa',
                 caixaNumero: null,
                 caixaAberto: false,
+                caixaBloqueado: false,
                 error: ''
             }
         },
@@ -78,15 +79,24 @@
                 })
                 this.closeDialog('dialog-abrirCaixa')
                 this.errors.clear()
-                this.$refs['navbar'].toggleIcon()
+                this.$refs['navbar'].toggleCaixaAbertoIcon()
             },
             fecharCaixa() {
                 if (this.caixaAberto) {
                     backend.fecharCaixa(this)
-                    this.$refs['navbar'].toggleIcon()
+                    this.$refs['navbar'].toggleCaixaAbertoIcon()
                 } else {
                     this.error = 'Este caixa já está fechado!'
                     this.openAlert()
+                }
+            },
+            bloquearCaixa() {
+                if (this.caixaBloqueado) {
+                    this.error = 'Este caixa já está bloqueado!'
+                    this.openAlert()
+                } else {
+                    backend.bloquearCaixa(this)
+                    this.$refs['navbar'].toggleCaixaBloqueadoIcon()
                 }
             },
             isCaixaAberto() {
@@ -105,6 +115,7 @@
         mounted() {
             this.caixaAberto = ipcRenderer.sendSync('caixa-getAberto')
             this.caixaNumero = ipcRenderer.sendSync('caixa-getNumero')
+            this.caixaBloqueado = ipcRenderer.sendSync('caixa-getBloqueado')
         },
         name: 'gerir-caixa'
     }

@@ -54,6 +54,12 @@ export default {
             context.openAlert()
         })
     },
+    bloquearCaixa(context) {
+        ipcRenderer.sendSync('caixa-setBloqueado', true)
+        context.caixaBloqueado = true
+        context.error = "Caixa bloqueado com sucesso!"
+        context.openAlert()
+    },
     isCaixaAberto(context, caixaNumero) {
         if (caixaNumero === null) {
             context.caixaAberto = false

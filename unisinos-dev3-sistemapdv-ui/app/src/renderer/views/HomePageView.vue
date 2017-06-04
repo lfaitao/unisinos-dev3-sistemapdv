@@ -11,12 +11,12 @@
                     </md-card-header>
                     <md-card md-align="center">
                         <button-auth text="Gerenciar Caixa" path="/gerir-caixa"></button-auth>
-                        <button-auth text="Gerenciar Vendas" path="/iniciar-venda" :canNavigateIf="isCaixaAberto" @click.native="verificarEstadoCaixa(MOMENTO_CLICANDO) && navigate()"></button-auth>
-                        <button-auth text="Gerenciar Pré-Vendas" path="/gerir-pre-venda"></button-auth>
-                        <button-auth text="Gerenciar Clientes" path="/gerir-clientes"></button-auth>
-                        <button-auth text="Gerenciar Produtos" path="/gerir-produtos"></button-auth>
-                        <button-auth text="Gerenciar DAVs" path="/gerir-davs"></button-auth>
-                        <button-auth text="Gerenciar Acessos" path="/gerir-acessos"></button-auth>
+                        <button-auth text="Gerenciar Vendas" path="/iniciar-venda" :canNavigateIf="isCaixaAberto && !isCaixaBloqueado" @click.native="verificarCaixaAberto(MOMENTO_CLICANDO) && navigate()"></button-auth>
+                        <button-auth text="Gerenciar Pré-Vendas" path="/gerir-pre-venda" :canNavigateIf="!isCaixaBloqueado" @click.native="verificarCaixaBloqueado(MOMENTO_CLICANDO) && navigate()"></button-auth>
+                        <button-auth text="Gerenciar Clientes" path="/gerir-clientes" :canNavigateIf="!isCaixaBloqueado" @click.native="verificarCaixaBloqueado(MOMENTO_CLICANDO) && navigate()"></button-auth>
+                        <button-auth text="Gerenciar Produtos" path="/gerir-produtos" :canNavigateIf="!isCaixaBloqueado" @click.native="verificarCaixaBloqueado(MOMENTO_CLICANDO) && navigate()"></button-auth>
+                        <button-auth text="Gerenciar DAVs" path="/gerir-davs" :canNavigateIf="!isCaixaBloqueado" @click.native="verificarCaixaBloqueado(MOMENTO_CLICANDO) && navigate()"></button-auth>
+                        <button-auth text="Gerenciar Acessos" path="/gerir-acessos" :canNavigateIf="!isCaixaBloqueado" @click.native="verificarCaixaBloqueado(MOMENTO_CLICANDO) && navigate()"></button-auth>
                     </md-card>
                 </md-layout>
             </md-layout>
@@ -45,6 +45,7 @@
                 MOMENTO_INICIANDO: 1,
                 MOMENTO_CLICANDO: 2,
                 isCaixaAberto: false,
+                isCaixaBloqueado: false,
                 error: ''
             }
         },
@@ -56,20 +57,32 @@
                 this.error = message
                 this.$refs.snackbar.open()
             },
-            verificarEstadoCaixa(momento) {
-                let isCaixaAberto = ipcRenderer.sendSync('caixa-getAberto');
-                if (isCaixaAberto) {
-                    this.isCaixaAberto = true
-                } else {
-                    this.isCaixaAberto = false;
-                    if (momento == this.MOMENTO_CLICANDO) {
-                        this.openAlert("O caixa precisa estar aberto para gerir vendas!")
+            verificarCaixaAberto(momento) {
+                this.isCaixaAberto = ipcRenderer.sendSync('caixa-getAberto');
+                this.isCaixaBloqueado = ipcRenderer.sendSync('caixa-getBloqueado');
+
+                if (momento == this.MOMENTO_CLICANDO) {
+                    if (!this.isCaixaBloqueado) {
+                        if (!this.isCaixaAberto) {
+                            this.openAlert("O caixa precisa estar aberto para gerir vendas!")
+                        }
+                    } else {
+                        this.openAlert("O caixa está bloqueado para operações!")
+                    }
+                }
+            },
+            verificarCaixaBloqueado(momento) {
+                this.isCaixaBloqueado = ipcRenderer.sendSync('caixa-getBloqueado');
+                if (momento == this.MOMENTO_CLICANDO) {
+                    if (this.isCaixaBloqueado) {
+                        this.openAlert("O caixa está bloqueado para operações!")
                     }
                 }
             }
         },
         mounted() {
-            this.verificarEstadoCaixa(this.MOMENTO_INICIANDO)
+            this.verificarCaixaAberto(this.MOMENTO_INICIANDO)
+            this.verificarCaixaBloqueado(this.MOMENTO_INICIANDO)
         },
         name: 'home-page'
     }
