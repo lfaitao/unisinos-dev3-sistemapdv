@@ -8,6 +8,7 @@ const DEFAULTS = {
     apiUrl: 'http://localhost:8080/sistemapdv/api',
     caixaNumero: 0,
     caixaAberto: false,
+    caixaBloqueado: false,
     credentials: {
         username: '',
         password: ''

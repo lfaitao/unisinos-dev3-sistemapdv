@@ -12,8 +12,7 @@ const BACKEND_URL = cfg.get('apiUrl') + '/caixa/'
 export default {
     abrirCaixa(context, caixaNumero) {
         if (caixaNumero === null) {
-            context.error = 'Número do caixa é necessário!'
-            context.openAlert()
+            context.openAlert('Número do caixa é necessário!')
         } else {
             request.get({
                 url: BACKEND_URL + 'abrir/' + caixaNumero
@@ -29,10 +28,9 @@ export default {
                 }
 
                 // Seta se o caixa está aberto
-                context.caixaAberto = response.status
+                context.caixaAbertoStatus = response.status
                 ipcRenderer.sendSync('caixa-setAberto', response.status)
-                context.error = response.message
-                context.openAlert()
+                context.openAlert(response.message)
             })
         }
     },
@@ -46,27 +44,37 @@ export default {
             if (response.status) {
                 ipcRenderer.sendSync('caixa-setNumero', null)
                 context.caixaNumero = null
-                context.caixaAberto = false
+                context.caixaAbertoStatus = false
                 ipcRenderer.sendSync('caixa-setAberto', false)
             }
 
-            context.error = response.message
-            context.openAlert()
+            context.openAlert(response.message)
         })
+    },
+    bloquearCaixa(context) {
+        ipcRenderer.sendSync('caixa-setBloqueado', true)
+        context.caixaBloqueadoStatus = true
+        context.openAlert("Caixa bloqueado com sucesso!")
     },
     isCaixaAberto(context, caixaNumero) {
         if (caixaNumero === null) {
-            context.caixaAberto = false
+            context.caixaAbertoStatus = false
         } else {
             request.get({
                 url: BACKEND_URL + 'isAberto/' + caixaNumero
             }, (err, res, body) => {
                 if (res.body == 'true') {
-                    context.caixaAberto = true
+                    context.caixaAbertoStatus = true
                 } else {
-                    context.caixaAberto = false
+                    context.caixaAbertoStatus = false
                 }
             })
+        }
+    },
+    isCaixaBloqueado(context) {
+        context.caixaBloqueadoStatus = ipcRenderer.sendSync('caixa-getBloqueado');
+        if (context.caixaBloqueadoStatus) {
+            context.openAlert("O caixa está bloqueado para operações!")
         }
     }
 }

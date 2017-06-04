@@ -7,8 +7,9 @@
 
         <h2 class="md-title" style="flex: 1">{{ title }}</h2>
 
+        <!-- Ícone Caixa Aberto/Fechado -->
         <transition name="fade" mode="out-in">
-            <div v-if="caixaAberto" style="padding: 5px 10px;">
+            <div v-if="caixaAbertoStatus" style="padding: 5px 10px;">
                 <md-icon>phonelink</md-icon>
                 <md-tooltip md-direction="bottom">Caixa Aberto</md-tooltip>
             </div>
@@ -17,6 +18,19 @@
                 <md-tooltip md-direction="bottom">Caixa Fechado</md-tooltip>
             </div>
         </transition>
+
+        <!-- Ícone Caixa Bloqueado/Desbloqueado -->
+        <transition name="fade" mode="out-in">
+            <div v-if="caixaBloqueadoStatus" style="padding: 5px 10px;">
+                <md-icon>lock_outline</md-icon>
+                <md-tooltip md-direction="bottom">Caixa Bloqueado</md-tooltip>
+            </div>
+            <div v-else style="padding: 5px 10px;">
+                <md-icon>lock_open</md-icon>
+                <md-tooltip md-direction="bottom">Caixa Desbloqueado</md-tooltip>
+            </div>
+        </transition>
+
         <md-button class="md-icon-button md-raised" @click.native="logout">
             <md-icon>power_settings_new</md-icon>
             <md-tooltip md-direction="bottom">Logout</md-tooltip>
@@ -32,7 +46,8 @@
     export default {
         data() {
             return {
-                caixaAberto: false
+                caixaAbertoStatus: false,
+                caixaBloqueadoStatus: false
             }
         },
         methods: {
@@ -43,8 +58,22 @@
             logout() {
                 auth.logout()
             },
-            toggleIcon() {
-                this.caixaAberto = !this.caixaAberto
+            toggleCaixaAbertoIcon() {
+                this.caixaAbertoStatus = !this.caixaAbertoStatus
+            },
+            toggleCaixaBloqueadoIcon() {
+                this.caixaBloqueadoStatus = !this.caixaBloqueadoStatus
+            },
+            atualizaCaixaStatus() {
+                let isCaixaAberto = ipcRenderer.sendSync('caixa-getAberto')
+                if (isCaixaAberto !== null) {
+                    this.caixaAbertoStatus = isCaixaAberto
+                }
+
+                let isCaixaBloqueado = ipcRenderer.sendSync('caixa-getBloqueado')
+                if (isCaixaBloqueado !== null) {
+                    this.caixaBloqueadoStatus = isCaixaBloqueado
+                }
             }
         },
         props: {
@@ -58,10 +87,7 @@
             }
         },
         mounted() {
-            let isCaixaAberto = ipcRenderer.sendSync('caixa-getAberto')
-            if (isCaixaAberto !== null) {
-                this.caixaAberto= isCaixaAberto
-            }
+            this.atualizaCaixaStatus();
         },
         name: 'navbar'
     }

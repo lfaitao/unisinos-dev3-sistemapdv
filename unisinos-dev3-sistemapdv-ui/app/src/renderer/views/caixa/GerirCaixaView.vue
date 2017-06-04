@@ -5,14 +5,14 @@
             <md-layout md-gutter md-align="center">
                 <md-layout>
                     <md-card md-align="center">
-                        <md-button class="md-raised md-primary" @click.native="abrirCaixa()">Abrir Caixa</md-button>
-                        <md-button class="md-raised md-primary" @click.native="fecharCaixa()">Fechar Caixa</md-button>
-                        <md-button class="md-raised md-primary" @click.native="">Bloquear Caixa</md-button>
+                        <md-button class="md-raised md-primary" @click.native="isCaixaBloqueado() && abrirCaixa()">Abrir Caixa</md-button>
+                        <md-button class="md-raised md-primary" @click.native="isCaixaBloqueado() && fecharCaixa()">Fechar Caixa</md-button>
+                        <md-button class="md-raised md-primary" @click.native="bloquearCaixa()">Bloquear Caixa</md-button>
                         <md-button class="md-raised md-primary" @click.native="">Desbloquear Caixa</md-button>
-                        <md-button class="md-raised md-primary" @click.native="">Realizar Sangria</md-button>
-                        <md-button class="md-raised md-primary" @click.native="">Realizar Suprimento</md-button>
-                        <md-button class="md-raised md-primary" @click.native="">Abrir Dia Fiscal (ECF)</md-button>
-                        <md-button class="md-raised md-primary" @click.native="">Fechar Dia Fiscal (ECF)</md-button>
+                        <md-button class="md-raised md-primary" @click.native="isCaixaBloqueado()">Realizar Sangria</md-button>
+                        <md-button class="md-raised md-primary" @click.native="isCaixaBloqueado()">Realizar Suprimento</md-button>
+                        <md-button class="md-raised md-primary" @click.native="isCaixaBloqueado()">Abrir Dia Fiscal (ECF)</md-button>
+                        <md-button class="md-raised md-primary" @click.native="isCaixaBloqueado()">Fechar Dia Fiscal (ECF)</md-button>
                     </md-card>
                 </md-layout>
             </md-layout>
@@ -54,9 +54,12 @@
     export default {
         data() {
             return {
+                MOMENTO_INICIANDO: 1,
+                MOMENTO_CLICANDO: 2,
                 title: 'Gerir Caixa',
                 caixaNumero: null,
-                caixaAberto: false,
+                caixaAbertoStatus: false,
+                caixaBloqueadoStatus: false,
                 error: ''
             }
         },
@@ -65,10 +68,9 @@
               router.push(route)
             },
             abrirCaixa() {
-                if (this.caixaAberto) {
-                  this.error = 'Este caixa já está aberto!'
-                  this.openAlert()
-                } else {
+                if (this.caixaAbertoStatus) {
+                  this.openAlert('Este caixa já está aberto!')
+                } else if (!this.caixaBloqueadoStatus) {
                   this.openDialog('dialog-abrirCaixa')
                 }
             },
@@ -78,19 +80,31 @@
                 })
                 this.closeDialog('dialog-abrirCaixa')
                 this.errors.clear()
-                this.$refs['navbar'].toggleIcon()
+                this.$refs['navbar'].toggleCaixaAbertoIcon()
             },
             fecharCaixa() {
-                if (this.caixaAberto) {
-                    backend.fecharCaixa(this)
-                    this.$refs['navbar'].toggleIcon()
+                if (this.caixaAbertoStatus) {
+                    if (!this.caixaBloqueadoStatus) {
+                        backend.fecharCaixa(this)
+                        this.$refs['navbar'].toggleCaixaAbertoIcon()
+                    }
                 } else {
-                    this.error = 'Este caixa já está fechado!'
-                    this.openAlert()
+                    this.openAlert('Este caixa já está fechado!')
+                }
+            },
+            bloquearCaixa() {
+                if (this.caixaBloqueadoStatus) {
+                    this.openAlert('Este caixa já está bloqueado!')
+                } else {
+                    backend.bloquearCaixa(this)
+                    this.$refs['navbar'].toggleCaixaBloqueadoIcon()
                 }
             },
             isCaixaAberto() {
                 backend.isCaixaAberto(this, this.caixaNumero)
+            },
+            isCaixaBloqueado() {
+                backend.isCaixaBloqueado(this)
             },
             openDialog(dialogName) {
                 this.$refs[dialogName].open();
@@ -98,13 +112,15 @@
             closeDialog(dialogName) {
                 this.$refs[dialogName].close();
             },
-            openAlert() {
+            openAlert(mensagem) {
+                this.error = mensagem
                 this.$refs.snackbar.open()
             }
         },
         mounted() {
-            this.caixaAberto = ipcRenderer.sendSync('caixa-getAberto')
+            this.caixaAbertoStatus = ipcRenderer.sendSync('caixa-getAberto')
             this.caixaNumero = ipcRenderer.sendSync('caixa-getNumero')
+            this.caixaBloqueadoStatus = ipcRenderer.sendSync('caixa-getBloqueado')
         },
         name: 'gerir-caixa'
     }
