@@ -60,7 +60,9 @@ public class PreVendaController {
     @PutMapping("/prevendas")
     public void put(@RequestBody PreVenda preVenda) {
         PreVenda preVendaExistente = preVendaRepository.findOne(preVenda.getId());
-        CarregarProdutos(preVendaExistente);
+
+        CarregarProdutos(preVenda);
+
         preVendaExistente.atualizar(preVenda);
         preVendaRepository.save(preVendaExistente);
     }

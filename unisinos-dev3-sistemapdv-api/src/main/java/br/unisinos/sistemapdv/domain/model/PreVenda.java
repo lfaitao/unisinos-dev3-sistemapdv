@@ -17,7 +17,7 @@ public class PreVenda {
     @JoinColumn(name = "ID_CLIENTE")
     private Cliente cliente;
 
-    @OneToMany(cascade = {CascadeType.ALL},orphanRemoval = true, fetch = FetchType.EAGER, mappedBy = "preVenda")
+    @OneToMany(cascade = {CascadeType.ALL}, orphanRemoval = true, fetch = FetchType.EAGER, mappedBy = "preVenda")
     private List<PreVendaProduto> preVendaProdutos;
 
     public PreVenda()
@@ -69,6 +69,7 @@ public class PreVenda {
         {
             if(! preVenda.getPreVendaProdutos().stream().anyMatch(pp -> pp.getProduto().getId() == p.getProduto().getId()))
             {
+                p.setPreVenda(null);
                 this.getPreVendaProdutos().remove(p);
             }
             else
@@ -81,11 +82,11 @@ public class PreVenda {
                 preVenda.getPreVendaProdutos().remove(pvpUpdate);
             }
         });
-/*
+
         preVenda.getPreVendaProdutos().stream().forEach(p ->
         {
             p.setPreVenda(this);
             this.getPreVendaProdutos().add(p);
         });
-*/    }
+    }
 }
