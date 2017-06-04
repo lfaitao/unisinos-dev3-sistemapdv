@@ -7,19 +7,27 @@ const winURL = process.env.NODE_ENV === 'development'
   ? `http://localhost:${require('../../../config').port}`
   : `file://${__dirname}/index.html`
 
+const cfg = require('./config')
+cfg.init()
+
+require('./caixa')
+
 function createWindow () {
   /**
    * Initial window options
    */
   mainWindow = new BrowserWindow({
     height: 600,
-    width: 800
+    width: 800,
+    minHeight: 600,
+    minWidth: 800
   })
 
   mainWindow.loadURL(winURL)
 
   mainWindow.on('closed', () => {
-    mainWindow = null
+      mainWindow = null
+
   })
 
   // eslint-disable-next-line no-console
