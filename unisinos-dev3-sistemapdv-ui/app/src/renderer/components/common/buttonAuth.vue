@@ -11,7 +11,7 @@
 
     export default {
         name: 'button-auth',
-        props: ['text', 'path'],
+        props: ['text', 'path', 'canNavigateIf'],
         data() { 
            return {
                hasPermission: false
@@ -19,8 +19,16 @@
         },
         methods:{
            navigate() {
-               if(this.path !== "")
-                router.push(this.path)
+               if(this.path !== ""){
+                    if(this.canNavigateIf){
+                      
+                            router.push(this.path)
+                        
+                    } 
+                    else{
+                        router.push(this.path)
+                    }
+               }
            }
         },
         mounted(){

@@ -11,7 +11,7 @@
           </md-card-header>
           <md-card md-align="center">
             <button-auth text="Gerenciar Caixa" path="/gerir-caixa" />
-            <button-auth text="Gerenciar Vendas" path="/iniciar-venda" />
+            <button-auth text="Gerenciar Vendas" path="/iniciar-venda" :canNavigateIf="dummy()" />
             <button-auth text="Gerenciar Pré-Vendas" path="/gerir-pre-venda" />
             <button-auth text="Gerenciar Clientes" path="/gerir-clientes" />
             <button-auth text="Gerenciar Produtos" path="/gerir-produtos" />
@@ -62,6 +62,10 @@
                     this.openAlert("O caixa precisa estar aberto para gerir vendas!")
                     return false;
                 }
+            }
+            dummy(){
+                alert('ok');
+                return true;
             }
         },
         mounted() {
