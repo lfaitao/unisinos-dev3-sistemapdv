@@ -9,7 +9,7 @@
 
         <!-- Ícone Caixa Aberto/Fechado -->
         <transition name="fade" mode="out-in">
-            <div v-if="caixaAberto" style="padding: 5px 10px;">
+            <div v-if="caixaAbertoStatus" style="padding: 5px 10px;">
                 <md-icon>phonelink</md-icon>
                 <md-tooltip md-direction="bottom">Caixa Aberto</md-tooltip>
             </div>
@@ -21,7 +21,7 @@
 
         <!-- Ícone Caixa Bloqueado/Desbloqueado -->
         <transition name="fade" mode="out-in">
-            <div v-if="caixaBloqueado" style="padding: 5px 10px;">
+            <div v-if="caixaBloqueadoStatus" style="padding: 5px 10px;">
                 <md-icon>lock_outline</md-icon>
                 <md-tooltip md-direction="bottom">Caixa Bloqueado</md-tooltip>
             </div>
@@ -46,8 +46,8 @@
     export default {
         data() {
             return {
-                caixaAberto: false,
-                caixaBloqueado: false
+                caixaAbertoStatus: false,
+                caixaBloqueadoStatus: false
             }
         },
         methods: {
@@ -59,20 +59,20 @@
                 auth.logout()
             },
             toggleCaixaAbertoIcon() {
-                this.caixaAberto = !this.caixaAberto
+                this.caixaAbertoStatus = !this.caixaAbertoStatus
             },
             toggleCaixaBloqueadoIcon() {
-                this.caixaBloqueado = !this.caixaBloqueado
+                this.caixaBloqueadoStatus = !this.caixaBloqueadoStatus
             },
             atualizaCaixaStatus() {
                 let isCaixaAberto = ipcRenderer.sendSync('caixa-getAberto')
                 if (isCaixaAberto !== null) {
-                    this.caixaAberto = isCaixaAberto
+                    this.caixaAbertoStatus = isCaixaAberto
                 }
 
                 let isCaixaBloqueado = ipcRenderer.sendSync('caixa-getBloqueado')
                 if (isCaixaBloqueado !== null) {
-                    this.caixaBloqueado = isCaixaBloqueado
+                    this.caixaBloqueadoStatus = isCaixaBloqueado
                 }
             }
         },

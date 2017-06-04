@@ -12,12 +12,12 @@ ipcMain.on('caixa-setNumero', (event, arg) => {
 })
 
 ipcMain.on('caixa-setAberto', (event, arg) => {
-    getConfig().set('caixaAberto', arg)
+    getConfig().set('caixaAbertoStatus', arg)
     event.returnValue = true
 })
 
 ipcMain.on('caixa-setBloqueado', (event, arg) => {
-    getConfig().set('caixaBloqueado', arg)
+    getConfig().set('caixaBloqueadoStatus', arg)
     event.returnValue = true
 })
 
@@ -26,9 +26,9 @@ ipcMain.on('caixa-getNumero', (event, arg) => {
 })
 
 ipcMain.on('caixa-getAberto', (event, arg) => {
-    event.returnValue = getConfig().get('caixaAberto')
+    event.returnValue = getConfig().get('caixaAbertoStatus')
 })
 
 ipcMain.on('caixa-getBloqueado', (event, arg) => {
-    event.returnValue = getConfig().get('caixaBloqueado')
+    event.returnValue = getConfig().get('caixaBloqueadoStatus')
 })

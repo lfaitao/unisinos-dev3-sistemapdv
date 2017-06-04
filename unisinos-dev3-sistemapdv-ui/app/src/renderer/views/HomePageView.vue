@@ -11,12 +11,12 @@
                     </md-card-header>
                     <md-card md-align="center">
                         <button-auth text="Gerenciar Caixa" path="/gerir-caixa"></button-auth>
-                        <button-auth text="Gerenciar Vendas" path="/iniciar-venda" :canNavigateIf="isCaixaAberto && !isCaixaBloqueado" @click.native="verificarCaixaAberto(MOMENTO_CLICANDO) && navigate()"></button-auth>
-                        <button-auth text="Gerenciar Pré-Vendas" path="/gerir-pre-venda" :canNavigateIf="!isCaixaBloqueado" @click.native="verificarCaixaBloqueado(MOMENTO_CLICANDO) && navigate()"></button-auth>
-                        <button-auth text="Gerenciar Clientes" path="/gerir-clientes" :canNavigateIf="!isCaixaBloqueado" @click.native="verificarCaixaBloqueado(MOMENTO_CLICANDO) && navigate()"></button-auth>
-                        <button-auth text="Gerenciar Produtos" path="/gerir-produtos" :canNavigateIf="!isCaixaBloqueado" @click.native="verificarCaixaBloqueado(MOMENTO_CLICANDO) && navigate()"></button-auth>
-                        <button-auth text="Gerenciar DAVs" path="/gerir-davs" :canNavigateIf="!isCaixaBloqueado" @click.native="verificarCaixaBloqueado(MOMENTO_CLICANDO) && navigate()"></button-auth>
-                        <button-auth text="Gerenciar Acessos" path="/gerir-acessos" :canNavigateIf="!isCaixaBloqueado" @click.native="verificarCaixaBloqueado(MOMENTO_CLICANDO) && navigate()"></button-auth>
+                        <button-auth text="Gerenciar Vendas" path="/iniciar-venda" :canNavigateIf="caixaAbertoStatus && !caixaBloqueadoStatus" @click.native="isCaixaAberto(MOMENTO_CLICANDO) && navigate()"></button-auth>
+                        <button-auth text="Gerenciar Pré-Vendas" path="/gerir-pre-venda" :canNavigateIf="!caixaBloqueadoStatus" @click.native="isCaixaBloqueado(MOMENTO_CLICANDO) && navigate()"></button-auth>
+                        <button-auth text="Gerenciar Clientes" path="/gerir-clientes" :canNavigateIf="!caixaBloqueadoStatus" @click.native="isCaixaBloqueado(MOMENTO_CLICANDO) && navigate()"></button-auth>
+                        <button-auth text="Gerenciar Produtos" path="/gerir-produtos" :canNavigateIf="!caixaBloqueadoStatus" @click.native="isCaixaBloqueado(MOMENTO_CLICANDO) && navigate()"></button-auth>
+                        <button-auth text="Gerenciar DAVs" path="/gerir-davs" :canNavigateIf="!caixaBloqueadoStatus" @click.native="isCaixaBloqueado(MOMENTO_CLICANDO) && navigate()"></button-auth>
+                        <button-auth text="Gerenciar Acessos" path="/gerir-acessos" :canNavigateIf="!caixaBloqueadoStatus" @click.native="isCaixaBloqueado(MOMENTO_CLICANDO) && navigate()"></button-auth>
                     </md-card>
                 </md-layout>
             </md-layout>
@@ -44,8 +44,8 @@
             return {
                 MOMENTO_INICIANDO: 1,
                 MOMENTO_CLICANDO: 2,
-                isCaixaAberto: false,
-                isCaixaBloqueado: false,
+                caixaAbertoStatus: false,
+                caixaBloqueadoStatus: false,
                 error: ''
             }
         },
@@ -57,13 +57,13 @@
                 this.error = message
                 this.$refs.snackbar.open()
             },
-            verificarCaixaAberto(momento) {
-                this.isCaixaAberto = ipcRenderer.sendSync('caixa-getAberto');
-                this.isCaixaBloqueado = ipcRenderer.sendSync('caixa-getBloqueado');
+            isCaixaAberto(momento) {
+                this.caixaAbertoStatus = ipcRenderer.sendSync('caixa-getAberto');
+                this.caixaBloqueadoStatus = ipcRenderer.sendSync('caixa-getBloqueado');
 
                 if (momento == this.MOMENTO_CLICANDO) {
-                    if (!this.isCaixaBloqueado) {
-                        if (!this.isCaixaAberto) {
+                    if (!this.caixaBloqueadoStatus) {
+                        if (!this.caixaAbertoStatus) {
                             this.openAlert("O caixa precisa estar aberto para gerir vendas!")
                         }
                     } else {
@@ -71,18 +71,18 @@
                     }
                 }
             },
-            verificarCaixaBloqueado(momento) {
-                this.isCaixaBloqueado = ipcRenderer.sendSync('caixa-getBloqueado');
+            isCaixaBloqueado(momento) {
+                this.caixaBloqueadoStatus = ipcRenderer.sendSync('caixa-getBloqueado');
                 if (momento == this.MOMENTO_CLICANDO) {
-                    if (this.isCaixaBloqueado) {
+                    if (this.caixaBloqueadoStatus) {
                         this.openAlert("O caixa está bloqueado para operações!")
                     }
                 }
             }
         },
         mounted() {
-            this.verificarCaixaAberto(this.MOMENTO_INICIANDO)
-            this.verificarCaixaBloqueado(this.MOMENTO_INICIANDO)
+            this.isCaixaAberto(this.MOMENTO_INICIANDO)
+            this.isCaixaBloqueado(this.MOMENTO_INICIANDO)
         },
         name: 'home-page'
     }
