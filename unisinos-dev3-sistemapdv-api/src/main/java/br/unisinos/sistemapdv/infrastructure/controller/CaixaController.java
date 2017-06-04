@@ -36,6 +36,20 @@ public class CaixaController {
         return feedback;
     }
 
+
+    /**
+     * GET /fechar  --> Fecha o caixa e salva estado no banco.
+     */
+    @RequestMapping("/fechar")
+    @ResponseBody
+    public FeedbackDTO fecharCaixa() {
+        FeedbackDTO feedback;
+
+        feedback = gerenciarCaixaService.fecharCaixa();
+
+        return feedback;
+    }
+
     /**
      * GET /isAberto/{numeroCaixa}  --> Verifica no banco se o respectivo caixa está aberto.
      */

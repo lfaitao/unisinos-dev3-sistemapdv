@@ -3,7 +3,6 @@
  */
 
 import {ipcRenderer} from 'electron'
-import {router} from '../../main'
 import request from 'request'
 import Config from 'electron-config'
 
@@ -34,15 +33,27 @@ export default {
                 ipcRenderer.sendSync('caixa-setAberto', response.status)
                 context.error = response.message
                 context.openAlert()
-
-                context.$forceUpdate();
-                // if (response.status) {
-                //     router.push('home')
-                // }
             })
         }
     },
+    fecharCaixa(context) {
+        request.get({
+            url: BACKEND_URL + 'fechar'
+        }, (err, res, body) => {
+            let response = JSON.parse(res.body)
 
+            // Seta numero do caixa
+            if (response.status) {
+                ipcRenderer.sendSync('caixa-setNumero', null)
+                context.caixaNumero = null
+                context.caixaAberto = false
+                ipcRenderer.sendSync('caixa-setAberto', false)
+            }
+
+            context.error = response.message
+            context.openAlert()
+        })
+    },
     isCaixaAberto(context, caixaNumero) {
         if (caixaNumero === null) {
             context.caixaAberto = false
