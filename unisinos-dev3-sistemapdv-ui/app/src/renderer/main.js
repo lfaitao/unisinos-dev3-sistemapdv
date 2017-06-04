@@ -27,6 +27,9 @@ export const router = new Router({
   scrollBehavior: () => ({ y: 0 }),
   routes
 })
+// .beforeEach((to, from, next) => {
+//   //console.log(new Date() + ": indo de " + from + "para" + to);
+// });
 
 Vue.material.registerTheme('default', {
   primary: 'blue',

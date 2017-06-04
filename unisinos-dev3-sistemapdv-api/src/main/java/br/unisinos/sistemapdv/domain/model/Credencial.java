@@ -1,5 +1,7 @@
 package br.unisinos.sistemapdv.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
@@ -20,6 +22,12 @@ public class Credencial {
     @NotNull
     private String senha;
 
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinTable(name = "usuario_credencial", joinColumns = {
+            @JoinColumn(name = "ID_CREDENCIAL", nullable = false, updatable = false) }, inverseJoinColumns = {
+            @JoinColumn(name = "ID_USUARIO", nullable = false, updatable = false) })
+    private Usuario usuario;
+
     public Credencial() {
     }
 
@@ -30,6 +38,12 @@ public class Credencial {
     public Credencial(String login, String senha) {
         this.login = login;
         this.senha = senha;
+    }
+
+    public Credencial(String login, String senha, Usuario  usuario) {
+        this.login = login;
+        this.senha = senha;
+        this.usuario = usuario;
     }
 
     public Long getId() {
@@ -56,4 +70,12 @@ public class Credencial {
         this.senha = senha;
     }
 
+    @JsonIgnore
+    public Usuario getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
+    }
 }

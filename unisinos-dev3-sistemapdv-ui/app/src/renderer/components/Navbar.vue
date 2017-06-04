@@ -1,7 +1,8 @@
 <template>
     <md-toolbar>
-        <md-button v-if="previousPage" class="md-icon-button" @click.native="goTo(previousPage)">
-            <md-icon>arrow_back</md-icon>
+        <md-button class="md-icon-button" @click.native="goTo(previousPage)">
+
+            <md-icon>{{previousPage ? "arrow_back" : "home"}}</md-icon>
         </md-button>
 
         <h2 class="md-title" style="flex: 1">{{ title }}</h2>
@@ -36,7 +37,8 @@
         },
         methods: {
             goTo(route) {
-                router.push(route)
+                if(this.previousPage)
+                    router.push(route)
             },
             logout() {
                 auth.logout()
@@ -52,7 +54,7 @@
             },
             previousPage: {
                 type: String,
-                required: true
+                required: false
             }
         },
         mounted() {
