@@ -93,6 +93,8 @@
                 
                     <select-cliente v-model="currentItem.cliente" />
 
+                    <h3>Produtos</h3>
+                    
                     <md-card v-for="pvp in currentItem.preVendaProdutos">
                         <md-card-content>
                             <select-produto v-model="pvp.produto" />
@@ -108,7 +110,7 @@
                         </md-card-actions>
                     </md-card>
 
-                    <md-button class="md-icon-button md-raised md-primary" @click.native="adicionarProdutoPrevenda()">
+                    <md-button id="adicionarProduto" class="md-icon-button md-raised md-primary" @click.native="adicionarProdutoPrevenda()">
                         <md-icon>add</md-icon>
                     </md-button>
                 </form>
@@ -261,5 +263,9 @@
     .md-table .md-table-cell .md-button .md-icon {
         margin: auto;
         color: white;
+    }
+
+    .md-theme-default.md-card, #adicionarProduto {
+        margin-top: 15px;
     }
 </style>

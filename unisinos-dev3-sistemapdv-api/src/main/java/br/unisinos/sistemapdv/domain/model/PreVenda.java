@@ -2,6 +2,7 @@ package br.unisinos.sistemapdv.domain.model;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -17,7 +18,7 @@ public class PreVenda {
     @JoinColumn(name = "ID_CLIENTE")
     private Cliente cliente;
 
-    @OneToMany(cascade = {CascadeType.ALL}, orphanRemoval = true, fetch = FetchType.EAGER, mappedBy = "preVenda")
+    @OneToMany(orphanRemoval = true, cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "preVenda")
     private List<PreVendaProduto> preVendaProdutos;
 
     public PreVenda()
@@ -65,12 +66,13 @@ public class PreVenda {
     public void atualizar(PreVenda preVenda) {
         this.setCliente(preVenda.cliente);
 
+        List<PreVendaProduto> removeList = new ArrayList<PreVendaProduto>();
+
         this.getPreVendaProdutos().stream().forEach(p ->
         {
             if(! preVenda.getPreVendaProdutos().stream().anyMatch(pp -> pp.getProduto().getId() == p.getProduto().getId()))
             {
-                p.setPreVenda(null);
-                this.getPreVendaProdutos().remove(p);
+                removeList.add(p);
             }
             else
             {
@@ -82,6 +84,8 @@ public class PreVenda {
                 preVenda.getPreVendaProdutos().remove(pvpUpdate);
             }
         });
+
+        this.preVendaProdutos.removeAll(removeList);
 
         preVenda.getPreVendaProdutos().stream().forEach(p ->
         {
