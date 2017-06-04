@@ -2,6 +2,7 @@ package br.unisinos.sistemapdv.domain.model;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.Date;
 
 /**
  * Created by lfaitao on 26/03/2017.
@@ -10,48 +11,127 @@ import javax.validation.constraints.NotNull;
 @Table(name = "CAIXAS")
 public class Caixa {
 
+    /*
+     * Atributos
+     */
+
     @Id
     @GeneratedValue(strategy = GenerationType.TABLE)
     private Long id;
 
     @NotNull
-    private String email;
+    private Integer numeroCaixa;
 
     @NotNull
-    private String name;
+    private double qtDinheiro;
 
-    public Caixa() { }
+    @NotNull
+    private double qtDinheiroMinimo;
 
-    public Caixa(long id) {
-        this.id = id;
+    @NotNull
+    private double qtDinheiroMaximo;
+
+    @NotNull
+    private Date diaFiscal;
+
+    @NotNull
+    private boolean diaFiscalAberto;
+
+    @NotNull
+    private boolean diaFiscalFechado;
+
+    @NotNull
+    private boolean caixaAberto;
+
+    /*
+     * Construtores
+     */
+
+    private Caixa() {
+        // Necessário por causa do Spring
     }
 
-    public Caixa(String email, String name) {
-        this.email = email;
-        this.name = name;
+    public Caixa(Integer numeroCaixa) {
+        this.numeroCaixa = numeroCaixa;
+        this.qtDinheiro = 0;
+        this.qtDinheiroMinimo = 0;
+        this.qtDinheiroMaximo = 0;
+        this.diaFiscal = new Date();
+        this.diaFiscalAberto = false;
+        this.diaFiscalFechado = false;
+        this.caixaAberto = false;
     }
+
+    /*
+     * Metodos
+     */
 
     public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
-        this.id = id;
+    public double getQtDinheiro() {
+        return qtDinheiro;
     }
 
-    public String getEmail() {
-        return email;
+    public void setQtDinheiro(double qtDinheiro) {
+        this.qtDinheiro = qtDinheiro;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public double getQtDinheiroMinimo() {
+        return qtDinheiroMinimo;
     }
 
-    public String getName() {
-        return name;
+    public void setQtDinheiroMinimo(double qtDinheiroMinimo) {
+        this.qtDinheiroMinimo = qtDinheiroMinimo;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public double getQtDinheiroMaximo() {
+        return qtDinheiroMaximo;
     }
+
+    public void setQtDinheiroMaximo(double qtDinheiroMaximo) {
+        this.qtDinheiroMaximo = qtDinheiroMaximo;
+    }
+
+    public boolean isCaixaAberto() {
+        return caixaAberto;
+    }
+
+    public void setCaixaAberto(boolean caixaAberto) {
+        this.caixaAberto = caixaAberto;
+    }
+
+    public Date getDiaFiscal() {
+        return diaFiscal;
+    }
+
+    public void setDiaFiscal(Date diaFiscal) {
+        this.diaFiscal = diaFiscal;
+    }
+
+    public boolean isDiaFiscalAberto() {
+        return diaFiscalAberto;
+    }
+
+    public void setDiaFiscalAberto(boolean diaFiscalAberto) {
+        this.diaFiscalAberto = diaFiscalAberto;
+    }
+
+    public boolean isDiaFiscalFechado() {
+        return diaFiscalFechado;
+    }
+
+    public void setDiaFiscalFechado(boolean diaFiscalFechado) {
+        this.diaFiscalFechado = diaFiscalFechado;
+    }
+
+    public Integer getNumeroCaixa() {
+        return numeroCaixa;
+    }
+
+    public void setNumeroCaixa(Integer numeroCaixa) {
+        this.numeroCaixa = numeroCaixa;
+    }
+
 }

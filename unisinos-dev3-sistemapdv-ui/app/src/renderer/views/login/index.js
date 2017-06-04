@@ -5,9 +5,8 @@
 import {router} from '../../main'
 import request from 'request'
 import Config from 'electron-config'
-const cfg = new Config()
 
-// Endpoints
+const cfg = new Config()
 const LOGIN_URL = cfg.get('apiUrl') + '/autenticar'
 
 export default {
@@ -36,38 +35,24 @@ export default {
             }
 
             if (res.statusCode == 200) {
-                localStorage.setItem('user', credentials)
+                localStorage.setItem('teste',res.body)
 
-                console.log(res.body)
-                console.log(credentials.username)
-                console.log(credentials.password)
-                if (res.body == 'true') {
+                if (res.body != null && res.body !="") {
                     this.user.authenticated = true
                     if (redirect) {
                         router.push(redirect)
                     }
                 } else {
+                    context.error = 'Credenciais informadas invalidas.'
                     context.openAlert()
                 }
-
-            } else if (res.statusCode == 400) {
-                console.log(body)
-                context.error = body.message
-                context.openAlert()
-            } else if (res.statusCode == 401) {
-                context.error = 'Credenciais informadas invalidas.'
-                context.openAlert()
-            } else if (res.statusCode == 500) {
-                console.log(body)
-                context.error = 'Ocorreu um erro inesperado, por favor entre em contato com um Administrador do Sistema'
-                context.openAlert()
-            } else {
-                console.log(res.statusCode)
-            }
+           
+        }
         })
     },
 
     logout(){
+        this.user.authenticated = false
         window.localStorage.setItem('user', null)
         window.localStorage.removeItem('user')
         this.user.authenticated = false

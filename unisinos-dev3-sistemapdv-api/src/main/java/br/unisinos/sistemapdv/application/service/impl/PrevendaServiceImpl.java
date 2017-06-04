@@ -1,6 +1,6 @@
 package br.unisinos.sistemapdv.application.service.impl;
 
-import br.unisinos.sistemapdv.application.service.CaixaService;
+import br.unisinos.sistemapdv.application.service.PreVendaService;
 
-public class PrevendaServiceImpl implements CaixaService {
+public class PrevendaServiceImpl implements PreVendaService {
 }

@@ -1,5 +1,6 @@
 <template>
   <div>
+   <navbar title="Home"></navbar>
     <div class="mainMenu centered_div">
       <md-layout md-gutter md-align="center">
         <md-layout md-column md-align="center" style="align-items: center">
@@ -8,14 +9,14 @@
               <h1>Sistema PDV</h1>
             </md-card-header-text>
           </md-card-header>
-          <md-card md-align="center" style="background-color: rgba(200, 200, 200, 0.35)">
-              <md-button class="md-raised md-primary" @click.native="goTo('/gerir-caixa')">Gerenciar Caixa</md-button>
-              <md-button class="md-raised md-primary" @click.native="goTo('/iniciar-venda')">Gerenciar Vendas</md-button>
-              <md-button class="md-raised md-primary" @click.native="goTo('/gerir-pre-venda')">Gerenciar Pré-Vendas</md-button>
-              <md-button class="md-raised md-primary" @click.native="goTo('/gerir-clientes')">Gerenciar Clientes</md-button>
-              <md-button class="md-raised md-primary" @click.native="goTo('/gerir-produtos')">Gerenciar Produtos</md-button>
-              <md-button class="md-raised md-primary" @click.native="goTo('/gerir-acessos')">Gerenciar Acessos</md-button>
-              <md-button class="md-raised md-primary" @click.native="goTo('/gerir-davs')">Gerenciar DAVs</md-button>
+          <md-card md-align="center">
+            <button-auth text="Gerenciar Caixa" path="/gerir-caixa" />
+            <button-auth text="Gerenciar Vendas" path="/iniciar-venda" :canNavigateIf="dummy()" />
+            <button-auth text="Gerenciar Pré-Vendas" path="/gerir-pre-venda" />
+            <button-auth text="Gerenciar Clientes" path="/gerir-clientes" />
+            <button-auth text="Gerenciar Produtos" path="/gerir-produtos" />
+            <button-auth text="Gerenciar DAVs" path="/gerir-davs" />
+            <button-auth text="Gerenciar Acessos" path="/gerir-acessos" />
           </md-card>
         </md-layout>
       </md-layout>
@@ -25,16 +26,22 @@
 
 <script>
     import {router} from '../main'
+    import buttonAuth from '../components/common/buttonAuth'
+
 
     export default {
+         components:{
+            buttonAuth
+        },
         data() {
             return {
             }
         },
         methods: {
-            goTo(route) {
-                router.push(route)
-            },
+            dummy(){
+                alert('ok');
+                return true;
+            }
         },
         mounted() {
         },

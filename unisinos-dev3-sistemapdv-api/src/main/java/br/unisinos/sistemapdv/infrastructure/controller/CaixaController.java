@@ -1,90 +1,48 @@
 package br.unisinos.sistemapdv.infrastructure.controller;
 
 import br.unisinos.sistemapdv.application.repository.CaixaRepository;
-import br.unisinos.sistemapdv.domain.model.Caixa;
+import br.unisinos.sistemapdv.application.service.GerenciarCaixaService;
+import br.unisinos.sistemapdv.infrastructure.dto.FeedbackDTO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * Created by lfaitao on 26/03/2017.
  */
 @RestController
+@RequestMapping("/caixa")
 public class CaixaController {
 
     @Autowired
     private CaixaRepository caixaRepository;
 
+    @Autowired
+    private GerenciarCaixaService gerenciarCaixaService;
+
     /**
-     * GET /create  --> Create a new user and save it in the database.
+     * GET /abrir/{numeroCaixa}  --> Abre o caixa e salva estado no banco.
      */
-    @RequestMapping("/create")
+    @RequestMapping("/abrir/{caixaNumero}")
     @ResponseBody
-    public String create(String email, String name) {
-        String userId = "";
-        try {
-            Caixa user = new Caixa(email, name);
-            caixaRepository.save(user);
-            userId = String.valueOf(user.getId());
+    public FeedbackDTO abrirCaixa(@PathVariable Integer caixaNumero) {
+        FeedbackDTO feedback;
+
+        if (caixaNumero == null || caixaNumero <= 0) {
+            feedback = new FeedbackDTO(false, "O número do caixa é obrigatório e deve ser maior que zero!");
+        } else {
+            feedback = gerenciarCaixaService.abrirCaixa(caixaNumero);
         }
-        catch (Exception ex) {
-            return "Error creating the user: " + ex.toString();
-        }
-        return "Caixa succesfully created with id = " + userId;
+
+        return feedback;
     }
 
     /**
-     * GET /delete  --> Delete the user having the passed id.
+     * GET /isAberto/{numeroCaixa}  --> Verifica no banco se o respectivo caixa está aberto.
      */
-    @RequestMapping("/delete")
+    @GetMapping(value="/isAberto/{numeroCaixa}")
     @ResponseBody
-    public String delete(long id) {
-        try {
-            Caixa user = new Caixa(id);
-            caixaRepository.delete(user);
-        }
-        catch (Exception ex) {
-            return "Error deleting the user:" + ex.toString();
-        }
-        return "Caixa succesfully deleted!";
-    }
-
-    /**
-     * GET /get-by-email  --> Return the id for the user having the passed
-     * email.
-     */
-    @RequestMapping("/get-by-email")
-    @ResponseBody
-    public String getByEmail(String email) {
-        String userId = "";
-        try {
-            Caixa user = caixaRepository.findByEmail(email);
-            userId = String.valueOf(user.getId());
-        }
-        catch (Exception ex) {
-            return "Caixa not found";
-        }
-        return "The user id is: " + userId;
-    }
-
-    /**
-     * GET /update  --> Update the email and the name for the user in the
-     * database having the passed id.
-     */
-    @RequestMapping("/update")
-    @ResponseBody
-    public String updateUsuario(long id, String email, String name) {
-        try {
-            Caixa user = caixaRepository.findOne(id);
-            user.setEmail(email);
-            user.setName(name);
-            caixaRepository.save(user);
-        }
-        catch (Exception ex) {
-            return "Error updating the user: " + ex.toString();
-        }
-        return "Caixa succesfully updated!";
+    public boolean isCaixaAberto(@PathVariable Integer numeroCaixa) {
+        return gerenciarCaixaService.isCaixaAberto(numeroCaixa);
     }
 
 }
