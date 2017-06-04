@@ -1,49 +1,75 @@
 <template>
-  <div>
-   <navbar title="Home"></navbar>
-    <div class="mainMenu centered_div">
-      <md-layout md-gutter md-align="center">
-        <md-layout md-column md-align="center" style="align-items: center">
-          <md-card-header style="text-align: center; padding-bottom: 20px">
-            <md-card-header-text>
-              <h1>Sistema PDV</h1>
-            </md-card-header-text>
-          </md-card-header>
-          <md-card md-align="center">
-            <button-auth text="Gerenciar Caixa" path="/gerir-caixa" />
-            <button-auth text="Gerenciar Vendas" path="/iniciar-venda" :canNavigateIf="dummy()" />
-            <button-auth text="Gerenciar Pré-Vendas" path="/gerir-pre-venda" />
-            <button-auth text="Gerenciar Clientes" path="/gerir-clientes" />
-            <button-auth text="Gerenciar Produtos" path="/gerir-produtos" />
-            <button-auth text="Gerenciar DAVs" path="/gerir-davs" />
-            <button-auth text="Gerenciar Acessos" path="/gerir-acessos" />
-          </md-card>
-        </md-layout>
-      </md-layout>
+    <div>
+        <navbar title="Home"></navbar>
+        <div class="mainMenu centered_div">
+            <md-layout md-gutter md-align="center">
+                <md-layout md-column md-align="center" style="align-items: center">
+                    <md-card-header style="text-align: center; padding-bottom: 20px">
+                        <md-card-header-text>
+                            <h1>Sistema PDV</h1>
+                        </md-card-header-text>
+                    </md-card-header>
+                    <md-card md-align="center">
+                        <button-auth text="Gerenciar Caixa" path="/gerir-caixa"></button-auth>
+                        <button-auth text="Gerenciar Vendas" path="/iniciar-venda" :canNavigateIf="isCaixaAberto" @click.native="verificarEstadoCaixa(MOMENTO_CLICANDO) && navigate()"></button-auth>
+                        <button-auth text="Gerenciar Pré-Vendas" path="/gerir-pre-venda"></button-auth>
+                        <button-auth text="Gerenciar Clientes" path="/gerir-clientes"></button-auth>
+                        <button-auth text="Gerenciar Produtos" path="/gerir-produtos"></button-auth>
+                        <button-auth text="Gerenciar DAVs" path="/gerir-davs"></button-auth>
+                        <button-auth text="Gerenciar Acessos" path="/gerir-acessos"></button-auth>
+                    </md-card>
+                </md-layout>
+            </md-layout>
+
+            <md-snackbar md-position="bottom center" ref="snackbar" md-duration="4000">
+                <span>{{ error }}</span>
+                <md-button class="md-accent" md-theme="light-blue" @click.native="$refs.snackbar.close()">
+                    OK
+                </md-button>
+            </md-snackbar>
+        </div>
     </div>
-  </div>
 </template>
 
 <script>
     import {router} from '../main'
+    import {ipcRenderer} from 'electron'
     import buttonAuth from '../components/common/buttonAuth'
 
-
     export default {
-         components:{
+        components: {
             buttonAuth
         },
         data() {
             return {
+                MOMENTO_INICIANDO: 1,
+                MOMENTO_CLICANDO: 2,
+                isCaixaAberto: false,
+                error: ''
             }
         },
         methods: {
-            dummy(){
-                alert('ok');
-                return true;
+            goTo(route) {
+                router.push(route)
+            },
+            openAlert(message) {
+                this.error = message
+                this.$refs.snackbar.open()
+            },
+            verificarEstadoCaixa(momento) {
+                let isCaixaAberto = ipcRenderer.sendSync('caixa-getAberto');
+                if (isCaixaAberto) {
+                    this.isCaixaAberto = true
+                } else {
+                    this.isCaixaAberto = false;
+                    if (momento == this.MOMENTO_CLICANDO) {
+                        this.openAlert("O caixa precisa estar aberto para gerir vendas!")
+                    }
+                }
             }
         },
         mounted() {
+            this.verificarEstadoCaixa(this.MOMENTO_INICIANDO)
         },
         name: 'home-page'
     }
@@ -53,10 +79,11 @@
     .mainMenu {
         background-color: #EEE;
     }
+
     .centered_div {
         position: absolute;
-        top:  20%;
-        bottom:  50%;
+        top: 20%;
+        bottom: 50%;
         left: 50%;
         right: 50%;
     }
