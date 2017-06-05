@@ -134,4 +134,8 @@ public class Caixa {
         this.numeroCaixa = numeroCaixa;
     }
 
+    public void suprirCaixa(Double valor) {
+        this.qtDinheiro += valor;
+    }
+
 }

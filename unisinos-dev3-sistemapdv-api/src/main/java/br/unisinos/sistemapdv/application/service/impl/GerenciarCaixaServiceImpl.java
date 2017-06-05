@@ -92,4 +92,24 @@ public class GerenciarCaixaServiceImpl implements GerenciarCaixaService {
         }
     }
 
+    /**
+     * Supre o caixa com o valor passado e persiste no banco.
+     *
+     * @param valor
+     * @return feedback
+     */
+    @Override
+    public FeedbackDTO suprirCaixa(Double valor) {
+        FeedbackDTO feedback;
+
+        try {
+            Caixa caixa = caixaService.suprirCaixa(valor);
+            caixaRepository.save(caixa);
+            feedback = new FeedbackDTO(true, "Valor suprido no caixa com sucesso!");
+        } catch (ValidationException e) {
+            feedback = e.getFeedback();
+        }
+
+        return feedback;
+    }
 }

@@ -61,10 +61,10 @@ export default {
         if (currentCredentials.username === credentials.username && currentCredentials.password === credentials.password) {
             ipcRenderer.sendSync('caixa-setBloqueado', false)
             context.caixaBloqueadoStatus = false
-            context.closeDialog('dialog-desbloquearCaixa')
-            context.openAlert("Caixa desbloqueado com sucesso!")
             context.credentials.username = ''
             context.credentials.password = ''
+            context.closeDialog('dialog-desbloquearCaixa')
+            context.openAlert("Caixa desbloqueado com sucesso!")
             context.errors.clear()
         } else {
             context.openAlert("As credenciais inseridas não são as do usuário que bloqueou o caixa! Por favor, tente novamente.")

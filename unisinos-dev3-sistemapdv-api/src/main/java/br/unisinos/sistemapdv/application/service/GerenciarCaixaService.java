@@ -10,9 +10,8 @@ import org.springframework.stereotype.Service;
 public interface GerenciarCaixaService {
 
     FeedbackDTO abrirCaixa(Integer numeroCaixa);
-
     FeedbackDTO fecharCaixa();
-
     boolean isCaixaAberto(Integer numeroCaixa);
+    FeedbackDTO suprirCaixa(Double valor);
 
 }

@@ -36,7 +36,6 @@ public class CaixaController {
         return feedback;
     }
 
-
     /**
      * GET /fechar  --> Fecha o caixa e salva estado no banco.
      */
@@ -46,6 +45,23 @@ public class CaixaController {
         FeedbackDTO feedback;
 
         feedback = gerenciarCaixaService.fecharCaixa();
+
+        return feedback;
+    }
+
+    /**
+     * GET /suprir  --> Supre o caixa com o valor passado e salva estado no banco.
+     */
+    @RequestMapping("/suprir/{valor}")
+    @ResponseBody
+    public FeedbackDTO suprirCaixa(@PathVariable Double valor) {
+        FeedbackDTO feedback;
+
+        if (valor <= 0) {
+            feedback = new FeedbackDTO(false, "O valor a ser suprido não pode ser inferior ou igual à zero.");
+        } else {
+            feedback = gerenciarCaixaService.suprirCaixa(valor);
+        }
 
         return feedback;
     }
