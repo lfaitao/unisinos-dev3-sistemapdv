@@ -3,7 +3,6 @@
  */
 
 import {ipcMain} from 'electron'
-
 import {getConfig} from './config'
 
 ipcMain.on('caixa-setNumero', (event, arg) => {

@@ -56,6 +56,20 @@ export default {
         context.caixaBloqueadoStatus = true
         context.openAlert("Caixa bloqueado com sucesso!")
     },
+    desbloquearCaixa(context, credentials) {
+        let currentCredentials = ipcRenderer.sendSync('login-getCredentials')
+        if (currentCredentials.username === credentials.username && currentCredentials.password === credentials.password) {
+            ipcRenderer.sendSync('caixa-setBloqueado', false)
+            context.caixaBloqueadoStatus = false
+            context.closeDialog('dialog-desbloquearCaixa')
+            context.openAlert("Caixa desbloqueado com sucesso!")
+            context.credentials.username = ''
+            context.credentials.password = ''
+            context.errors.clear()
+        } else {
+            context.openAlert("As credenciais inseridas não são as do usuário que bloqueou o caixa! Por favor, tente novamente.")
+        }
+    },
     isCaixaAberto(context, caixaNumero) {
         if (caixaNumero === null) {
             context.caixaAbertoStatus = false

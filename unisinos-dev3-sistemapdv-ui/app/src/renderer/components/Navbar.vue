@@ -1,7 +1,6 @@
 <template>
     <md-toolbar>
         <md-button class="md-icon-button" @click.native="goTo(previousPage)">
-
             <md-icon>{{previousPage ? "arrow_back" : "home"}}</md-icon>
         </md-button>
 
