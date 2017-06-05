@@ -54,7 +54,8 @@ export default {
         this.user.authenticated = false
         window.localStorage.setItem('user', null)
         window.localStorage.removeItem('user')
-        this.user.authenticated = false
+        ipcRenderer.sendSync('login-cleanCredentials')
+        ipcRenderer.sendSync('caixa-setBloqueado', false)
         router.push('/')
     },
 

@@ -5,14 +5,14 @@
             <md-layout md-gutter md-align="center">
                 <md-layout>
                     <md-card md-align="center">
-                        <md-button class="md-raised md-primary" @click.native="isCaixaBloqueado() && abrirCaixa()">Abrir Caixa</md-button>
-                        <md-button class="md-raised md-primary" @click.native="isCaixaBloqueado() && fecharCaixa()">Fechar Caixa</md-button>
+                        <md-button class="md-raised md-primary" @click.native="!isCaixaBloqueado() && abrirCaixa()">Abrir Caixa</md-button>
+                        <md-button class="md-raised md-primary" @click.native="!isCaixaBloqueado() && fecharCaixa()">Fechar Caixa</md-button>
                         <md-button class="md-raised md-primary" @click.native="bloquearCaixa()">Bloquear Caixa</md-button>
                         <md-button class="md-raised md-primary" @click.native="desbloquearCaixa()">Desbloquear Caixa</md-button>
-                        <md-button class="md-raised md-primary" @click.native="isCaixaBloqueado()">Realizar Sangria</md-button>
-                        <md-button class="md-raised md-primary" @click.native="isCaixaBloqueado()">Realizar Suprimento</md-button>
-                        <md-button class="md-raised md-primary" @click.native="isCaixaBloqueado()">Abrir Dia Fiscal (ECF)</md-button>
-                        <md-button class="md-raised md-primary" @click.native="isCaixaBloqueado()">Fechar Dia Fiscal (ECF)</md-button>
+                        <md-button class="md-raised md-primary" @click.native="!isCaixaBloqueado()">Realizar Sangria</md-button>
+                        <md-button class="md-raised md-primary" @click.native="!isCaixaBloqueado()">Realizar Suprimento</md-button>
+                        <md-button class="md-raised md-primary" @click.native="!isCaixaBloqueado()">Abrir Dia Fiscal (ECF)</md-button>
+                        <md-button class="md-raised md-primary" @click.native="!isCaixaBloqueado()">Fechar Dia Fiscal (ECF)</md-button>
                     </md-card>
                 </md-layout>
             </md-layout>
@@ -21,42 +21,44 @@
         <!-- Dialog Abrir Caixa -->
         <md-dialog ref="dialog-abrirCaixa">
             <md-dialog-title>Abrir Caixa</md-dialog-title>
-            <md-dialog-content>
-                <form>
+            <form>
+                <md-dialog-content>
                     <md-input-container :class="{'md-input-invalid': errors.has('numero')}">
                         <label>Número do Caixa</label>
                         <md-input type="number" min="1" v-model="caixaNumero" data-vv-name="numero" v-validate data-vv-rules="required|min:1|max:2"></md-input>
                         <span class="md-error">{{errors.first('numero')}}</span>
                     </md-input-container>
-                </form>
-            </md-dialog-content>
+                </md-dialog-content>
 
-            <md-dialog-actions>
-                <md-button class="md-raised md-primary" @click.native="abrirCaixaSave()">Abrir Caixa</md-button>
-                <md-button class="md-primary" @click.native="closeDialog('dialog-abrirCaixa')">Cancelar</md-button>
-            </md-dialog-actions>
+                <md-dialog-actions>
+                    <md-button type="submit" class="md-raised md-primary" @click.native="abrirCaixaSave()">Abrir Caixa</md-button>
+                    <md-button class="md-primary" @click.native="closeDialog('dialog-abrirCaixa')">Cancelar</md-button>
+                </md-dialog-actions>
+            </form>
         </md-dialog>
 
-        <!-- Dialog Debloquear Caixa -->
-        <md-dialog ref="dialog-abrirCaixa">
+        <!-- Dialog Desbloquear Caixa -->
+        <md-dialog ref="dialog-desbloquearCaixa">
             <md-dialog-title>Desbloquear Caixa</md-dialog-title>
-            <md-dialog-content>
-                <md-input-container :class="{'md-input-invalid': errors.has('usuario')}">
-                    <label>Usuário</label>
-                    <md-input type="text" v-model="credentials.username" data-vv-name="usuario" v-validate data-vv-rules="required|min:5|max:45"></md-input>
-                    <span class="md-error">{{errors.first('usuario')}}</span>
-                </md-input-container>
-                <md-input-container :class="{'md-input-invalid': errors.has('senha')}">
-                    <label>Senha</label>
-                    <md-input type="password" v-model="credentials.password" data-vv-name="senha" v-validate data-vv-rules="required|min:5|max:45"></md-input>
-                    <span class="md-error">{{errors.first('senha')}}</span>
-                </md-input-container>
-            </md-dialog-content>
+            <form>
+                <md-dialog-content>
+                    <md-input-container :class="{'md-input-invalid': errors.has('usuario')}">
+                        <label>Usuário</label>
+                        <md-input type="text" v-model="credentials.username" data-vv-name="usuario" v-validate data-vv-rules="required|min:5|max:45"></md-input>
+                        <span class="md-error">{{errors.first('usuario')}}</span>
+                    </md-input-container>
+                    <md-input-container :class="{'md-input-invalid': errors.has('senha')}">
+                        <label>Senha</label>
+                        <md-input type="password" v-model="credentials.password" data-vv-name="senha" v-validate data-vv-rules="required|min:5|max:45"></md-input>
+                        <span class="md-error">{{errors.first('senha')}}</span>
+                    </md-input-container>
+                </md-dialog-content>
 
-            <md-dialog-actions>
-                <md-button class="md-raised md-primary" @click.native="desbloquearCaixaSave()">Desbloquear Caixa</md-button>
-                <md-button class="md-primary" @click.native="closeDialog('dialog-abrirCaixa')">Cancelar</md-button>
-            </md-dialog-actions>
+                <md-dialog-actions>
+                    <md-button type="submit" class="md-raised md-primary" @click.native="desbloquearCaixaSave()">Desbloquear Caixa</md-button>
+                    <md-button class="md-primary" @click.native="closeDialog('dialog-desbloquearCaixa')">Cancelar</md-button>
+                </md-dialog-actions>
+            </form>
         </md-dialog>
 
         <md-snackbar md-position="bottom center" ref="snackbar" md-duration="4000">

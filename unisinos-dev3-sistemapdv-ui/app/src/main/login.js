@@ -10,6 +10,12 @@ ipcMain.on('login-setCredentials', (event, arg) => {
     event.returnValue = true
 })
 
-ipcMain.on('login-getCredentials', (event, arg) => {
+ipcMain.on('login-getCredentials', (event) => {
     event.returnValue = getConfig().get('credentials')
+})
+
+ipcMain.on('login-cleanCredentials', (event) => {
+    getConfig().set('credentials.username', '')
+    getConfig().set('credentials.password', '')
+    event.returnValue = true
 })
