@@ -66,6 +66,8 @@ export default {
             context.credentials.username = ''
             context.credentials.password = ''
             context.errors.clear()
+        } else {
+            context.openAlert("As credenciais inseridas não são as do usuário que bloqueou o caixa! Por favor, tente novamente.")
         }
     },
     isCaixaAberto(context, caixaNumero) {
