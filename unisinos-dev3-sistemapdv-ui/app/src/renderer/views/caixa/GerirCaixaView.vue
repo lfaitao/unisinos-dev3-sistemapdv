@@ -8,7 +8,7 @@
                         <md-button class="md-raised md-primary" @click.native="isCaixaBloqueado() && abrirCaixa()">Abrir Caixa</md-button>
                         <md-button class="md-raised md-primary" @click.native="isCaixaBloqueado() && fecharCaixa()">Fechar Caixa</md-button>
                         <md-button class="md-raised md-primary" @click.native="bloquearCaixa()">Bloquear Caixa</md-button>
-                        <md-button class="md-raised md-primary" @click.native="">Desbloquear Caixa</md-button>
+                        <md-button class="md-raised md-primary" @click.native="desbloquearCaixa()">Desbloquear Caixa</md-button>
                         <md-button class="md-raised md-primary" @click.native="isCaixaBloqueado()">Realizar Sangria</md-button>
                         <md-button class="md-raised md-primary" @click.native="isCaixaBloqueado()">Realizar Suprimento</md-button>
                         <md-button class="md-raised md-primary" @click.native="isCaixaBloqueado()">Abrir Dia Fiscal (ECF)</md-button>
@@ -32,7 +32,29 @@
             </md-dialog-content>
 
             <md-dialog-actions>
-                <md-button class="md-primary" @click.native="abrirCaixaSave()">Abrir Caixa</md-button>
+                <md-button class="md-raised md-primary" @click.native="abrirCaixaSave()">Abrir Caixa</md-button>
+                <md-button class="md-primary" @click.native="closeDialog('dialog-abrirCaixa')">Cancelar</md-button>
+            </md-dialog-actions>
+        </md-dialog>
+
+        <!-- Dialog Debloquear Caixa -->
+        <md-dialog ref="dialog-abrirCaixa">
+            <md-dialog-title>Desbloquear Caixa</md-dialog-title>
+            <md-dialog-content>
+                <md-input-container :class="{'md-input-invalid': errors.has('usuario')}">
+                    <label>Usuário</label>
+                    <md-input type="text" v-model="credentials.username" data-vv-name="usuario" v-validate data-vv-rules="required|min:5|max:45"></md-input>
+                    <span class="md-error">{{errors.first('usuario')}}</span>
+                </md-input-container>
+                <md-input-container :class="{'md-input-invalid': errors.has('senha')}">
+                    <label>Senha</label>
+                    <md-input type="password" v-model="credentials.password" data-vv-name="senha" v-validate data-vv-rules="required|min:5|max:45"></md-input>
+                    <span class="md-error">{{errors.first('senha')}}</span>
+                </md-input-container>
+            </md-dialog-content>
+
+            <md-dialog-actions>
+                <md-button class="md-raised md-primary" @click.native="desbloquearCaixaSave()">Desbloquear Caixa</md-button>
                 <md-button class="md-primary" @click.native="closeDialog('dialog-abrirCaixa')">Cancelar</md-button>
             </md-dialog-actions>
         </md-dialog>
@@ -57,6 +79,10 @@
                 MOMENTO_INICIANDO: 1,
                 MOMENTO_CLICANDO: 2,
                 title: 'Gerir Caixa',
+                credentials: {
+                    username: '',
+                    password: ''
+                },
                 caixaNumero: null,
                 caixaAbertoStatus: false,
                 caixaBloqueadoStatus: false,
@@ -99,6 +125,21 @@
                     backend.bloquearCaixa(this)
                     this.$refs['navbar'].toggleCaixaBloqueadoIcon()
                 }
+            },
+            desbloquearCaixa() {
+                if (this.caixaBloqueadoStatus) {
+                    this.openDialog('dialog-desbloquearCaixa')
+                } else {
+                    this.openAlert('Este caixa já está desbloqueado!')
+                }
+            },
+            desbloquearCaixaSave() {
+                this.$validator.validateAll().then(() => {
+                    backend.desbloquearCaixa(this, this.credentials)
+                }).catch( bag => {
+                    this.error = 'Por favor, preencha todos os campos obrigatórios!'
+                    this.openAlert()
+                })
             },
             isCaixaAberto() {
                 backend.isCaixaAberto(this, this.caixaNumero)

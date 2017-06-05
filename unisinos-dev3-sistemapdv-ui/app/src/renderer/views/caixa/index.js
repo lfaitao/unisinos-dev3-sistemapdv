@@ -56,6 +56,17 @@ export default {
         context.caixaBloqueadoStatus = true
         context.openAlert("Caixa bloqueado com sucesso!")
     },
+    desbloquearCaixa(context, credentials) {
+        let currentCredentials = ipcRenderer.sendSync('login-getCredentials')
+        console.log(currentCredentials)
+        console.log(credentials)
+        console.log(currentCredentials == credentials)
+        if (currentCredentials == credentials) {
+            ipcRenderer.sendSync('caixa-setBloqueado', false)
+            context.caixaBloqueadoStatus = false
+            context.openAlert("Caixa desbloqueado com sucesso!")
+        }
+    },
     isCaixaAberto(context, caixaNumero) {
         if (caixaNumero === null) {
             context.caixaAbertoStatus = false

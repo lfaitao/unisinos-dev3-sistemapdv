@@ -2,6 +2,7 @@
  * Created by lfaitao on 4/19/17.
  */
 
+import {ipcRenderer} from 'electron'
 import {router} from '../../main'
 import request from 'request'
 import Config from 'electron-config'
@@ -35,10 +36,9 @@ export default {
             }
 
             if (res.statusCode == 200) {
-                localStorage.setItem('teste',res.body)
-
                 if (res.body != null && res.body !="") {
                     this.user.authenticated = true
+                    ipcRenderer.sendSync('login-setCredentials', credentials)
                     if (redirect) {
                         router.push(redirect)
                     }
@@ -46,8 +46,7 @@ export default {
                     context.error = 'Credenciais informadas invalidas.'
                     context.openAlert()
                 }
-           
-        }
+            }
         })
     },
 
