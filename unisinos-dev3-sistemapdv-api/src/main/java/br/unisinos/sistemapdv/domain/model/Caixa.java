@@ -54,8 +54,8 @@ public class Caixa {
     public Caixa(Integer numeroCaixa) {
         this.numeroCaixa = numeroCaixa;
         this.qtDinheiro = 0;
-        this.qtDinheiroMinimo = 0;
-        this.qtDinheiroMaximo = 0;
+        this.qtDinheiroMinimo = 100;
+        this.qtDinheiroMaximo = 1000;
         this.diaFiscal = new Date();
         this.diaFiscalAberto = false;
         this.diaFiscalFechado = false;
