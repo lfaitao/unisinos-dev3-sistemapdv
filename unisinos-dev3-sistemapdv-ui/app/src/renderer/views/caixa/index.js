@@ -10,6 +10,11 @@ const cfg = new Config()
 const BACKEND_URL = cfg.get('apiUrl') + '/caixa/'
 
 export default {
+
+    /*
+     * Abertura e fechamento do caixa
+     */
+
     abrirCaixa(context, caixaNumero) {
         if (caixaNumero === null) {
             context.openAlert('Número do caixa é necessário!')
@@ -51,25 +56,6 @@ export default {
             context.openAlert(response.message)
         })
     },
-    bloquearCaixa(context) {
-        ipcRenderer.sendSync('caixa-setBloqueado', true)
-        context.caixaBloqueadoStatus = true
-        context.openAlert("Caixa bloqueado com sucesso!")
-    },
-    desbloquearCaixa(context, credentials) {
-        let currentCredentials = ipcRenderer.sendSync('login-getCredentials')
-        if (currentCredentials.username === credentials.username && currentCredentials.password === credentials.password) {
-            ipcRenderer.sendSync('caixa-setBloqueado', false)
-            context.caixaBloqueadoStatus = false
-            context.credentials.username = ''
-            context.credentials.password = ''
-            context.closeDialog('dialog-desbloquearCaixa')
-            context.openAlert("Caixa desbloqueado com sucesso!")
-            context.errors.clear()
-        } else {
-            context.openAlert("As credenciais inseridas não são as do usuário que bloqueou o caixa! Por favor, tente novamente.")
-        }
-    },
     isCaixaAberto(context, caixaNumero) {
         if (caixaNumero === null) {
             context.caixaAbertoStatus = false
@@ -85,10 +71,51 @@ export default {
             })
         }
     },
+
+    /*
+     * Bloqueio e desbloqueio do caixa
+     */
+
+    bloquearCaixa(context) {
+        ipcRenderer.sendSync('caixa-setBloqueado', true)
+        context.caixaBloqueadoStatus = true
+        context.openAlert("Caixa bloqueado com sucesso!")
+    },
+    desbloquearCaixa(context, credentials) {
+        let currentCredentials = ipcRenderer.sendSync('login-getCredentials')
+        if (currentCredentials.username === credentials.username && currentCredentials.password === credentials.password) {
+            ipcRenderer.sendSync('caixa-setBloqueado', false)
+            context.caixaBloqueadoStatus = false
+            context.credentials.username = ''
+            context.credentials.password = ''
+            context.openAlert("Caixa desbloqueado com sucesso!")
+            context.errors.clear()
+        } else {
+            context.openAlert("As credenciais inseridas não são as do usuário que bloqueou o caixa! Por favor, tente novamente.")
+        }
+    },
     isCaixaBloqueado(context) {
         context.caixaBloqueadoStatus = ipcRenderer.sendSync('caixa-getBloqueado');
         if (context.caixaBloqueadoStatus) {
             context.openAlert("O caixa está bloqueado para operações!")
         }
+    },
+
+    /*
+     * Suprimento e sangria do caixa
+     */
+
+    realizarSuprimento(context, valorSuprimento){
+        if (valorSuprimento === null) {
+            context.openAlert('O valor do suprimento deve ser maior que zero!')
+        } else {
+            request.get({
+                url: BACKEND_URL + 'suprir/' + valorSuprimento
+            }, (err, res, body) => {
+                let response = JSON.parse(res.body)
+                context.openAlert(response.message)
+            })
+        }
     }
+
 }

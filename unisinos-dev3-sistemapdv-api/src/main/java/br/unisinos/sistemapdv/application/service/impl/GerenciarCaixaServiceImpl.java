@@ -105,11 +105,12 @@ public class GerenciarCaixaServiceImpl implements GerenciarCaixaService {
         try {
             Caixa caixa = caixaService.suprirCaixa(valor);
             caixaRepository.save(caixa);
-            feedback = new FeedbackDTO(true, "Valor suprido no caixa com sucesso!");
+            feedback = new FeedbackDTO(true, "Valor (R$" + valor + ") suprido no caixa com sucesso!\nTotal: R$" + caixa.getQtDinheiro());
         } catch (ValidationException e) {
             feedback = e.getFeedback();
         }
 
         return feedback;
     }
+
 }

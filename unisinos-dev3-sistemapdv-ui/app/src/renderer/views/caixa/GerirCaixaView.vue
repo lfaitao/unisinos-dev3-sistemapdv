@@ -10,7 +10,7 @@
                         <md-button class="md-raised md-primary" @click.native="bloquearCaixa()">Bloquear Caixa</md-button>
                         <md-button class="md-raised md-primary" @click.native="desbloquearCaixa()">Desbloquear Caixa</md-button>
                         <md-button class="md-raised md-primary" @click.native="!isCaixaBloqueado()">Realizar Sangria</md-button>
-                        <md-button class="md-raised md-primary" @click.native="!isCaixaBloqueado()">Realizar Suprimento</md-button>
+                        <md-button class="md-raised md-primary" @click.native="!isCaixaBloqueado() && realizarSuprimento()">Realizar Suprimento</md-button>
                         <md-button class="md-raised md-primary" @click.native="!isCaixaBloqueado()">Abrir Dia Fiscal (ECF)</md-button>
                         <md-button class="md-raised md-primary" @click.native="!isCaixaBloqueado()">Fechar Dia Fiscal (ECF)</md-button>
                     </md-card>
@@ -25,13 +25,13 @@
                 <md-dialog-content>
                     <md-input-container :class="{'md-input-invalid': errors.has('numero')}">
                         <label>Número do Caixa</label>
-                        <md-input type="number" min="1" v-model="caixaNumero" data-vv-name="numero" v-validate data-vv-rules="required|min:1|max:2"></md-input>
+                        <md-input type="number" min="1 " v-model="caixaNumero" data-vv-name="numero" v-validate data-vv-rules="required|min:1|max:2"></md-input>
                         <span class="md-error">{{errors.first('numero')}}</span>
                     </md-input-container>
                 </md-dialog-content>
 
                 <md-dialog-actions>
-                    <md-button type="submit" class="md-raised md-primary" @click.native="abrirCaixaSave()">Abrir Caixa</md-button>
+                    <md-button type="submit" class="md-raised md-primary" @click.native="abrirCaixaSave()">OK</md-button>
                     <md-button class="md-primary" @click.native="closeDialog('dialog-abrirCaixa')">Cancelar</md-button>
                 </md-dialog-actions>
             </form>
@@ -55,8 +55,27 @@
                 </md-dialog-content>
 
                 <md-dialog-actions>
-                    <md-button type="submit" class="md-raised md-primary" @click.native="desbloquearCaixaSave()">Desbloquear Caixa</md-button>
+                    <md-button type="submit" class="md-raised md-primary" @click.native="desbloquearCaixaSave()">OK</md-button>
                     <md-button class="md-primary" @click.native="closeDialog('dialog-desbloquearCaixa')">Cancelar</md-button>
+                </md-dialog-actions>
+            </form>
+        </md-dialog>
+
+        <!-- Dialog Realizar Suprimento -->
+        <md-dialog ref="dialog-realizarSuprimento">
+            <md-dialog-title>Realizar Suprimento</md-dialog-title>
+            <form>
+                <md-dialog-content>
+                    <md-input-container :class="{'md-input-invalid': errors.has('valorSuprimento')}">
+                        <label>Valor a Suprir</label>
+                        <md-input type="number" min="1" v-model="valorSuprimento" data-vv-name="valorSuprimento" v-validate data-vv-rules="required|min:1|max:10"></md-input>
+                        <span class="md-error">{{errors.first('valorSuprimento')}}</span>
+                    </md-input-container>
+                </md-dialog-content>
+
+                <md-dialog-actions>
+                    <md-button type="submit" class="md-raised md-primary" @click.native="realizarSuprimentoSave()">OK</md-button>
+                    <md-button class="md-primary" @click.native="closeDialog('dialog-realizarSuprimento')">Cancelar</md-button>
                 </md-dialog-actions>
             </form>
         </md-dialog>
@@ -71,7 +90,6 @@
 </template>
 
 <script>
-    import {router} from '../../main'
     import {ipcRenderer} from 'electron'
     import backend from './index'
 
@@ -88,27 +106,30 @@
                 caixaNumero: null,
                 caixaAbertoStatus: false,
                 caixaBloqueadoStatus: false,
+                valorSuprimento: 0,
                 error: ''
             }
         },
         methods: {
-            goTo(route) {
-              router.push(route)
-            },
             abrirCaixa() {
                 if (this.caixaAbertoStatus) {
                   this.openAlert('Este caixa já está aberto!')
                 } else if (!this.caixaBloqueadoStatus) {
-                  this.openDialog('dialog-abrirCaixa')
+                    this.errors.clear()
+                    this.openDialog('dialog-abrirCaixa')
                 }
             },
             abrirCaixaSave() {
-                this.$validator.validateAll().then(() => {
+                this.$validator.validateAll({
+                    numero: this.caixaNumero
+                }).then(() => {
                     backend.abrirCaixa(this, this.caixaNumero)
+                    this.closeDialog('dialog-abrirCaixa')
+                    this.$refs['navbar'].toggleCaixaAbertoIcon()
+                    this.errors.clear()
+                }).catch( bag => {
+                    this.openAlert("Por favor, preencha as informações corretamente!")
                 })
-                this.closeDialog('dialog-abrirCaixa')
-                this.errors.clear()
-                this.$refs['navbar'].toggleCaixaAbertoIcon()
             },
             fecharCaixa() {
                 if (this.caixaAbertoStatus) {
@@ -136,11 +157,34 @@
                 }
             },
             desbloquearCaixaSave() {
-                this.$validator.validateAll().then(() => {
+                this.$validator.validateAll({
+                    usuario: this.credentials.username,
+                    senha: this.credentials.password
+                }).then(() => {
                     backend.desbloquearCaixa(this, this.credentials)
+                    this.closeDialog('dialog-desbloquearCaixa')
+                    this.$refs['navbar'].toggleCaixaBloqueadoIcon()
+                    this.errors.clear()
                 }).catch( bag => {
-                    this.error = 'Por favor, preencha todos os campos obrigatórios!'
-                    this.openAlert()
+                    this.openAlert("Por favor, preencha todos os campos obrigatórios!")
+                })
+            },
+            realizarSuprimento() {
+                if (this.caixaAbertoStatus) {
+                    this.openDialog('dialog-realizarSuprimento')
+                } else if (!this.caixaBloqueadoStatus) {
+                    this.openAlert('O caixa precisa estar aberto para realizar suprimento!')
+                }
+            },
+            realizarSuprimentoSave() {
+                this.$validator.validateAll({
+                    valorSuprimento: this.valorSuprimento
+                }).then(() => {
+                    backend.realizarSuprimento(this, this.valorSuprimento)
+                    this.closeDialog('dialog-realizarSuprimento')
+                    this.errors.clear()
+                }).catch( bag => {
+                    this.openAlert("Por favor, preencha as informações corretamente!")
                 })
             },
             isCaixaAberto() {

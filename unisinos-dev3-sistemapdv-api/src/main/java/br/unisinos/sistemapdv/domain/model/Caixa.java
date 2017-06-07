@@ -23,13 +23,13 @@ public class Caixa {
     private Integer numeroCaixa;
 
     @NotNull
-    private double qtDinheiro;
+    private Double qtDinheiro;
 
     @NotNull
-    private double qtDinheiroMinimo;
+    private Double qtDinheiroMinimo;
 
     @NotNull
-    private double qtDinheiroMaximo;
+    private Double qtDinheiroMaximo;
 
     @NotNull
     private Date diaFiscal;
@@ -53,9 +53,9 @@ public class Caixa {
 
     public Caixa(Integer numeroCaixa) {
         this.numeroCaixa = numeroCaixa;
-        this.qtDinheiro = 0;
-        this.qtDinheiroMinimo = 100;
-        this.qtDinheiroMaximo = 1000;
+        this.qtDinheiro = 0.0;
+        this.qtDinheiroMinimo = 100.0;
+        this.qtDinheiroMaximo = 1000.0;
         this.diaFiscal = new Date();
         this.diaFiscalAberto = false;
         this.diaFiscalFechado = false;
@@ -74,19 +74,19 @@ public class Caixa {
         return qtDinheiro;
     }
 
-    public void setQtDinheiro(double qtDinheiro) {
+    public void setQtDinheiro(Double qtDinheiro) {
         this.qtDinheiro = qtDinheiro;
     }
 
-    public double getQtDinheiroMinimo() {
+    public Double getQtDinheiroMinimo() {
         return qtDinheiroMinimo;
     }
 
-    public void setQtDinheiroMinimo(double qtDinheiroMinimo) {
+    public void setQtDinheiroMinimo(Double qtDinheiroMinimo) {
         this.qtDinheiroMinimo = qtDinheiroMinimo;
     }
 
-    public double getQtDinheiroMaximo() {
+    public Double getQtDinheiroMaximo() {
         return qtDinheiroMaximo;
     }
 
