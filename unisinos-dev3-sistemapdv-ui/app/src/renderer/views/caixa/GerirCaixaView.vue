@@ -21,63 +21,57 @@
         <!-- Dialog Abrir Caixa -->
         <md-dialog ref="dialog-abrirCaixa">
             <md-dialog-title>Abrir Caixa</md-dialog-title>
-            <form>
-                <md-dialog-content>
-                    <md-input-container :class="{'md-input-invalid': errors.has('numero')}">
-                        <label>Número do Caixa</label>
-                        <md-input type="number" min="1 " v-model="caixaNumero" data-vv-name="numero" v-validate data-vv-rules="required|min:1|max:2"></md-input>
-                        <span class="md-error">{{errors.first('numero')}}</span>
-                    </md-input-container>
-                </md-dialog-content>
+            <md-dialog-content>
+                <md-input-container :class="{'md-input-invalid': errors.has('numero')}">
+                    <label>Número do Caixa</label>
+                    <md-input type="number" min="1 " v-model="caixaNumero" data-vv-name="numero" v-validate data-vv-rules="required|min:1|max:2"></md-input>
+                    <span class="md-error">{{errors.first('numero')}}</span>
+                </md-input-container>
+            </md-dialog-content>
 
-                <md-dialog-actions>
-                    <md-button type="submit" class="md-raised md-primary" @click.native="abrirCaixaSave()">OK</md-button>
-                    <md-button class="md-primary" @click.native="closeDialog('dialog-abrirCaixa')">Cancelar</md-button>
-                </md-dialog-actions>
-            </form>
+            <md-dialog-actions>
+                <md-button class="md-raised md-primary" @click.native="abrirCaixaSave()">OK</md-button>
+                <md-button class="md-primary" @click.native="closeDialog('dialog-abrirCaixa')">Cancelar</md-button>
+            </md-dialog-actions>
         </md-dialog>
 
         <!-- Dialog Desbloquear Caixa -->
         <md-dialog ref="dialog-desbloquearCaixa">
             <md-dialog-title>Desbloquear Caixa</md-dialog-title>
-            <form>
-                <md-dialog-content>
-                    <md-input-container :class="{'md-input-invalid': errors.has('usuario')}">
-                        <label>Usuário</label>
-                        <md-input type="text" v-model="credentials.username" data-vv-name="usuario" v-validate data-vv-rules="required|min:5|max:45"></md-input>
-                        <span class="md-error">{{errors.first('usuario')}}</span>
-                    </md-input-container>
-                    <md-input-container :class="{'md-input-invalid': errors.has('senha')}">
-                        <label>Senha</label>
-                        <md-input type="password" v-model="credentials.password" data-vv-name="senha" v-validate data-vv-rules="required|min:5|max:45"></md-input>
-                        <span class="md-error">{{errors.first('senha')}}</span>
-                    </md-input-container>
-                </md-dialog-content>
+            <md-dialog-content>
+                <md-input-container :class="{'md-input-invalid': errors.has('usuario')}">
+                    <label>Usuário</label>
+                    <md-input type="text" v-model="credentials.username" data-vv-name="usuario" v-validate data-vv-rules="required|min:5|max:45"></md-input>
+                    <span class="md-error">{{errors.first('usuario')}}</span>
+                </md-input-container>
+                <md-input-container :class="{'md-input-invalid': errors.has('senha')}">
+                    <label>Senha</label>
+                    <md-input type="password" v-model="credentials.password" data-vv-name="senha" v-validate data-vv-rules="required|min:5|max:45"></md-input>
+                    <span class="md-error">{{errors.first('senha')}}</span>
+                </md-input-container>
+            </md-dialog-content>
 
-                <md-dialog-actions>
-                    <md-button type="submit" class="md-raised md-primary" @click.native="desbloquearCaixaSave()">OK</md-button>
-                    <md-button class="md-primary" @click.native="closeDialog('dialog-desbloquearCaixa')">Cancelar</md-button>
-                </md-dialog-actions>
-            </form>
+            <md-dialog-actions>
+                <md-button class="md-raised md-primary" @click.native="desbloquearCaixaSave()">OK</md-button>
+                <md-button class="md-primary" @click.native="closeDialog('dialog-desbloquearCaixa')">Cancelar</md-button>
+            </md-dialog-actions>
         </md-dialog>
 
         <!-- Dialog Realizar Suprimento -->
         <md-dialog ref="dialog-realizarSuprimento">
-            <md-dialog-title>Realizar Suprimento</md-dialog-title>
-            <form>
-                <md-dialog-content>
-                    <md-input-container :class="{'md-input-invalid': errors.has('valorSuprimento')}">
-                        <label>Valor a Suprir</label>
-                        <md-input type="number" min="1" v-model="valorSuprimento" data-vv-name="valorSuprimento" v-validate data-vv-rules="required|min:1|max:10"></md-input>
-                        <span class="md-error">{{errors.first('valorSuprimento')}}</span>
-                    </md-input-container>
-                </md-dialog-content>
+        <md-dialog-title>Realizar Suprimento</md-dialog-title>
+            <md-dialog-content>
+                <md-input-container :class="{'md-input-invalid': errors.has('valorSuprimento')}">
+                    <label>Valor a Suprir</label>
+                    <md-input type="number" min="1" v-model="valorSuprimento" data-vv-name="valorSuprimento" v-validate data-vv-rules="required|min:1|max:10"></md-input>
+                    <span class="md-error">{{errors.first('valorSuprimento')}}</span>
+                </md-input-container>
+            </md-dialog-content>
 
-                <md-dialog-actions>
-                    <md-button type="submit" class="md-raised md-primary" @click.native="realizarSuprimentoSave()">OK</md-button>
-                    <md-button class="md-primary" @click.native="closeDialog('dialog-realizarSuprimento')">Cancelar</md-button>
-                </md-dialog-actions>
-            </form>
+            <md-dialog-actions>
+                <md-button class="md-raised md-primary" @click.native="realizarSuprimentoSave()">OK</md-button>
+                <md-button class="md-primary" @click.native="closeDialog('dialog-realizarSuprimento')">Cancelar</md-button>
+            </md-dialog-actions>
         </md-dialog>
 
         <md-snackbar md-position="bottom center" ref="snackbar" md-duration="4000">
