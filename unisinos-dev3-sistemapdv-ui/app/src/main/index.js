@@ -15,6 +15,7 @@ cfg.init()
 const BACKEND_CAIXA_URL = getConfig().get('apiUrl') + '/caixa/'
 
 require('./caixa')
+require('./login')
 
 function createWindow () {
   /**
