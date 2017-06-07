@@ -15,7 +15,7 @@ public class Usuario {
     @NotNull
     private String nome;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToOne(orphanRemoval = true, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "usuario_credencial", joinColumns = {
             @JoinColumn(name = "ID_USUARIO", nullable = false, updatable = false) }, inverseJoinColumns = {
             @JoinColumn(name = "ID_CREDENCIAL", nullable = false, updatable = false) })
@@ -67,4 +67,5 @@ public class Usuario {
         this.setCredencial(usuario.getCredencial());
         this.setPermissao(usuario.getPermissao());
     }
+
 }
