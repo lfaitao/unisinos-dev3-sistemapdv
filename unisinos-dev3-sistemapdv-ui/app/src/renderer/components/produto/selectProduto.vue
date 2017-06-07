@@ -2,15 +2,14 @@
     <md-layout md-flex="100">
         <md-input-container>
             <label for="produto-select">Produto</label>
-            <md-select id="produto" name="produto-select" placeholder="Selecione..." 
+            <md-select name="produto-select" placeholder="Selecione..." 
                 ref="selecionado"
-                :multiple="multiple"
                 :value="value ? value.id : null"
                 @input="selected()">
                 <md-option 
                     v-for="p in produtos" 
                     v-bind:value="p.id">
-                    {{p.descricao}}
+                        {{p.descricao}}
                 </md-option>
             </md-select>
         </md-input-container>
@@ -53,11 +52,9 @@
             }
         },
         mounted(){
-            this.$http.get(url).then(
-                response => { 
-                    this.produtos = response.data;
-                }
-            );
+            this.$http.get(url).then(response => { 
+                this.produtos = response.data;
+            });
         }
     }
 </script>

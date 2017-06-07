@@ -17,7 +17,6 @@
 </template>
 
 <script>
-
     import Config from 'electron-config'
     const cfg = new Config()
     const url = cfg.get('apiUrl') + '/clientes/all'
@@ -54,9 +53,8 @@
         },
         mounted(){
             this.$http.get(url).then(response => { 
-                    this.clientes = response.data;
-                }
-            );
+                this.clientes = response.data;
+            });
         }
     }
 </script>
