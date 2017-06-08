@@ -2,6 +2,8 @@ package br.unisinos.sistemapdv.infrastructure.controller;
 
 import br.unisinos.sistemapdv.application.repository.CaixaRepository;
 import br.unisinos.sistemapdv.application.service.GerenciarCaixaService;
+import br.unisinos.sistemapdv.domain.model.Caixa;
+import br.unisinos.sistemapdv.infrastructure.dto.CaixaDTO;
 import br.unisinos.sistemapdv.infrastructure.dto.FeedbackDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -73,6 +75,17 @@ public class CaixaController {
     @ResponseBody
     public boolean isCaixaAberto(@PathVariable Integer numeroCaixa) {
         return gerenciarCaixaService.isCaixaAberto(numeroCaixa);
+    }
+
+    /**
+     * GET /{numeroCaixa}  --> Retorna o objeto do caixa com as informações atuais no banco.
+     */
+    @GetMapping(value="/{numeroCaixa}")
+    @ResponseBody
+    public CaixaDTO getCaixa(@PathVariable Integer numeroCaixa) {
+        Caixa caixa = gerenciarCaixaService.getCaixa(numeroCaixa);
+        System.out.println(caixa);
+        return caixa == null ? null : new CaixaDTO(caixa);
     }
 
 }

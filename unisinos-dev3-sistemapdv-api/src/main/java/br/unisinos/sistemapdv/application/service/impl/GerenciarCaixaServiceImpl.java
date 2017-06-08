@@ -5,6 +5,7 @@ import br.unisinos.sistemapdv.application.repository.CaixaRepository;
 import br.unisinos.sistemapdv.application.service.GerenciarCaixaService;
 import br.unisinos.sistemapdv.domain.model.Caixa;
 import br.unisinos.sistemapdv.domain.service.CaixaService;
+import br.unisinos.sistemapdv.infrastructure.dto.CaixaDTO;
 import br.unisinos.sistemapdv.infrastructure.dto.FeedbackDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -48,7 +49,7 @@ public class GerenciarCaixaServiceImpl implements GerenciarCaixaService {
         if (!caixa.isCaixaAberto()) {
             caixaService.abrirCaixa(caixa);
             caixaRepository.save(caixa);
-            feedback = new FeedbackDTO(true, "Caixa aberto com sucesso!");
+            feedback = new FeedbackDTO(true, "Caixa aberto com sucesso!", new CaixaDTO(caixa));
         } else {
             feedback = new FeedbackDTO(false, "O caixa " + caixa.getNumeroCaixa() + " já está aberto!");
         }
@@ -111,6 +112,17 @@ public class GerenciarCaixaServiceImpl implements GerenciarCaixaService {
         }
 
         return feedback;
+    }
+
+    /**
+     * Busca o objeto do caixa referente ao numero passado.
+     *
+     * @param numeroCaixa
+     * @return objeto do caixa.
+     */
+    @Override
+    public Caixa getCaixa(Integer numeroCaixa) {
+        return caixaRepository.findByNumeroCaixa(numeroCaixa);
     }
 
 }

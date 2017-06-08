@@ -36,6 +36,9 @@ export default {
                 context.caixaAbertoStatus = response.status
                 ipcRenderer.sendSync('caixa-setAberto', response.status)
                 context.openAlert(response.message)
+
+                // Callback
+                context.abrirCaixaCallback(response)
             })
         }
     },

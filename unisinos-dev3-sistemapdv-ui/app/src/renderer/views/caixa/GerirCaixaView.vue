@@ -67,10 +67,14 @@
                     <span class="md-error">{{errors.first('valorSuprimento')}}</span>
                 </md-input-container>
             </md-dialog-content>
-
             <md-dialog-actions>
                 <md-button class="md-raised md-primary" @click.native="realizarSuprimentoSave()">OK</md-button>
-                <md-button class="md-primary" @click.native="closeDialog('dialog-realizarSuprimento')">Cancelar</md-button>
+                <div v-if="isSuprimentoMinimo">
+                    <md-button class="md-primary" @click.native="closeDialog('dialog-realizarSuprimento') & fecharCaixa()">Cancelar</md-button>
+                </div>
+                <div v-else>
+                    <md-button class="md-primary" @click.native="closeDialog('dialog-realizarSuprimento')">Cancelar</md-button>
+                </div>
             </md-dialog-actions>
         </md-dialog>
 
@@ -101,6 +105,8 @@
                 caixaAbertoStatus: false,
                 caixaBloqueadoStatus: false,
                 valorSuprimento: 0,
+                qtDinheiroMinimo: 0,
+                isSuprimentoMinimo: false,
                 error: ''
             }
         },
@@ -119,11 +125,24 @@
                 }).then(() => {
                     backend.abrirCaixa(this, this.caixaNumero)
                     this.closeDialog('dialog-abrirCaixa')
-                    this.$refs['navbar'].toggleCaixaAbertoIcon()
                     this.errors.clear()
                 }).catch( bag => {
                     this.openAlert("Por favor, preencha as informações corretamente!")
                 })
+            },
+            abrirCaixaCallback(response) {
+                if (response.status === true) {
+                    this.$refs['navbar'].toggleCaixaAbertoIcon()
+
+                    // Verificando quantidade de dinheiro no caixa
+                    let caixa = response.object
+                    if(caixa.qtDinheiro === 0) {
+                        this.openAlert("A quantidade de dinheiro no caixa está zerada. Por favor, insira no mínimo R$ " + caixa.qtDinheiroMinimo + ".")
+                        this.qtDinheiroMinimo = caixa.qtDinheiroMinimo
+                        this.isSuprimentoMinimo = true
+                        this.realizarSuprimento()
+                    }
+                }
             },
             fecharCaixa() {
                 if (this.caixaAbertoStatus) {
@@ -174,8 +193,14 @@
                 this.$validator.validateAll({
                     valorSuprimento: this.valorSuprimento
                 }).then(() => {
+                    if(this.isSuprimentoMinimo && (this.valorSuprimento < this.qtDinheiroMinimo)) {
+                        this.openAlert("O valor mínimo do suprimento deve ser R$ " + this.qtDinheiroMinimo + ".")
+                        return
+                    }
                     backend.realizarSuprimento(this, this.valorSuprimento)
                     this.closeDialog('dialog-realizarSuprimento')
+                    this.isSuprimentoMinimo = false
+                    this.valorSuprimento = 0
                     this.errors.clear()
                 }).catch( bag => {
                     this.openAlert("Por favor, preencha as informações corretamente!")
