@@ -1,26 +1,25 @@
 package br.unisinos.sistemapdv.domain.model;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "PREVENDAS")
+@Table(name = "PREVENDA")
 public class PreVenda {
 
     @Id
     @GeneratedValue(strategy = GenerationType.TABLE)
     private Long id;
 
+    @NotNull
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "ID_CLIENTE")
     private Cliente cliente;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinTable(name = "PREVENDA_PRODUTO", joinColumns = {
-            @JoinColumn(name = "ID_PREVENDA", nullable = false, updatable = false) },
-            inverseJoinColumns = {
-                    @JoinColumn(name = "ID_PRODUTO", nullable = false, updatable = false) })
-    private List<Produto> produtos;
+    @OneToMany(orphanRemoval = true, cascade = {CascadeType.ALL}, fetch = FetchType.EAGER, mappedBy = "preVenda")
+    private List<PreVendaProduto> preVendaProdutos;
 
     public PreVenda()
     {}
@@ -45,20 +44,20 @@ public class PreVenda {
         this.cliente = cliente;
     }
 
-    public List<Produto> getProdutos() {
-        return produtos;
+    public List<PreVendaProduto> getPreVendaProdutos() {
+        return preVendaProdutos;
     }
 
-    public void setProdutos(List<Produto> produtos) {
-        this.produtos = produtos;
+    public void setPreVendaProdutos(List<PreVendaProduto> preVendaProdutos) {
+        this.preVendaProdutos = preVendaProdutos;
     }
 
     public float getSubTotal() {
         float subTotal = 0;
 
-        for (Produto p : produtos)
+        for (PreVendaProduto p : preVendaProdutos)
         {
-            subTotal += p.getValor();
+            subTotal += p.getProduto().getValor() * p.getQuantidade();
         }
 
         return subTotal;
@@ -66,6 +65,32 @@ public class PreVenda {
 
     public void atualizar(PreVenda preVenda) {
         this.setCliente(preVenda.cliente);
-        this.setProdutos(preVenda.produtos);
+
+        List<PreVendaProduto> removeList = new ArrayList<PreVendaProduto>();
+
+        this.getPreVendaProdutos().stream().forEach(p ->
+        {
+            if(! preVenda.getPreVendaProdutos().stream().anyMatch(pp -> pp.getProduto().getId() == p.getProduto().getId()))
+            {
+                removeList.add(p);
+            }
+            else
+            {
+                PreVendaProduto pvpUpdate = preVenda.preVendaProdutos.stream().filter(pp ->
+                        pp.getProduto().getId() == p.getProduto().getId() ).findFirst().get();
+
+                p.setQuantidade(pvpUpdate.getQuantidade());
+
+                preVenda.getPreVendaProdutos().remove(pvpUpdate);
+            }
+        });
+
+        this.preVendaProdutos.removeAll(removeList);
+
+        preVenda.getPreVendaProdutos().stream().forEach(p ->
+        {
+            p.setPreVenda(this);
+            this.getPreVendaProdutos().add(p);
+        });
     }
 }

@@ -4,6 +4,8 @@ import br.unisinos.sistemapdv.application.repository.UsuarioRepository;
 import br.unisinos.sistemapdv.domain.model.Credencial;
 import br.unisinos.sistemapdv.domain.model.Permissao;
 import br.unisinos.sistemapdv.domain.model.Usuario;
+
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,9 +51,24 @@ public class UsuarioController {
     @CrossOrigin("*")
     @DeleteMapping("/usuarios/{id}")
     @ResponseBody
-    public void delete(@PathVariable long id) {
+    public String delete(@PathVariable long id) {
+        Usuario usuario = usuarioRepository.findById(id);
+        List<Usuario> admins = usuarioRepository.findByPermissaoNome("Administrador");
+        List<Usuario> all = usuarioRepository.findAll();
 
-        usuarioRepository.delete(id);
+        boolean isAdmin = false;
+        for(int i = 0; i<usuario.getPermissao().size(); i++) {
+            if(usuario.getPermissao().get(i).getNome().equalsIgnoreCase("Administrador")){
+                isAdmin = true;
+            }
+        }
+
+        if((!isAdmin  || admins.size() > 1) && all.size() > 1){
+            usuario.setPermissao(null);
+            usuarioRepository.delete(usuario);
+            return "S";
+        }
+        return "N";
     }
 
     @CrossOrigin("*")

@@ -15,7 +15,7 @@ public class Permissao {
     @NotNull
     private String nome;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "permissao_tela", joinColumns = {
             @JoinColumn(name = "ID_PERMISSAO", nullable = false, updatable = false) }, inverseJoinColumns = {
             @JoinColumn(name = "ID_TELA", nullable = false, updatable = false) })

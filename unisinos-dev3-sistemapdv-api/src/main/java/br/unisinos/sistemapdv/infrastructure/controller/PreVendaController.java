@@ -1,8 +1,8 @@
 package br.unisinos.sistemapdv.infrastructure.controller;
 
 import br.unisinos.sistemapdv.application.repository.PreVendaRepository;
+import br.unisinos.sistemapdv.application.repository.ProdutoRepository;
 import br.unisinos.sistemapdv.domain.model.PreVenda;
-import br.unisinos.sistemapdv.domain.model.Produto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import java.util.stream.Collectors;
@@ -13,6 +13,8 @@ public class PreVendaController {
 
     @Autowired
     private PreVendaRepository preVendaRepository;
+    @Autowired
+    private ProdutoRepository produtoRepository;
 
     @ResponseBody
     @CrossOrigin(origins = "*")
@@ -39,7 +41,7 @@ public class PreVendaController {
                     (
                         produtoId == null
                         ||
-                        pv.getProdutos().stream().anyMatch((p) -> p.getId() == produtoId)
+                        pv.getPreVendaProdutos().stream().anyMatch((p) -> p.getProduto().getId() == produtoId)
                     )
                 ).collect(Collectors.toList());
     }
@@ -48,16 +50,21 @@ public class PreVendaController {
     @CrossOrigin(origins = "*")
     @PostMapping("/prevendas")
     public PreVenda post(@RequestBody PreVenda preVenda) {
+        CarregarProdutos(preVenda);
         PreVenda preVendaSalva = preVendaRepository.save(preVenda);
         return preVendaSalva;
     }
 
     @ResponseBody
     @CrossOrigin(origins = "*")
-        @PutMapping("/prevendas")
+    @PutMapping("/prevendas")
     public void put(@RequestBody PreVenda preVenda) {
         PreVenda preVendaExistente = preVendaRepository.findOne(preVenda.getId());
+
+        CarregarProdutos(preVenda);
+
         preVendaExistente.atualizar(preVenda);
+
         preVendaRepository.save(preVendaExistente);
     }
 
@@ -66,5 +73,14 @@ public class PreVendaController {
     @DeleteMapping("/prevendas/{id}")
     public void delete(@PathVariable Long id) {
         preVendaRepository.delete(id);
+    }
+
+    private void CarregarProdutos(PreVenda preVenda)
+    {
+        preVenda.getPreVendaProdutos().stream().forEach(preVendaProduto ->
+        {
+            preVendaProduto.setPreVenda(preVenda);
+            preVendaProduto.setProduto(produtoRepository.findOne(preVendaProduto.getProduto().getId()));
+        });
     }
 }

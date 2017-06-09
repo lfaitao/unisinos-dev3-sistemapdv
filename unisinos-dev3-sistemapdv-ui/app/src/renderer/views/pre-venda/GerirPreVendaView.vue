@@ -51,7 +51,7 @@
                             <md-table-row>
                                 <md-table-head>id</md-table-head>
                                 <md-table-head>Cliente</md-table-head>
-                                <md-table-head>Produtos</md-table-head>
+                                <md-table-head>Produto - Quantidade</md-table-head>
                                 <md-table-head>Sub-total</md-table-head>
                                 <md-table-head>Editar</md-table-head>
                                 <md-table-head>Excluir</md-table-head>
@@ -63,7 +63,7 @@
                                 <md-table-cell>{{p.id}}</md-table-cell>
                                 <md-table-cell>{{p.cliente.nome}}</md-table-cell>
                                 <md-table-cell>
-                                    <span v-for="prod in p.produtos">{{prod.descricao}}<br/></span>
+                                    <span v-for="prod in p.preVendaProdutos">{{prod.produto.descricao + " - " + prod.quantidade}}<br/></span>
                                 </md-table-cell>
                                 <md-table-cell>{{p.subTotal}}</md-table-cell>
                                 <md-table-cell>
@@ -87,23 +87,32 @@
 
         <!-- dialog criar / editar -->
         <md-dialog ref="dialog">
-            <md-dialog-title>Pre-Venda</md-dialog-title>
+            <md-dialog-title>Pré-Venda</md-dialog-title>
             <md-dialog-content>
                 <form v-if="currentItem">
                 
                     <select-cliente v-model="currentItem.cliente" />
 
-                    <md-input-container>
-                        <label for="produto-select">Produto</label>
-                        <md-select multiple id="produto-select" name="produto-select" placeholder="Selecione..." 
-                            v-model="currentItem.produtos">
-                            <md-option 
-                                v-for="p in produtos" 
-                                :value="p">
-                                    {{p.descricao}}
-                            </md-option>
-                        </md-select>
-                    </md-input-container>
+                    <h3>Produtos</h3>
+                    
+                    <md-card v-for="pvp in currentItem.preVendaProdutos">
+                        <md-card-content>
+                            <select-produto v-model="pvp.produto" />
+                            <md-input-container>
+                                <label>Quantidade</label>
+                                <md-input type="number" placeholder="Quantidade" v-model="pvp.quantidade"></md-input>
+                            </md-input-container>
+                        </md-card-content>
+                            <md-card-actions>
+                            <md-button @click.native="removerProdutoPrevenda(pvp)">
+                                Excluir
+                            </md-button>
+                        </md-card-actions>
+                    </md-card>
+
+                    <md-button id="adicionarProduto" class="md-icon-button md-raised md-primary" @click.native="adicionarProdutoPrevenda()">
+                        <md-icon>add</md-icon>
+                    </md-button>
                 </form>
             </md-dialog-content>
 
@@ -168,7 +177,7 @@
                 this.filtro.produto = null;
             },            
              criar(){
-                this.currentItem = {id:0};
+                this.currentItem = {id:0, cliente:{}, preVendaProdutos:[]};
                 this.$refs['dialog'].open();
             },
             editar(item){
@@ -190,6 +199,15 @@
                         this.$refs.snackbar.open();
                     } 
                 );
+            },
+            removerProdutoPrevenda(pvp){
+                const i = this.currentItem.preVendaProdutos.indexOf(pvp);
+
+                if(i >= 0)
+                    this.currentItem.preVendaProdutos.splice(i,1);
+            },
+            adicionarProdutoPrevenda(pvp){
+                this.currentItem.preVendaProdutos.push({produto:{}, quantidade:0});
             },
             salvar() {
 
@@ -245,5 +263,9 @@
     .md-table .md-table-cell .md-button .md-icon {
         margin: auto;
         color: white;
+    }
+
+    .md-theme-default.md-card, #adicionarProduto {
+        margin-top: 15px;
     }
 </style>

@@ -189,6 +189,7 @@
                             this.$refs.snackbar.open();
                         } 
                     );
+                    limpar();
                 }
                 else // Criar
                 {
@@ -204,6 +205,7 @@
                             this.$refs.snackbar.open();
                         } 
                     ); 
+                    limpar();
                 }
             },
             close() {

@@ -171,6 +171,7 @@
                 this.nomeUsuario = "";
                 this.login = "";
                 this.itens = [];
+                this.permissao = {};
             },
             editar(usuario){
                 this.currentItem = usuario;
@@ -182,8 +183,9 @@
                     response => {
                         var indice = this.itens.indexOf(this.currentItem);
                         if(indice > -1)
-                            this.itens.splice(indice, 1);
-                        this.snackMessage = "Excluído com sucesso";
+                            if(response.bodyText == 'S')
+                            {this.snackMessage = this.snackMessage = "Excluído com sucesso"; this.itens.splice(indice, 1);}
+                            else{this.snackMessage =  "Não foi possivel excluir. Último Admin ou usuário da base";}
                         this.$refs.snackbar.open();
                     },
                     response => {
@@ -205,6 +207,7 @@
                             this.$refs.snackbar.open();
                         } 
                     );
+                    limpar();
                 }
                 else // Criar
                 {
@@ -225,6 +228,7 @@
                             this.$refs.snackbar.open();
                         } 
                     ); 
+                    limpar();
                 }
             },
             close() {
