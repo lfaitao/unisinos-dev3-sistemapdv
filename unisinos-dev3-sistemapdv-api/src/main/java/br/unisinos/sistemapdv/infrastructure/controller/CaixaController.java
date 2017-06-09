@@ -84,7 +84,6 @@ public class CaixaController {
     @ResponseBody
     public CaixaDTO getCaixa(@PathVariable Integer numeroCaixa) {
         Caixa caixa = gerenciarCaixaService.getCaixa(numeroCaixa);
-        System.out.println(caixa);
         return caixa == null ? null : new CaixaDTO(caixa);
     }
 

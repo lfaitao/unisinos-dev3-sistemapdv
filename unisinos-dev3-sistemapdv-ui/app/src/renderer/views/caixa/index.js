@@ -12,6 +12,23 @@ const BACKEND_URL = cfg.get('apiUrl') + '/caixa/'
 export default {
 
     /*
+     * Busca caixa pelo numero
+     */
+
+    getCaixa(context, caixaNumero){
+        if (caixaNumero === null) {
+            context.openAlert('Número do caixa é necessário!')
+        } else {
+            request.get({
+                url: BACKEND_URL + caixaNumero
+            }, (err, res, body) => {
+                let response = JSON.parse(res.body)
+                context.getCaixaCallback(response)
+            })
+        }
+    },
+
+    /*
      * Abertura e fechamento do caixa
      */
 

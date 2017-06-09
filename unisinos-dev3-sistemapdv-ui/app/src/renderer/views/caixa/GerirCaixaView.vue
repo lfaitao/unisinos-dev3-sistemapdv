@@ -105,7 +105,9 @@
                 caixaAbertoStatus: false,
                 caixaBloqueadoStatus: false,
                 valorSuprimento: 0,
+                qtDinheiro: 0,
                 qtDinheiroMinimo: 0,
+                qtDinheiroMaximo: 0,
                 isSuprimentoMinimo: false,
                 error: ''
             }
@@ -138,7 +140,9 @@
                     let caixa = response.object
                     if(caixa.qtDinheiro === 0) {
                         this.openAlert("A quantidade de dinheiro no caixa está zerada. Por favor, insira no mínimo R$ " + caixa.qtDinheiroMinimo + ".")
+                        this.qtDinheiro = caixa.qtDinheiro
                         this.qtDinheiroMinimo = caixa.qtDinheiroMinimo
+                        this.qtDinheiroMaximo = caixa.qtDinheiroMaximo
                         this.isSuprimentoMinimo = true
                         this.realizarSuprimento()
                     }
@@ -184,7 +188,17 @@
             },
             realizarSuprimento() {
                 if (this.caixaAbertoStatus) {
-                    this.openDialog('dialog-realizarSuprimento')
+                    if (!this.isSuprimentoMinimo) {
+                        backend.getCaixa(this, this.caixaNumero)
+                    }
+
+                    // Valida se a quantidade maxima de dinheiro estabelecida para o caixa já foi atingida
+                    if(this.qtDinheiro === this.qtDinheiroMaximo) {
+                        this.openAlert("O valor máximo de dinheiro no caixa já foi atingido (R$ " + this.qtDinheiroMaximo + ").")
+                        this.closeDialog('dialog-realizarSuprimento')
+                    } else {
+                        this.openDialog('dialog-realizarSuprimento')
+                    }
                 } else if (!this.caixaBloqueadoStatus) {
                     this.openAlert('O caixa precisa estar aberto para realizar suprimento!')
                 }
@@ -193,10 +207,21 @@
                 this.$validator.validateAll({
                     valorSuprimento: this.valorSuprimento
                 }).then(() => {
+                    // Valida se é suprimento mínimo e se é necessário suprir valor minimo ao caixa
                     if(this.isSuprimentoMinimo && (this.valorSuprimento < this.qtDinheiroMinimo)) {
                         this.openAlert("O valor mínimo do suprimento deve ser R$ " + this.qtDinheiroMinimo + ".")
                         return
                     }
+
+                    // Valida se o suprimento ultrapassa a quantidade maxima de dinheiro estabelecida para o caixa
+                    let totalFinal = +this.valorSuprimento + +this.qtDinheiro
+                    if(totalFinal > this.qtDinheiroMaximo) {
+                        let suprimentoMaximoAtual = this.qtDinheiroMaximo - this.qtDinheiro
+                        this.openAlert("O valor máximo de dinheiro no caixa é R$ " + this.qtDinheiroMaximo + "." +
+                            "\nEntão o valor máximo do suprimento deve ser R$ " + suprimentoMaximoAtual + ".")
+                        return
+                    }
+
                     backend.realizarSuprimento(this, this.valorSuprimento)
                     this.closeDialog('dialog-realizarSuprimento')
                     this.isSuprimentoMinimo = false
@@ -205,6 +230,11 @@
                 }).catch( bag => {
                     this.openAlert("Por favor, preencha as informações corretamente!")
                 })
+            },
+            getCaixaCallback(caixa) {
+                this.qtDinheiro = caixa.qtDinheiro
+                this.qtDinheiroMinimo = caixa.qtDinheiroMinimo
+                this.qtDinheiroMaximo = caixa.qtDinheiroMaximo
             },
             isCaixaAberto() {
                 backend.isCaixaAberto(this, this.caixaNumero)
