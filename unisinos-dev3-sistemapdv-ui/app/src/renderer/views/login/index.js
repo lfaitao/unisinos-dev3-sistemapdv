@@ -24,13 +24,11 @@ export default {
         }, (err, res, body) => {
             if (err) {
                 if (err.code == 'ECONNREFUSED') {
-                    context.error = 'Não foi possível se conectar com o servidor ' + cfg.get('apiUrl')
-                    context.openAlert()
+                    context.openAlert("Não foi possível se conectar com o servidor " + cfg.get('apiUrl'))
                     return;
                 } else {
                     console.log(err)
-                    context.error = 'Ocorreu um erro inesperado, por favor entre em contato com um Administrador do Sistema'
-                    context.openAlert()
+                    context.openAlert("Ocorreu um erro inesperado, por favor entre em contato com um Administrador do Sistema")
                     return;
                 }
             }
@@ -43,8 +41,7 @@ export default {
                         router.push(redirect)
                     }
                 } else {
-                    context.error = 'Credenciais informadas invalidas.'
-                    context.openAlert()
+                    context.openAlert("Credenciais informadas invalidas.")
                 }
             }
         })

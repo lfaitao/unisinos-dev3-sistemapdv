@@ -67,15 +67,18 @@
             }
         },
         methods: {
-            openAlert() {
+            openAlert(mensagem) {
+                this.error = mensagem
                 this.$refs.snackbar.open()
             },
             submit(){
-                this.$validator.validateAll().then(() => {
+                this.$validator.validateAll({
+                    usuario: this.credentials.username,
+                    senha: this.credentials.password
+                }).then(() => {
                     auth.login(this, this.credentials, 'home')
                 }).catch( bag => {
-                    this.error = 'Por favor, preencha todos os campos obrigatórios!'
-                    this.openAlert()
+                    this.openAlert("Por favor, preencha todos os campos obrigatórios!")
                 })
             }
         },

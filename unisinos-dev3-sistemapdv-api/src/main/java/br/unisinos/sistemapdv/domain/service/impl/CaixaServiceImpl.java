@@ -49,6 +49,16 @@ public class CaixaServiceImpl implements CaixaService {
     }
 
     @Override
+    public Caixa suprirCaixa(Double valor) throws ValidationException {
+        if (isCaixaAberto()) {
+            caixa.suprirCaixa(valor);
+            return this.caixa;
+        } else {
+            throw new ValidationException("O Caixa deve estar aberto para que o suprimento seja realizado!");
+        }
+    }
+
+    @Override
     public boolean isCaixaAberto() {
         return caixa.isCaixaAberto();
     }
