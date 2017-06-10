@@ -17,7 +17,9 @@
                 <gerirTelas ref="telas" />
             </md-tab>
             </md-tabs>
-            <md-icon>{{response === 0 ? "sync":"sync_problem"}}</md-icon>
+            <div class="sync">
+            <span class="md-caption">{{response === 0 ? "Sincronizado":"Não sincronizado"}}</span>
+            </div>
         </md-layout>
     </div>
 </template>
@@ -78,5 +80,9 @@
 </script>
 
 <style scoped>
-
+    .sync{
+        width: 100%;
+        text-align: right;
+        padding-right: 40px;
+    }
 </style>
