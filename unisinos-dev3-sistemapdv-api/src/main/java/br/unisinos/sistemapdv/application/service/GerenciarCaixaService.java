@@ -1,5 +1,6 @@
 package br.unisinos.sistemapdv.application.service;
 
+import br.unisinos.sistemapdv.domain.model.Caixa;
 import br.unisinos.sistemapdv.infrastructure.dto.FeedbackDTO;
 import org.springframework.stereotype.Service;
 
@@ -10,9 +11,9 @@ import org.springframework.stereotype.Service;
 public interface GerenciarCaixaService {
 
     FeedbackDTO abrirCaixa(Integer numeroCaixa);
-
     FeedbackDTO fecharCaixa();
-
+    FeedbackDTO suprirCaixa(Double valor);
     boolean isCaixaAberto(Integer numeroCaixa);
+    Caixa getCaixa(Integer numeroCaixa);
 
 }
