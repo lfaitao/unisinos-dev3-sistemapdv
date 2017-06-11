@@ -8,6 +8,7 @@ insert into telas(id, nome, path) value(5, "Gerir Clientes", "/gerir-clientes");
 insert into telas(id, nome, path) value(6, "Gerir Produtos", "/gerir-produtos");
 insert into telas(id, nome, path) value(7, "Gerir DAVs", "/gerir-davs");
 insert into telas(id, nome, path) value(8, "Gerir Acessos", "/gerir-acessos");
+insert into telas(id, nome, path) value(9, "Mesclar Pré-Vendas", "/mesclar-pre-venda");
 
 insert into permissoes(id, nome) value(1, "Administrador");
 insert into permissoes(id, nome) value(2, "Gerente");
@@ -21,6 +22,7 @@ insert into permissao_tela values (1, 5);
 insert into permissao_tela values (1, 6);
 insert into permissao_tela values (1, 7);
 insert into permissao_tela values (1, 8);
+insert into permissao_tela values (1, 9);
 
 insert into usuarios(id, nome) value(1, "Talita Audibert");
 insert into usuarios(id, nome) value(2, "Eduardo Pereira");
