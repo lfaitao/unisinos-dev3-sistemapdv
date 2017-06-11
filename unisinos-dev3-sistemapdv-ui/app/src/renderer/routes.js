@@ -1,7 +1,7 @@
 
 function acesso(to, from, next){
 
-  var permissoes = JSON.parse(window.localStorage.getItem('teste'));
+  var permissoes = JSON.parse(window.localStorage.getItem('user'));
 
   if(permissoes){
     var i; var j; var hasPermission = false;

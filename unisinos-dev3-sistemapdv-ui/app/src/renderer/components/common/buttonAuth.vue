@@ -31,7 +31,7 @@
             }
         },
         mounted(){
-            let permissoes = JSON.parse(window.localStorage.getItem('teste'));
+            let permissoes = JSON.parse(window.localStorage.getItem('user'));
 
             if (permissoes) {
                 let i;

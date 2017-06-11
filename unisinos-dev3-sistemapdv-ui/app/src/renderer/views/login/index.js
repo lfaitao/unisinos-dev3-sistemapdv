@@ -34,6 +34,7 @@ export default {
             }
 
             if (res.statusCode == 200) {
+                localStorage.setItem('user',res.body)
                 if (res.body != null && res.body !="") {
                     this.user.authenticated = true
                     ipcRenderer.sendSync('login-setCredentials', credentials)
