@@ -27,6 +27,8 @@ public class PreVendaProduto {
     @NotNull
     private Long quantidade;
 
+    private double percentualDesconto;
+
     public PreVendaProduto(){}
 
     public Long getId() {
@@ -55,5 +57,21 @@ public class PreVendaProduto {
 
     public void setQuantidade(Long quantidade) {
         this.quantidade = quantidade;
+    }
+
+    public double getPercentualDesconto() {
+        return percentualDesconto;
+    }
+
+    public void setPercentualDesconto(double percentualDesconto) {
+        this.percentualDesconto = percentualDesconto;
+    }
+
+    public double getSubTotal() {
+        double subTotal = 0;
+
+        subTotal = (quantidade * produto.getValor()) - ((quantidade * produto.getValor()) * (percentualDesconto / 100) );
+
+        return subTotal;
     }
 }
