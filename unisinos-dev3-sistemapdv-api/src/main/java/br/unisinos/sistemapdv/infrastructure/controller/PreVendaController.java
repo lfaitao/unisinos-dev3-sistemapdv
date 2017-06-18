@@ -3,6 +3,7 @@ package br.unisinos.sistemapdv.infrastructure.controller;
 import br.unisinos.sistemapdv.application.repository.PreVendaRepository;
 import br.unisinos.sistemapdv.application.repository.ProdutoRepository;
 import br.unisinos.sistemapdv.domain.model.PreVenda;
+import br.unisinos.sistemapdv.infrastructure.dto.FeedbackDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import java.util.stream.Collectors;
@@ -49,23 +50,37 @@ public class PreVendaController {
     @ResponseBody
     @CrossOrigin(origins = "*")
     @PostMapping("/prevendas")
-    public PreVenda post(@RequestBody PreVenda preVenda) {
+    public FeedbackDTO post(@RequestBody PreVenda preVenda) {
+        PreVenda preVendaSalva;
+
         CarregarProdutos(preVenda);
-        PreVenda preVendaSalva = preVendaRepository.save(preVenda);
-        return preVendaSalva;
+
+        FeedbackDTO feedback = verificarEstoque(preVenda);
+
+        if(feedback.isStatus()) {
+            preVendaSalva = preVendaRepository.save(preVenda);
+            feedback.setObject(preVendaSalva);
+        }
+
+        return feedback;
     }
 
     @ResponseBody
     @CrossOrigin(origins = "*")
     @PutMapping("/prevendas")
-    public void put(@RequestBody PreVenda preVenda) {
+    public FeedbackDTO put(@RequestBody PreVenda preVenda) {
         PreVenda preVendaExistente = preVendaRepository.findOne(preVenda.getId());
 
         CarregarProdutos(preVenda);
 
-        preVendaExistente.atualizar(preVenda);
+        FeedbackDTO feedback = verificarEstoque(preVenda);
 
-        preVendaRepository.save(preVendaExistente);
+        if(feedback.isStatus()){
+            preVendaExistente.atualizar(preVenda);
+            preVendaRepository.save(preVendaExistente);
+        }
+
+        return feedback;
     }
 
     @ResponseBody
@@ -82,5 +97,25 @@ public class PreVendaController {
             preVendaProduto.setPreVenda(preVenda);
             preVendaProduto.setProduto(produtoRepository.findOne(preVendaProduto.getProduto().getId()));
         });
+    }
+
+    private FeedbackDTO verificarEstoque(PreVenda preVenda){
+        FeedbackDTO feedback = new FeedbackDTO(true, "sucesso", preVenda);
+
+        preVenda.getPreVendaProdutos().stream().forEach(pvp ->{
+
+            Integer estoqueDisponivel = produtoRepository.CountEstoqueDisponivel(pvp.getProduto().getId(), preVenda.getId());
+
+            if(estoqueDisponivel == null)
+                estoqueDisponivel = pvp.getProduto().getEstoque();
+
+            if (pvp.getQuantidade() > estoqueDisponivel){
+                feedback.setStatus(false);
+                feedback.setMessage("O produto " + pvp.getProduto().getDescricao() + " possui apenas " + estoqueDisponivel+ " itens disponiveis");
+            }
+
+        });
+
+        return feedback;
     }
 }

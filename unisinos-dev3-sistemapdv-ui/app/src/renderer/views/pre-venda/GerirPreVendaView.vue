@@ -225,9 +225,15 @@
                if(this.currentItem.id !== 0) { // Editar
                     this.$http.put(url, this.currentItem).then(
                         response => {
-                            this.snackMessage = "Atualizado com sucesso";
-                            this.$refs.dialog.close();
-                            this.$refs.snackbar.open();
+                            if(response.data.status){
+                                this.snackMessage = "Atualizado com sucesso";
+                                this.$refs.dialog.close();
+                                this.$refs.snackbar.open();
+                            }
+                            else {
+                                this.snackMessage = response.data.message;
+                                this.$refs.snackbar.open();
+                            }
                         },
                         response => {
                             this.snackMessage = "Erro ao atualizar.";
@@ -239,10 +245,16 @@
                 {
                    this.$http.post(url, this.currentItem).then(
                         response => {
-                            this.itens.push(response.data);
-                            this.snackMessage = "Salvo com sucesso";
-                            this.$refs.dialog.close();
-                            this.$refs.snackbar.open();
+                            if(response.data.status){
+                                this.itens.push(response.data.object);
+                                this.snackMessage = "Salvo com sucesso";
+                                this.$refs.dialog.close();
+                                this.$refs.snackbar.open();
+                            }
+                            else{
+                                this.snackMessage = response.data.message;
+                                this.$refs.snackbar.open();
+                            }
                         },
                         response => {
                             this.snackMessage = "Erro ao salvar";
