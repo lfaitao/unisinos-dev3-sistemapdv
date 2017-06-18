@@ -59,6 +59,16 @@ public class CaixaServiceImpl implements CaixaService {
     }
 
     @Override
+    public Caixa sangrarCaixa(Double valor) throws ValidationException {
+        if (isCaixaAberto()) {
+            caixa.sangrarCaixa(valor);
+            return this.caixa;
+        } else {
+            throw new ValidationException("O Caixa deve estar aberto para que a sangria seja realizada!");
+        }
+    }
+
+    @Override
     public boolean isCaixaAberto() {
         return caixa.isCaixaAberto();
     }

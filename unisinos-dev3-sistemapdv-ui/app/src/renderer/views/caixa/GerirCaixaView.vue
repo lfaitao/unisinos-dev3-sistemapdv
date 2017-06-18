@@ -9,7 +9,7 @@
                         <md-button class="md-raised md-primary" @click.native="!isCaixaBloqueado() && fecharCaixa()">Fechar Caixa</md-button>
                         <md-button class="md-raised md-primary" @click.native="bloquearCaixa()">Bloquear Caixa</md-button>
                         <md-button class="md-raised md-primary" @click.native="desbloquearCaixa()">Desbloquear Caixa</md-button>
-                        <md-button class="md-raised md-primary" @click.native="!isCaixaBloqueado()">Realizar Sangria</md-button>
+                        <md-button class="md-raised md-primary" @click.native="!isCaixaBloqueado() && realizarSangria()">Realizar Sangria</md-button>
                         <md-button class="md-raised md-primary" @click.native="!isCaixaBloqueado() && realizarSuprimento()">Realizar Suprimento</md-button>
                         <md-button class="md-raised md-primary" @click.native="!isCaixaBloqueado()">Abrir Dia Fiscal (ECF)</md-button>
                         <md-button class="md-raised md-primary" @click.native="!isCaixaBloqueado()">Fechar Dia Fiscal (ECF)</md-button>
@@ -66,6 +66,16 @@
                     <md-input type="number" min="1" v-model="valorSuprimento" data-vv-name="valorSuprimento" v-validate data-vv-rules="required|min:1|max:10"></md-input>
                     <span class="md-error">{{errors.first('valorSuprimento')}}</span>
                 </md-input-container>
+                <md-input-container :class="{'md-input-invalid': errors.has('usuario')}">
+                    <label>Usuário</label>
+                    <md-input type="text" v-model="credentials.username" data-vv-name="usuario" v-validate data-vv-rules="required|min:5|max:45"></md-input>
+                    <span class="md-error">{{errors.first('usuario')}}</span>
+                </md-input-container>
+                <md-input-container :class="{'md-input-invalid': errors.has('senha')}">
+                    <label>Senha</label>
+                    <md-input type="password" v-model="credentials.password" data-vv-name="senha" v-validate data-vv-rules="required|min:5|max:45"></md-input>
+                    <span class="md-error">{{errors.first('senha')}}</span>
+                </md-input-container>
             </md-dialog-content>
             <md-dialog-actions>
                 <md-button class="md-raised md-primary" @click.native="realizarSuprimentoSave()">OK</md-button>
@@ -78,6 +88,33 @@
             </md-dialog-actions>
         </md-dialog>
 
+        <!-- Dialog Realizar Sangria -->
+        <md-dialog ref="dialog-realizarSangria">
+        <md-dialog-title>Realizar Sangria</md-dialog-title>
+            <md-dialog-content>
+                <md-input-container :class="{'md-input-invalid': errors.has('valorSangria')}">
+                    <label>Valor a Sangrar</label>
+                    <md-input type="number" min="1" v-model="valorSangria" data-vv-name="valorSangria" v-validate data-vv-rules="required|min:1|max:10"></md-input>
+                    <span class="md-error">{{errors.first('valorSangria')}}</span>
+                </md-input-container>
+                <md-input-container :class="{'md-input-invalid': errors.has('usuario')}">
+                    <label>Usuário</label>
+                    <md-input type="text" v-model="credentials.username" data-vv-name="usuario" v-validate data-vv-rules="required|min:5|max:45"></md-input>
+                    <span class="md-error">{{errors.first('usuario')}}</span>
+                </md-input-container>
+                <md-input-container :class="{'md-input-invalid': errors.has('senha')}">
+                    <label>Senha</label>
+                    <md-input type="password" v-model="credentials.password" data-vv-name="senha" v-validate data-vv-rules="required|min:5|max:45"></md-input>
+                    <span class="md-error">{{errors.first('senha')}}</span>
+                </md-input-container>
+            </md-dialog-content>
+            <md-dialog-actions>
+                <md-button class="md-raised md-primary" @click.native="realizarSangriaSave()">OK</md-button>
+                <md-button class="md-primary" @click.native="closeDialog('dialog-realizarSangria')">Cancelar</md-button>
+            </md-dialog-actions>
+        </md-dialog>
+
+        <!-- Snackbar -->
         <md-snackbar md-position="bottom center" ref="snackbar" md-duration="4000">
             <span>{{ error }}</span>
             <md-button class="md-accent" md-theme="light-blue" @click.native="$refs.snackbar.close()">
@@ -105,6 +142,7 @@
                 caixaAbertoStatus: false,
                 caixaBloqueadoStatus: false,
                 valorSuprimento: 0,
+                valorSangria: 0,
                 qtDinheiro: 0,
                 qtDinheiroMinimo: 0,
                 qtDinheiroMaximo: 0,
@@ -179,9 +217,6 @@
                     senha: this.credentials.password
                 }).then(() => {
                     backend.desbloquearCaixa(this, this.credentials)
-                    this.closeDialog('dialog-desbloquearCaixa')
-                    this.$refs['navbar'].toggleCaixaBloqueadoIcon()
-                    this.errors.clear()
                 }).catch( bag => {
                     this.openAlert("Por favor, preencha todos os campos obrigatórios!")
                 })
@@ -195,7 +230,6 @@
                     // Valida se a quantidade maxima de dinheiro estabelecida para o caixa já foi atingida
                     if(this.qtDinheiro === this.qtDinheiroMaximo) {
                         this.openAlert("O valor máximo de dinheiro no caixa já foi atingido (R$ " + this.qtDinheiroMaximo + ").")
-                        this.closeDialog('dialog-realizarSuprimento')
                     } else {
                         this.openDialog('dialog-realizarSuprimento')
                     }
@@ -205,7 +239,9 @@
             },
             realizarSuprimentoSave() {
                 this.$validator.validateAll({
-                    valorSuprimento: this.valorSuprimento
+                    valorSuprimento: this.valorSuprimento,
+                    usuario: this.credentials.username,
+                    senha: this.credentials.password
                 }).then(() => {
                     // Valida se é suprimento mínimo e se é necessário suprir valor minimo ao caixa
                     if(this.isSuprimentoMinimo && (this.valorSuprimento < this.qtDinheiroMinimo)) {
@@ -223,10 +259,40 @@
                     }
 
                     backend.realizarSuprimento(this, this.valorSuprimento)
-                    this.closeDialog('dialog-realizarSuprimento')
-                    this.isSuprimentoMinimo = false
-                    this.valorSuprimento = 0
-                    this.errors.clear()
+                }).catch( bag => {
+                    this.openAlert("Por favor, preencha as informações corretamente!")
+                })
+            },
+            realizarSangria() {
+                if (this.caixaAbertoStatus) {
+                    // Valida se a quantidade minima de dinheiro estabelecida para o caixa já foi atingida
+                    backend.getCaixa(this, this.caixaNumero)
+                    if(this.qtDinheiro === this.qtDinheiroMinimo) {
+                        this.openAlert("O valor minimo de dinheiro no caixa já foi atingido (R$ " + this.qtDinheiroMinimo + ").")
+                    } else {
+                        this.openDialog('dialog-realizarSangria')
+                    }
+                } else if (!this.caixaBloqueadoStatus) {
+                    this.openAlert('O caixa precisa estar aberto para realizar sangria!')
+                }
+            },
+            realizarSangriaSave() {
+                this.$validator.validateAll({
+                    valorSangria: this.valorSangria,
+                    usuario: this.credentials.username,
+                    senha: this.credentials.password
+                }).then(() => {
+                    // Valida se a sangria ultrapassa a quantidade minima de dinheiro estabelecida para o caixa
+                    let totalFinal = +this.qtDinheiro - +this.valorSangria
+                    console.log(totalFinal)
+                    if(totalFinal < this.qtDinheiroMinimo) {
+                        let sangriaMaximaAtual = this.qtDinheiro - this.qtDinheiroMinimo
+                        this.openAlert("O valor minimo de dinheiro no caixa é R$ " + this.qtDinheiroMinimo + "." +
+                            "\nEntão o valor máximo da sangria deve ser R$ " + sangriaMaximaAtual + ".")
+                        return
+                    }
+
+                    backend.realizarSangria(this, this.valorSangria)
                 }).catch( bag => {
                     this.openAlert("Por favor, preencha as informações corretamente!")
                 })
@@ -251,6 +317,9 @@
             openAlert(mensagem) {
                 this.error = mensagem
                 this.$refs.snackbar.open()
+            },
+            sync() {
+                backend.getCaixa(this, this.caixaNumero)
             }
         },
         mounted() {

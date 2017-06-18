@@ -13,6 +13,7 @@ public interface GerenciarCaixaService {
     FeedbackDTO abrirCaixa(Integer numeroCaixa);
     FeedbackDTO fecharCaixa();
     FeedbackDTO suprirCaixa(Double valor);
+    FeedbackDTO sangrarCaixa(Double valor);
     boolean isCaixaAberto(Integer numeroCaixa);
     Caixa getCaixa(Integer numeroCaixa);
 
