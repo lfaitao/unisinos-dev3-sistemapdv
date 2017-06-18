@@ -91,6 +91,7 @@ public class CaixaController {
         for (Permissao permissao : usuario.getPermissao()) {
             if ("Administrador".equals(permissao.getNome()) || "Gerente".equals(permissao.getNome())) {
                 hasPermission = true;
+                break;
             }
         }
 
@@ -100,6 +101,42 @@ public class CaixaController {
             feedback = new FeedbackDTO(false, "O valor a ser suprido não pode ser inferior ou igual à zero. Por favor, tente novamente.");
         } else {
             feedback = gerenciarCaixaService.suprirCaixa(valor);
+        }
+
+        return feedback;
+    }
+
+    /**
+     * GET /sangrar  --> Sangra o caixa com o valor passado e salva estado no banco.
+     */
+    @RequestMapping("/sangrar/{valor}/credenciais/{login}/{senha}")
+    @ResponseBody
+    public FeedbackDTO sangrarCaixa(@PathVariable Double valor, @PathVariable String login, @PathVariable String senha) {
+        FeedbackDTO feedback;
+
+        // Verifica se as credenciais estão corretas
+        Credencial credenciais = credencialRepository.findByLoginAndSenha(login, senha);
+        if(credenciais == null) {
+            feedback = new FeedbackDTO(false, "Credenciais informadas invalidas. Por favor, tente novamente.");
+            return feedback;
+        }
+
+        // Verifica o nível de permissão do usuario que está suprindo o caixa
+        Usuario usuario = credenciais.getUsuario();
+        boolean hasPermission = false;
+        for (Permissao permissao : usuario.getPermissao()) {
+            if ("Administrador".equals(permissao.getNome()) || "Gerente".equals(permissao.getNome())) {
+                hasPermission = true;
+                break;
+            }
+        }
+
+        if (!hasPermission) {
+            feedback = new FeedbackDTO(false, "A sangria deve ser aprovada pelas credenciais de um Administrador ou Gerente. Por favor, tente novamente.");
+        } else if (valor <= 0) {
+            feedback = new FeedbackDTO(false, "O valor a ser sangrado não pode ser inferior ou igual à zero. Por favor, tente novamente.");
+        } else {
+            feedback = gerenciarCaixaService.sangrarCaixa(valor);
         }
 
         return feedback;

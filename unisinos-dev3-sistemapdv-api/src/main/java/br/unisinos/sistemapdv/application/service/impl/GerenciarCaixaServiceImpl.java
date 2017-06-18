@@ -115,6 +115,27 @@ public class GerenciarCaixaServiceImpl implements GerenciarCaixaService {
     }
 
     /**
+     * Sangra o caixa com o valor passado e persiste no banco.
+     *
+     * @param valor
+     * @return feedback
+     */
+    @Override
+    public FeedbackDTO sangrarCaixa(Double valor) {
+        FeedbackDTO feedback;
+
+        try {
+            Caixa caixa = caixaService.sangrarCaixa(valor);
+            caixaRepository.save(caixa);
+            feedback = new FeedbackDTO(true, "Valor (R$" + valor + ") sangrado do caixa com sucesso!\nTotal: R$" + caixa.getQtDinheiro());
+        } catch (ValidationException e) {
+            feedback = e.getFeedback();
+        }
+
+        return feedback;
+    }
+
+    /**
      * Busca o objeto do caixa referente ao numero passado.
      *
      * @param numeroCaixa

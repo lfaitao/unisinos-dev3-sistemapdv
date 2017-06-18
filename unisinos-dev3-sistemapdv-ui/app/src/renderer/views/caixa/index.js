@@ -109,6 +109,8 @@ export default {
             context.credentials.username = ''
             context.credentials.password = ''
             context.openAlert("Caixa desbloqueado com sucesso!")
+            context.closeDialog('dialog-desbloquearCaixa')
+            context.$refs['navbar'].toggleCaixaBloqueadoIcon()
             context.errors.clear()
         } else {
             context.openAlert("As credenciais inseridas não são as do usuário que bloqueou o caixa! Por favor, tente novamente.")
@@ -138,9 +140,39 @@ export default {
                     context.closeDialog('dialog-realizarSuprimento')
                     context.isSuprimentoMinimo = false
                     context.valorSuprimento = 0
+                    context.credentials = {
+                        username: '',
+                        password: ''
+                    }
                     context.errors.clear()
                 }
 
+                context.sync()
+                context.openAlert(response.message)
+            })
+        }
+    },
+    realizarSangria(context, valorSangria){
+        if (valorSangria === null) {
+            context.openAlert('O valor da sangria deve ser maior que zero!')
+        } else {
+            request.get({
+                url: BACKEND_URL + 'sangrar/' + valorSangria + '/credenciais/' + context.credentials.username + '/' + context.credentials.password
+            }, (err, res, body) => {
+                let response = JSON.parse(res.body)
+
+                if (response.status === true) {
+                    console.log("Ué")
+                    context.closeDialog('dialog-realizarSangria')
+                    context.valorSangria = 0
+                    context.credentials = {
+                        username: '',
+                        password: ''
+                    }
+                    context.errors.clear()
+                }
+
+                context.sync()
                 context.openAlert(response.message)
             })
         }
