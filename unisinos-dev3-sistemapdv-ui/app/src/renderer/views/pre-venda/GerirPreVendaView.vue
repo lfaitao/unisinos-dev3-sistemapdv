@@ -120,7 +120,7 @@
 
             <md-dialog-actions v-if="currentItem">
                 <md-layout md-align="start">
-                    <md-input-container>
+                    <md-input-container id="percentual">
                         <label>Percentual Desconto</label>
                         <md-input type="number" placeholder="Percentual Desconto" v-model="currentItem.percentualDesconto"></md-input>
                      </md-input-container>
@@ -265,6 +265,9 @@
 </script>
 
 <style scoped>
+    #percentual{
+        margin-top:20px;
+    }
     .fill {
         width:100%;
     }
