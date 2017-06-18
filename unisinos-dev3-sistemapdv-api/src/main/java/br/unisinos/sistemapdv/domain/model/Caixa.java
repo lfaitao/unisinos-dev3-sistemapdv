@@ -138,4 +138,8 @@ public class Caixa {
         this.qtDinheiro += valor;
     }
 
+    public void sangrarCaixa(Double valor) {
+        this.qtDinheiro -= valor;
+    }
+
 }
