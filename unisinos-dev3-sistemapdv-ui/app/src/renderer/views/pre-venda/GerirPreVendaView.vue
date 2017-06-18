@@ -120,7 +120,7 @@
 
             <md-dialog-actions v-if="currentItem">
                 <md-layout md-align="start">
-                    <md-input-container>
+                    <md-input-container id="percentual">
                         <label>Percentual Desconto</label>
                         <md-input type="number" placeholder="Percentual Desconto" v-model="currentItem.percentualDesconto"></md-input>
                      </md-input-container>
@@ -225,9 +225,15 @@
                if(this.currentItem.id !== 0) { // Editar
                     this.$http.put(url, this.currentItem).then(
                         response => {
-                            this.snackMessage = "Atualizado com sucesso";
-                            this.$refs.dialog.close();
-                            this.$refs.snackbar.open();
+                            if(response.data.status){
+                                this.snackMessage = "Atualizado com sucesso";
+                                this.$refs.dialog.close();
+                                this.$refs.snackbar.open();
+                            }
+                            else {
+                                this.snackMessage = response.data.message;
+                                this.$refs.snackbar.open();
+                            }
                         },
                         response => {
                             this.snackMessage = "Erro ao atualizar.";
@@ -239,10 +245,16 @@
                 {
                    this.$http.post(url, this.currentItem).then(
                         response => {
-                            this.itens.push(response.data);
-                            this.snackMessage = "Salvo com sucesso";
-                            this.$refs.dialog.close();
-                            this.$refs.snackbar.open();
+                            if(response.data.status){
+                                this.itens.push(response.data.object);
+                                this.snackMessage = "Salvo com sucesso";
+                                this.$refs.dialog.close();
+                                this.$refs.snackbar.open();
+                            }
+                            else{
+                                this.snackMessage = response.data.message;
+                                this.$refs.snackbar.open();
+                            }
                         },
                         response => {
                             this.snackMessage = "Erro ao salvar";
@@ -265,6 +277,9 @@
 </script>
 
 <style scoped>
+    #percentual{
+        margin-top:20px;
+    }
     .fill {
         width:100%;
     }
