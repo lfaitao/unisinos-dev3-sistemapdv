@@ -9,6 +9,7 @@ const DEFAULTS = {
     caixaNumero: 0,
     caixaAbertoStatus: false,
     caixaBloqueadoStatus: false,
+    diaFiscalAbertoStatus: false,
     credentials: {
         username: '',
         password: ''
