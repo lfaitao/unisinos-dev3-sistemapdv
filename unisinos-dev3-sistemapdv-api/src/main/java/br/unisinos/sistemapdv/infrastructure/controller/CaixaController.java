@@ -187,9 +187,43 @@ public class CaixaController {
         }
 
         if (!hasPermission) {
-            feedback = new FeedbackDTO(false, "A abertura do caixa deve ser aprovada pelas credenciais de um Administrador ou Gerente. Por favor, tente novamente.");
+            feedback = new FeedbackDTO(false, "A abertura do dia fiscal deve ser aprovada pelas credenciais de um Administrador ou Gerente. Por favor, tente novamente.");
         } else {
             feedback = gerenciarCaixaService.abrirDiaFiscal();
+        }
+
+        return feedback;
+    }
+
+    /**
+     * GET /fecharDiaFiscal  --> Fecha o dia fiscal e persiste no banco.
+     */
+    @RequestMapping("fecharDiaFiscal/credenciais/{login}/{senha}")
+    @ResponseBody
+    public FeedbackDTO fecharDiaFiscal(@PathVariable String login, @PathVariable String senha) {
+        FeedbackDTO feedback;
+
+        // Verifica se as credenciais estão corretas
+        Credencial credenciais = credencialRepository.findByLoginAndSenha(login, senha);
+        if(credenciais == null) {
+            feedback = new FeedbackDTO(false, "Credenciais informadas invalidas. Por favor, tente novamente.");
+            return feedback;
+        }
+
+        // Verifica o nível de permissão do usuario que está suprindo o caixa
+        Usuario usuario = credenciais.getUsuario();
+        boolean hasPermission = false;
+        for (Permissao permissao : usuario.getPermissao()) {
+            if ("Administrador".equals(permissao.getNome()) || "Gerente".equals(permissao.getNome())) {
+                hasPermission = true;
+                break;
+            }
+        }
+
+        if (!hasPermission) {
+            feedback = new FeedbackDTO(false, "O fechamento do dia fiscal deve ser aprovada pelas credenciais de um Administrador ou Gerente. Por favor, tente novamente.");
+        } else {
+            feedback = gerenciarCaixaService.fecharDiaFiscal();
         }
 
         return feedback;

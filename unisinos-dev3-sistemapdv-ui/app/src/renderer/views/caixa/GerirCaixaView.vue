@@ -12,7 +12,7 @@
                         <md-button class="md-raised md-primary" @click.native="!isCaixaBloqueado() && realizarSangria()">Realizar Sangria</md-button>
                         <md-button class="md-raised md-primary" @click.native="!isCaixaBloqueado() && realizarSuprimento()">Realizar Suprimento</md-button>
                         <md-button class="md-raised md-primary" @click.native="!isCaixaBloqueado() && abrirDiaFiscal()">Abrir Dia Fiscal (ECF)</md-button>
-                        <md-button class="md-raised md-primary" @click.native="!isCaixaBloqueado()">Fechar Dia Fiscal (ECF)</md-button>
+                        <md-button class="md-raised md-primary" @click.native="!isCaixaBloqueado() && fecharDiaFiscal()">Fechar Dia Fiscal (ECF)</md-button>
                     </md-card>
                 </md-layout>
             </md-layout>
@@ -132,6 +132,27 @@
             <md-dialog-actions>
                 <md-button class="md-raised md-primary" @click.native="abrirDiaFiscalSave()">OK</md-button>
                 <md-button class="md-primary" @click.native="closeDialog('dialog-abrirDiaFiscal')">Cancelar</md-button>
+            </md-dialog-actions>
+        </md-dialog>
+
+        <!-- Dialog Fechar Dia Fiscal -->
+        <md-dialog ref="dialog-fecharDiaFiscal">
+        <md-dialog-title>Fechar Dia Fiscal</md-dialog-title>
+            <md-dialog-content>
+                <md-input-container :class="{'md-input-invalid': errors.has('usuario')}">
+                    <label>Usuário</label>
+                    <md-input type="text" v-model="credentials.username" data-vv-name="usuario" v-validate data-vv-rules="required|min:5|max:45"></md-input>
+                    <span class="md-error">{{errors.first('usuario')}}</span>
+                </md-input-container>
+                <md-input-container :class="{'md-input-invalid': errors.has('senha')}">
+                    <label>Senha</label>
+                    <md-input type="password" v-model="credentials.password" data-vv-name="senha" v-validate data-vv-rules="required|min:5|max:45"></md-input>
+                    <span class="md-error">{{errors.first('senha')}}</span>
+                </md-input-container>
+            </md-dialog-content>
+            <md-dialog-actions>
+                <md-button class="md-raised md-primary" @click.native="fecharDiaFiscalSave()">OK</md-button>
+                <md-button class="md-primary" @click.native="closeDialog('dialog-fecharDiaFiscal')">Cancelar</md-button>
             </md-dialog-actions>
         </md-dialog>
 
@@ -344,6 +365,27 @@
                     senha: this.credentials.password
                 }).then(() => {
                     backend.abrirDiaFiscal(this);
+                }).catch( bag => {
+                    this.openAlert("Por favor, preencha as informações corretamente!")
+                })
+            },
+            fecharDiaFiscal() {
+                if (this.caixaAbertoStatus) {
+                    if(this.diaFiscalAbertoStatus) {
+                        this.openDialog('dialog-fecharDiaFiscal')
+                    } else {
+                        this.openAlert('O dia fiscal para este caixa já foi fechado!')
+                    }
+                } else {
+                    this.openAlert('Esta operação requer que o caixa esteja aberto!')
+                }
+            },
+            fecharDiaFiscalSave() {
+                this.$validator.validateAll({
+                    usuario: this.credentials.username,
+                    senha: this.credentials.password
+                }).then(() => {
+                    backend.fecharDiaFiscal(this);
                 }).catch( bag => {
                     this.openAlert("Por favor, preencha as informações corretamente!")
                 })

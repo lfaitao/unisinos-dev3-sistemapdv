@@ -117,6 +117,20 @@ public class CaixaServiceImpl implements CaixaService {
     }
 
     @Override
+    public Caixa fecharDiaFiscal() throws ValidationException {
+        if (isCaixaAberto()) {
+            if (isDiaFiscalAberto()) {
+                caixa.fecharDiaFiscal();
+                return this.caixa;
+            } else {
+                throw new ValidationException("O dia fiscal já está fechado para este caixa.");
+            }
+        } else {
+            throw new ValidationException("O Caixa deve estar aberto para que o fechamento do dia fiscal seja realizada!");
+        }
+    }
+
+    @Override
     public boolean isCaixaAberto() {
         return caixa.isCaixaAberto();
     }

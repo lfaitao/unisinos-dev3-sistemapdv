@@ -143,7 +143,13 @@ public class Caixa {
     }
 
     public void abrirDiaFiscal() {
+        this.diaFiscal = new Date();
         this.diaFiscalAberto = true;
+        this.diaFiscalFechado = false;
     }
 
+    public void fecharDiaFiscal() {
+        this.diaFiscalAberto = false;
+        this.diaFiscalFechado = true;
+    }
 }
