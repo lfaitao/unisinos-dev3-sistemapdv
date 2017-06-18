@@ -54,7 +54,6 @@ export default {
                 ipcRenderer.sendSync('caixa-setAberto', response.status)
 
                 // Seta se o dia fiscal foi aberto
-                console.log(response.object.diaFiscalAberto)
                 context.diaFiscalAbertoStatus = response.object.diaFiscalAberto
                 ipcRenderer.sendSync('caixa-setDiaFiscalAberto', response.object.diaFiscalAberto)
 
@@ -202,6 +201,26 @@ export default {
                 password: ''
             }
             context.closeDialog('dialog-abrirDiaFiscal')
+            context.errors.clear()
+            context.openAlert(response.message)
+        })
+    },
+    fecharDiaFiscal(context) {
+        request.get({
+            url: BACKEND_URL + 'fecharDiaFiscal/credenciais/' + context.credentials.username + '/' + context.credentials.password
+        }, (err, res, body) => {
+            let response = JSON.parse(res.body)
+
+            if (response.status === true) {
+                ipcRenderer.sendSync('caixa-setDiaFiscalAberto', false)
+                context.diaFiscalAbertoStatus = false
+            }
+
+            context.credentials = {
+                username: '',
+                password: ''
+            }
+            context.closeDialog('dialog-fecharDiaFiscal')
             context.errors.clear()
             context.openAlert(response.message)
         })

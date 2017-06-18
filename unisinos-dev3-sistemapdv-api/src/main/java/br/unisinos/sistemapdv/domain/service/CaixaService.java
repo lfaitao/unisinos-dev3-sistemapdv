@@ -15,6 +15,7 @@ public interface CaixaService {
     Caixa suprirCaixa(Double valor) throws ValidationException;
     Caixa sangrarCaixa(Double valor) throws ValidationException;
     Caixa abrirDiaFiscal() throws ValidationException;
+    Caixa fecharDiaFiscal() throws ValidationException;
     boolean isCaixaAberto();
     boolean isDiaFiscalAberto();
 
