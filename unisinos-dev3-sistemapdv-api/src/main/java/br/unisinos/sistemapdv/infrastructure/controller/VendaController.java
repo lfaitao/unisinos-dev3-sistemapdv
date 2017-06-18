@@ -17,7 +17,6 @@ public class VendaController {
     @CrossOrigin(origins = "*")
     @ResponseBody
     public Venda get(@PathVariable Long id) {
-        System.out.println("bye!");
         return vendaRepository.findOne(id);
     }
 
@@ -30,8 +29,6 @@ public class VendaController {
         // TODO: Passar p/ hibernate
         return vendas.stream()
                 .filter((venda) -> {
-                    System.out.println("quantas pre-vendas: " + venda.getPreVendas().size());
-                    
                     return venda.getPreVendas().stream()
                             .anyMatch((prevenda) -> prevenda.getCliente().getCpf().equals(cpfCliente));
                 })

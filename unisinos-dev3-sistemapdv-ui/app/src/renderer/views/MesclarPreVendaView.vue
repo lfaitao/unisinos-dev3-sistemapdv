@@ -18,13 +18,23 @@
                     <md-table-header>
                         <md-table-row>
                             <md-table-head md-sort-by="descricao">Decrição</md-table-head>
-                            <md-table-head md-sort-by="valor" md-numeric>Valor</md-table-head>
+                            <md-table-head md-sort-by="quantidade" md-numeric>Quantidade</md-table-head>
+                            <md-table-head md-sort-by="percentualDesconto" md-numeric>% Desconto</md-table-head>
                         </md-table-row>
                     </md-table-header>
-
                     <md-table-body>
-                        <md-table-row v-for="(row, rowIndex) in produtos" :key="rowIndex" :md-item="row" md-selection>
-                            <md-table-cell v-for="(column, columnIndex) in row" :key="columnIndex" :md-numeric="columnIndex !== 'descricao'" v-if="columnIndex=='descricao' || columnIndex == 'valor'">
+                        <md-table-row v-for="(row, rowIndex) in produtos" :key="rowIndex" :md-item="row" md-selection>  
+                            <md-table-cell 
+                                v-for="(column, columnIndex) in row" 
+                                :key="columnIndex" 
+                                v-if="columnIndex == 'produto'">
+                                <span>{{ column.descricao }}</span>
+                            </md-table-cell>                          
+                            <md-table-cell 
+                                v-for="(column, columnIndex) in row" 
+                                :key="columnIndex" 
+                                :md-numeric="columnIndex == 'quantidade' || columnIndex == 'percentualDesconto'" 
+                                v-if="columnIndex == 'quantidade' || columnIndex == 'percentualDesconto'">
                                 <span>{{ column }}</span>
                             </md-table-cell>
                         </md-table-row>
@@ -64,18 +74,17 @@
         },
         mounted() {
             this.cliente = this.$route.query.cliente;
-            
+
             var options = {
                 params: { produtoId: 0, clienteId: this.cliente.id }
             };
 
             this.$http.get(url, options).then(
                 response => {
-                    this.produtos = response.data.reduce((produtos, preVenda) => 
-                        produtos.concat(preVenda.produtos.map(prod => 
-                        {
-                            prod.preVenda = preVenda;
-                            return prod;
+                    this.produtos = response.data.reduce((produtos, preVenda) =>
+                        produtos.concat(preVenda.preVendaProdutos.map(pvp => {
+                            pvp.preVenda = preVenda;
+                            return pvp;
                         })), []);
                 },
                 response => {
@@ -93,11 +102,11 @@
     .fill {
         width: 100%;
     }
-    
+
     .padding {
         padding: 16px;
     }
-    
+
     .centered_div {
         position: absolute;
         top: 22%;
