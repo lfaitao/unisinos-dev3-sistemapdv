@@ -50,7 +50,7 @@ insert into produtos(id, descricao, estoque, valor) values(3, "Camisa", 300, 300
 insert into produtos(id, descricao, estoque, valor) values(4, "Meias", 400, 350);
 insert into produtos(id, descricao, estoque, valor) values(5, "Saia", 500, 400);
 
-insert into prevenda values(1,1);
+insert into prevenda values(1,0,1);
 insert into prevenda_produto values(1,5,1,1);
 insert into prevenda_produto values(2,10,1,2);
 
