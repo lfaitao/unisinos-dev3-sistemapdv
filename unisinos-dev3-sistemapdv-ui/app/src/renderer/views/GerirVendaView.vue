@@ -87,7 +87,6 @@
 
                 this.$http.get(cfg.get('apiUrl') + "/produtos/all").then(
                     response => {
-
                         this.alert.content = "";
                         this.produtos.forEach(product => {
                             let productInStock = response.data.filter(item => item.id == product.id)[0];
@@ -110,7 +109,7 @@
                         var preVendas = new Set(this.produtos.map(prod => {
                             let tmp = prod.preVenda;
                             delete prod.preVenda;
-                            delete tmp.produtos;
+                            delete tmp.preVendaProdutos;
                             return tmp;
                         }), (a, b) => a.id === b.id, (object) => object.id);
 
@@ -145,13 +144,21 @@
             }
         },
         mounted() {
-            // TODO: Agrupar produtos semelhantes e ajustar as quantidades
-            this.produtos = this.$route.query.produtosSelecionados
-                .map(produto => {
-                    produto.quantidade = 1;
-                    produto.percentualDesconto = 0;
-                    return produto;
+
+            let group = {};
+            this.$route.query.produtosSelecionados
+                .forEach(p => {
+                    if (group[p.produto.id] === undefined) {
+                        group[p.produto.id] = p.produto;
+                        group[p.produto.id].preVenda = p.preVenda;
+                        group[p.produto.id].quantidade = p.quantidade;
+                        group[p.produto.id].percentualDesconto = p.percentualDesconto;
+                    } else {
+                        group[p.produto.id].quantidade += p.quantidade;
+                        group[p.produto.id].percentualDesconto += p.percentualDesconto;
+                    }
                 });
+            this.produtos = Object.values(group);
         },
         name: 'gerir-venda'
     }
