@@ -130,9 +130,17 @@ export default {
             context.openAlert('O valor do suprimento deve ser maior que zero!')
         } else {
             request.get({
-                url: BACKEND_URL + 'suprir/' + valorSuprimento
+                url: BACKEND_URL + 'suprir/' + valorSuprimento + '/credenciais/' + context.credentials.username + '/' + context.credentials.password
             }, (err, res, body) => {
                 let response = JSON.parse(res.body)
+
+                if (response.status === true) {
+                    context.closeDialog('dialog-realizarSuprimento')
+                    context.isSuprimentoMinimo = false
+                    context.valorSuprimento = 0
+                    context.errors.clear()
+                }
+
                 context.openAlert(response.message)
             })
         }

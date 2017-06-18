@@ -66,6 +66,16 @@
                     <md-input type="number" min="1" v-model="valorSuprimento" data-vv-name="valorSuprimento" v-validate data-vv-rules="required|min:1|max:10"></md-input>
                     <span class="md-error">{{errors.first('valorSuprimento')}}</span>
                 </md-input-container>
+                <md-input-container :class="{'md-input-invalid': errors.has('usuario')}">
+                    <label>Usuário</label>
+                    <md-input type="text" v-model="credentials.username" data-vv-name="usuario" v-validate data-vv-rules="required|min:5|max:45"></md-input>
+                    <span class="md-error">{{errors.first('usuario')}}</span>
+                </md-input-container>
+                <md-input-container :class="{'md-input-invalid': errors.has('senha')}">
+                    <label>Senha</label>
+                    <md-input type="password" v-model="credentials.password" data-vv-name="senha" v-validate data-vv-rules="required|min:5|max:45"></md-input>
+                    <span class="md-error">{{errors.first('senha')}}</span>
+                </md-input-container>
             </md-dialog-content>
             <md-dialog-actions>
                 <md-button class="md-raised md-primary" @click.native="realizarSuprimentoSave()">OK</md-button>
@@ -205,7 +215,9 @@
             },
             realizarSuprimentoSave() {
                 this.$validator.validateAll({
-                    valorSuprimento: this.valorSuprimento
+                    valorSuprimento: this.valorSuprimento,
+                    usuario: this.credentials.username,
+                    senha: this.credentials.password
                 }).then(() => {
                     // Valida se é suprimento mínimo e se é necessário suprir valor minimo ao caixa
                     if(this.isSuprimentoMinimo && (this.valorSuprimento < this.qtDinheiroMinimo)) {
@@ -223,10 +235,6 @@
                     }
 
                     backend.realizarSuprimento(this, this.valorSuprimento)
-                    this.closeDialog('dialog-realizarSuprimento')
-                    this.isSuprimentoMinimo = false
-                    this.valorSuprimento = 0
-                    this.errors.clear()
                 }).catch( bag => {
                     this.openAlert("Por favor, preencha as informações corretamente!")
                 })
