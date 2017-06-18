@@ -11,7 +11,7 @@
                         <md-button class="md-raised md-primary" @click.native="desbloquearCaixa()">Desbloquear Caixa</md-button>
                         <md-button class="md-raised md-primary" @click.native="!isCaixaBloqueado() && realizarSangria()">Realizar Sangria</md-button>
                         <md-button class="md-raised md-primary" @click.native="!isCaixaBloqueado() && realizarSuprimento()">Realizar Suprimento</md-button>
-                        <md-button class="md-raised md-primary" @click.native="!isCaixaBloqueado()">Abrir Dia Fiscal (ECF)</md-button>
+                        <md-button class="md-raised md-primary" @click.native="!isCaixaBloqueado() && abrirDiaFiscal()">Abrir Dia Fiscal (ECF)</md-button>
                         <md-button class="md-raised md-primary" @click.native="!isCaixaBloqueado()">Fechar Dia Fiscal (ECF)</md-button>
                     </md-card>
                 </md-layout>
@@ -114,6 +114,27 @@
             </md-dialog-actions>
         </md-dialog>
 
+        <!-- Dialog Abrir Dia Fiscal -->
+        <md-dialog ref="dialog-abrirDiaFiscal">
+        <md-dialog-title>Abrir Dia Fiscal</md-dialog-title>
+            <md-dialog-content>
+                <md-input-container :class="{'md-input-invalid': errors.has('usuario')}">
+                    <label>Usuário</label>
+                    <md-input type="text" v-model="credentials.username" data-vv-name="usuario" v-validate data-vv-rules="required|min:5|max:45"></md-input>
+                    <span class="md-error">{{errors.first('usuario')}}</span>
+                </md-input-container>
+                <md-input-container :class="{'md-input-invalid': errors.has('senha')}">
+                    <label>Senha</label>
+                    <md-input type="password" v-model="credentials.password" data-vv-name="senha" v-validate data-vv-rules="required|min:5|max:45"></md-input>
+                    <span class="md-error">{{errors.first('senha')}}</span>
+                </md-input-container>
+            </md-dialog-content>
+            <md-dialog-actions>
+                <md-button class="md-raised md-primary" @click.native="abrirDiaFiscalSave()">OK</md-button>
+                <md-button class="md-primary" @click.native="closeDialog('dialog-abrirDiaFiscal')">Cancelar</md-button>
+            </md-dialog-actions>
+        </md-dialog>
+
         <!-- Snackbar -->
         <md-snackbar md-position="bottom center" ref="snackbar" md-duration="4000">
             <span>{{ error }}</span>
@@ -140,6 +161,7 @@
                 },
                 caixaNumero: null,
                 caixaAbertoStatus: false,
+                diaFiscalAbertoStatus: false,
                 caixaBloqueadoStatus: false,
                 valorSuprimento: 0,
                 valorSangria: 0,
@@ -197,18 +219,26 @@
                 }
             },
             bloquearCaixa() {
-                if (this.caixaBloqueadoStatus) {
-                    this.openAlert('Este caixa já está bloqueado!')
+                if (this.caixaAbertoStatus) {
+                    if (this.caixaBloqueadoStatus) {
+                        this.openAlert('Este caixa já está bloqueado!')
+                    } else {
+                        backend.bloquearCaixa(this)
+                        this.$refs['navbar'].toggleCaixaBloqueadoIcon()
+                    }
                 } else {
-                    backend.bloquearCaixa(this)
-                    this.$refs['navbar'].toggleCaixaBloqueadoIcon()
+                    this.openAlert('Esta operação requer que o caixa esteja aberto!')
                 }
             },
             desbloquearCaixa() {
-                if (this.caixaBloqueadoStatus) {
-                    this.openDialog('dialog-desbloquearCaixa')
+                if (this.caixaAbertoStatus) {
+                    if (this.caixaBloqueadoStatus) {
+                        this.openDialog('dialog-desbloquearCaixa')
+                    } else {
+                        this.openAlert('Este caixa já está desbloqueado!')
+                    }
                 } else {
-                    this.openAlert('Este caixa já está desbloqueado!')
+                    this.openAlert('Esta operação requer que o caixa esteja aberto!')
                 }
             },
             desbloquearCaixaSave() {
@@ -233,8 +263,8 @@
                     } else {
                         this.openDialog('dialog-realizarSuprimento')
                     }
-                } else if (!this.caixaBloqueadoStatus) {
-                    this.openAlert('O caixa precisa estar aberto para realizar suprimento!')
+                } else {
+                    this.openAlert('Esta operação requer que o caixa esteja aberto!')
                 }
             },
             realizarSuprimentoSave() {
@@ -273,7 +303,7 @@
                         this.openDialog('dialog-realizarSangria')
                     }
                 } else if (!this.caixaBloqueadoStatus) {
-                    this.openAlert('O caixa precisa estar aberto para realizar sangria!')
+                    this.openAlert('Esta operação requer que o caixa esteja aberto!')
                 }
             },
             realizarSangriaSave() {
@@ -297,6 +327,27 @@
                     this.openAlert("Por favor, preencha as informações corretamente!")
                 })
             },
+            abrirDiaFiscal() {
+                if (this.caixaAbertoStatus) {
+                    if(!this.diaFiscalAbertoStatus) {
+                        this.openDialog('dialog-abrirDiaFiscal')
+                    } else {
+                        this.openAlert('O dia fiscal para este caixa já foi aberto!')
+                    }
+                } else {
+                    this.openAlert('Esta operação requer que o caixa esteja aberto!')
+                }
+            },
+            abrirDiaFiscalSave() {
+                this.$validator.validateAll({
+                    usuario: this.credentials.username,
+                    senha: this.credentials.password
+                }).then(() => {
+                    backend.abrirDiaFiscal(this);
+                }).catch( bag => {
+                    this.openAlert("Por favor, preencha as informações corretamente!")
+                })
+            },
             getCaixaCallback(caixa) {
                 this.qtDinheiro = caixa.qtDinheiro
                 this.qtDinheiroMinimo = caixa.qtDinheiroMinimo
@@ -306,7 +357,7 @@
                 backend.isCaixaAberto(this, this.caixaNumero)
             },
             isCaixaBloqueado() {
-                backend.isCaixaBloqueado(this)
+                return backend.isCaixaBloqueado(this)
             },
             openDialog(dialogName) {
                 this.$refs[dialogName].open();
@@ -323,9 +374,10 @@
             }
         },
         mounted() {
-            this.caixaAbertoStatus = ipcRenderer.sendSync('caixa-getAberto')
             this.caixaNumero = ipcRenderer.sendSync('caixa-getNumero')
+            this.caixaAbertoStatus = ipcRenderer.sendSync('caixa-getAberto')
             this.caixaBloqueadoStatus = ipcRenderer.sendSync('caixa-getBloqueado')
+            this.diaFiscalAbertoStatus = ipcRenderer.sendSync('caixa-getDiaFiscalAberto')
         },
         name: 'gerir-caixa'
     }

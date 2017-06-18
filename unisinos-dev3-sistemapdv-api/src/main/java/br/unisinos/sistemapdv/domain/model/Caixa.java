@@ -142,4 +142,8 @@ public class Caixa {
         this.qtDinheiro -= valor;
     }
 
+    public void abrirDiaFiscal() {
+        this.diaFiscalAberto = true;
+    }
+
 }
