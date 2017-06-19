@@ -115,6 +115,68 @@ public class GerenciarCaixaServiceImpl implements GerenciarCaixaService {
     }
 
     /**
+     * Sangra o caixa com o valor passado e persiste no banco.
+     *
+     * @param valor
+     * @return feedback
+     */
+    @Override
+    public FeedbackDTO sangrarCaixa(Double valor) {
+        FeedbackDTO feedback;
+
+        try {
+            Caixa caixa = caixaService.sangrarCaixa(valor);
+            caixaRepository.save(caixa);
+            feedback = new FeedbackDTO(true, "Valor (R$" + valor + ") sangrado do caixa com sucesso!\nTotal: R$" + caixa.getQtDinheiro());
+        } catch (ValidationException e) {
+            feedback = e.getFeedback();
+        }
+
+        return feedback;
+    }
+
+    /**
+     * Abre o dia fiscal e salva estado no banco.
+     * Se o dia fiscal já foi aberto neste dia, o dia fiscal não pode ser aberto novamente.
+     *
+     * @return feedback
+     */
+    @Override
+    public FeedbackDTO abrirDiaFiscal() {
+        FeedbackDTO feedback;
+
+        try {
+            Caixa caixa = caixaService.abrirDiaFiscal();
+            caixaRepository.save(caixa);
+            feedback = new FeedbackDTO(true, "Dia fiscal para o caixa " + caixa.getNumeroCaixa() + " aberto com sucesso!");
+        } catch (ValidationException e) {
+            feedback = e.getFeedback();
+        }
+
+        return feedback;
+    }
+
+    /**
+     * Fecha o dia fiscal e salva estado no banco.
+     *
+     * @return feedback
+     */
+    @Override
+    public FeedbackDTO fecharDiaFiscal() {
+        FeedbackDTO feedback;
+
+        try {
+            Caixa caixa = caixaService.fecharDiaFiscal();
+            caixaRepository.save(caixa);
+            feedback = new FeedbackDTO(true, "Dia fiscal para o caixa " + caixa.getNumeroCaixa() + " fechado com sucesso!");
+        } catch (ValidationException e) {
+            feedback = e.getFeedback();
+        }
+
+        return feedback;
+    }
+
+    /**
      * Busca o objeto do caixa referente ao numero passado.
      *
      * @param numeroCaixa

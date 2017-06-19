@@ -1,12 +1,22 @@
 package br.unisinos.sistemapdv.infrastructure.controller;
 
 import br.unisinos.sistemapdv.application.repository.CaixaRepository;
+import br.unisinos.sistemapdv.application.repository.CredencialRepository;
+import br.unisinos.sistemapdv.application.repository.PermissaoRepository;
+import br.unisinos.sistemapdv.application.repository.UsuarioRepository;
 import br.unisinos.sistemapdv.application.service.GerenciarCaixaService;
 import br.unisinos.sistemapdv.domain.model.Caixa;
+import br.unisinos.sistemapdv.domain.model.Credencial;
+import br.unisinos.sistemapdv.domain.model.Permissao;
+import br.unisinos.sistemapdv.domain.model.Usuario;
 import br.unisinos.sistemapdv.infrastructure.dto.CaixaDTO;
+import br.unisinos.sistemapdv.infrastructure.dto.CredencialDTO;
 import br.unisinos.sistemapdv.infrastructure.dto.FeedbackDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by lfaitao on 26/03/2017.
@@ -17,6 +27,15 @@ public class CaixaController {
 
     @Autowired
     private CaixaRepository caixaRepository;
+
+    @Autowired
+    private CredencialRepository credencialRepository;
+
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private PermissaoRepository permissaoRepository;
 
     @Autowired
     private GerenciarCaixaService gerenciarCaixaService;
@@ -54,15 +73,70 @@ public class CaixaController {
     /**
      * GET /suprir  --> Supre o caixa com o valor passado e salva estado no banco.
      */
-    @RequestMapping("/suprir/{valor}")
+    @RequestMapping("/suprir/{valor}/credenciais/{login}/{senha}")
     @ResponseBody
-    public FeedbackDTO suprirCaixa(@PathVariable Double valor) {
+    public FeedbackDTO suprirCaixa(@PathVariable Double valor, @PathVariable String login, @PathVariable String senha) {
         FeedbackDTO feedback;
 
-        if (valor <= 0) {
-            feedback = new FeedbackDTO(false, "O valor a ser suprido não pode ser inferior ou igual à zero.");
+        // Verifica se as credenciais estão corretas
+        Credencial credenciais = credencialRepository.findByLoginAndSenha(login, senha);
+        if(credenciais == null) {
+            feedback = new FeedbackDTO(false, "Credenciais informadas invalidas. Por favor, tente novamente.");
+            return feedback;
+        }
+
+        // Verifica o nível de permissão do usuario que está suprindo o caixa
+        Usuario usuario = credenciais.getUsuario();
+        boolean hasPermission = false;
+        for (Permissao permissao : usuario.getPermissao()) {
+            if ("Administrador".equals(permissao.getNome()) || "Gerente".equals(permissao.getNome())) {
+                hasPermission = true;
+                break;
+            }
+        }
+
+        if (!hasPermission) {
+            feedback = new FeedbackDTO(false, "O suprimento deve ser aprovado pelas credenciais de um Administrador ou Gerente. Por favor, tente novamente.");
+        } else if (valor <= 0) {
+            feedback = new FeedbackDTO(false, "O valor a ser suprido não pode ser inferior ou igual à zero. Por favor, tente novamente.");
         } else {
             feedback = gerenciarCaixaService.suprirCaixa(valor);
+        }
+
+        return feedback;
+    }
+
+    /**
+     * GET /sangrar  --> Sangra o caixa com o valor passado e salva estado no banco.
+     */
+    @RequestMapping("/sangrar/{valor}/credenciais/{login}/{senha}")
+    @ResponseBody
+    public FeedbackDTO sangrarCaixa(@PathVariable Double valor, @PathVariable String login, @PathVariable String senha) {
+        FeedbackDTO feedback;
+
+        // Verifica se as credenciais estão corretas
+        Credencial credenciais = credencialRepository.findByLoginAndSenha(login, senha);
+        if(credenciais == null) {
+            feedback = new FeedbackDTO(false, "Credenciais informadas invalidas. Por favor, tente novamente.");
+            return feedback;
+        }
+
+        // Verifica o nível de permissão do usuario que está suprindo o caixa
+        Usuario usuario = credenciais.getUsuario();
+        boolean hasPermission = false;
+        for (Permissao permissao : usuario.getPermissao()) {
+            if ("Administrador".equals(permissao.getNome()) || "Gerente".equals(permissao.getNome())) {
+                hasPermission = true;
+                break;
+            }
+        }
+
+        if (!hasPermission) {
+            feedback = new FeedbackDTO(false, "A sangria deve ser aprovada pelas credenciais de um Administrador ou Gerente. Por favor, tente novamente.");
+        } else if (valor <= 0) {
+            feedback = new FeedbackDTO(false, "O valor a ser sangrado não pode ser inferior ou igual à zero. Por favor, tente novamente.");
+        } else {
+            feedback = gerenciarCaixaService.sangrarCaixa(valor);
         }
 
         return feedback;
@@ -85,6 +159,74 @@ public class CaixaController {
     public CaixaDTO getCaixa(@PathVariable Integer numeroCaixa) {
         Caixa caixa = gerenciarCaixaService.getCaixa(numeroCaixa);
         return caixa == null ? null : new CaixaDTO(caixa);
+    }
+
+    /**
+     * GET /abrirDiaFiscal  --> Abre o dia fiscal e persiste no banco.
+     */
+    @RequestMapping("abrirDiaFiscal/credenciais/{login}/{senha}")
+    @ResponseBody
+    public FeedbackDTO abrirDiaFiscal(@PathVariable String login, @PathVariable String senha) {
+        FeedbackDTO feedback;
+
+        // Verifica se as credenciais estão corretas
+        Credencial credenciais = credencialRepository.findByLoginAndSenha(login, senha);
+        if(credenciais == null) {
+            feedback = new FeedbackDTO(false, "Credenciais informadas invalidas. Por favor, tente novamente.");
+            return feedback;
+        }
+
+        // Verifica o nível de permissão do usuario que está suprindo o caixa
+        Usuario usuario = credenciais.getUsuario();
+        boolean hasPermission = false;
+        for (Permissao permissao : usuario.getPermissao()) {
+            if ("Administrador".equals(permissao.getNome()) || "Gerente".equals(permissao.getNome())) {
+                hasPermission = true;
+                break;
+            }
+        }
+
+        if (!hasPermission) {
+            feedback = new FeedbackDTO(false, "A abertura do dia fiscal deve ser aprovada pelas credenciais de um Administrador ou Gerente. Por favor, tente novamente.");
+        } else {
+            feedback = gerenciarCaixaService.abrirDiaFiscal();
+        }
+
+        return feedback;
+    }
+
+    /**
+     * GET /fecharDiaFiscal  --> Fecha o dia fiscal e persiste no banco.
+     */
+    @RequestMapping("fecharDiaFiscal/credenciais/{login}/{senha}")
+    @ResponseBody
+    public FeedbackDTO fecharDiaFiscal(@PathVariable String login, @PathVariable String senha) {
+        FeedbackDTO feedback;
+
+        // Verifica se as credenciais estão corretas
+        Credencial credenciais = credencialRepository.findByLoginAndSenha(login, senha);
+        if(credenciais == null) {
+            feedback = new FeedbackDTO(false, "Credenciais informadas invalidas. Por favor, tente novamente.");
+            return feedback;
+        }
+
+        // Verifica o nível de permissão do usuario que está suprindo o caixa
+        Usuario usuario = credenciais.getUsuario();
+        boolean hasPermission = false;
+        for (Permissao permissao : usuario.getPermissao()) {
+            if ("Administrador".equals(permissao.getNome()) || "Gerente".equals(permissao.getNome())) {
+                hasPermission = true;
+                break;
+            }
+        }
+
+        if (!hasPermission) {
+            feedback = new FeedbackDTO(false, "O fechamento do dia fiscal deve ser aprovada pelas credenciais de um Administrador ou Gerente. Por favor, tente novamente.");
+        } else {
+            feedback = gerenciarCaixaService.fecharDiaFiscal();
+        }
+
+        return feedback;
     }
 
 }

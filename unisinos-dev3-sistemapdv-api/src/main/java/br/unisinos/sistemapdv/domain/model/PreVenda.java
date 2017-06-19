@@ -13,8 +13,6 @@ public class PreVenda {
     @GeneratedValue(strategy = GenerationType.TABLE)
     private Long id;
 
-    private double percentualDesconto;
-
     @NotNull
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "ID_CLIENTE")
@@ -32,14 +30,6 @@ public class PreVenda {
 
     public Long getId() {
         return id;
-    }
-
-    public double getPercentualDesconto() {
-        return percentualDesconto;
-    }
-
-    public void setPercentualDesconto(double percentualDesconto) {
-        this.percentualDesconto = percentualDesconto;
     }
 
     public void setId(Long id) {
@@ -67,11 +57,7 @@ public class PreVenda {
 
         for (PreVendaProduto p : preVendaProdutos)
         {
-            subTotal += p.getProduto().getValor() * p.getQuantidade();
-        }
-
-        if (percentualDesconto > 0){
-            subTotal -= (subTotal * (percentualDesconto / 100));
+            subTotal += p.getSubTotal();
         }
 
         return subTotal;
@@ -79,7 +65,6 @@ public class PreVenda {
 
     public void atualizar(PreVenda preVenda) {
         this.setCliente(preVenda.cliente);
-        this.setPercentualDesconto(preVenda.percentualDesconto);
 
         List<PreVendaProduto> removeList = new ArrayList<PreVendaProduto>();
 
@@ -95,7 +80,7 @@ public class PreVenda {
                         pp.getProduto().getId() == p.getProduto().getId() ).findFirst().get();
 
                 p.setQuantidade(pvpUpdate.getQuantidade());
-
+                p.setPercentualDesconto(pvpUpdate.getPercentualDesconto());
                 preVenda.getPreVendaProdutos().remove(pvpUpdate);
             }
         });

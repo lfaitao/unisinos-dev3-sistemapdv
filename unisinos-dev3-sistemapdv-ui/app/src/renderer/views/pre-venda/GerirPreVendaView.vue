@@ -52,7 +52,6 @@
                                 <md-table-head>id</md-table-head>
                                 <md-table-head>Cliente</md-table-head>
                                 <md-table-head>Produto - Quantidade</md-table-head>
-                                <md-table-head>Desconto</md-table-head>
                                 <md-table-head>Sub-total</md-table-head>
                                 <md-table-head>Editar</md-table-head>
                                 <md-table-head>Excluir</md-table-head>
@@ -66,7 +65,6 @@
                                 <md-table-cell>
                                     <span v-for="prod in p.preVendaProdutos">{{prod.produto.descricao + " - " + prod.quantidade}}<br/></span>
                                 </md-table-cell>
-                                <md-table-cell>{{p.percentualDesconto}}%</md-table-cell>
                                 <md-table-cell>{{p.subTotal}}</md-table-cell>
                                 <md-table-cell>
                                     <md-button class="md-icon-button md-raised md-primary" @click.native="editar(p)">
@@ -104,8 +102,12 @@
                                 <label>Quantidade</label>
                                 <md-input type="number" placeholder="Quantidade" v-model="pvp.quantidade"></md-input>
                             </md-input-container>
+                            <md-input-container id="percentual">
+                                <label>Percentual Desconto</label>
+                                <md-input type="number" placeholder="Percentual Desconto" v-model="pvp.percentualDesconto"></md-input>
+                            </md-input-container>
                         </md-card-content>
-                            <md-card-actions>
+                        <md-card-actions>
                             <md-button @click.native="removerProdutoPrevenda(pvp)">
                                 Excluir
                             </md-button>
@@ -117,15 +119,6 @@
                     </md-button>
                 </form>
             </md-dialog-content>
-
-            <md-dialog-actions v-if="currentItem">
-                <md-layout md-align="start">
-                    <md-input-container>
-                        <label>Percentual Desconto</label>
-                        <md-input type="number" placeholder="Percentual Desconto" v-model="currentItem.percentualDesconto"></md-input>
-                     </md-input-container>
-                </md-layout>
-            </md-dialog-actions>
                                         
             <md-dialog-actions>
                 <md-button class="md-primary" @click.native="salvar()">Salvar</md-button>
@@ -188,7 +181,7 @@
                 this.filtro.produto = null;
             },            
              criar(){
-                this.currentItem = {id:0, cliente:{}, percentualDesconto:0, preVendaProdutos:[]};
+                this.currentItem = {id:0, cliente:{}, preVendaProdutos:[]};
                 this.$refs['dialog'].open();
             },
             editar(item){
@@ -225,9 +218,15 @@
                if(this.currentItem.id !== 0) { // Editar
                     this.$http.put(url, this.currentItem).then(
                         response => {
-                            this.snackMessage = "Atualizado com sucesso";
-                            this.$refs.dialog.close();
-                            this.$refs.snackbar.open();
+                            if(response.data.status){
+                                this.snackMessage = "Atualizado com sucesso";
+                                this.$refs.dialog.close();
+                                this.$refs.snackbar.open();
+                            }
+                            else {
+                                this.snackMessage = response.data.message;
+                                this.$refs.snackbar.open();
+                            }
                         },
                         response => {
                             this.snackMessage = "Erro ao atualizar.";
@@ -239,10 +238,16 @@
                 {
                    this.$http.post(url, this.currentItem).then(
                         response => {
-                            this.itens.push(response.data);
-                            this.snackMessage = "Salvo com sucesso";
-                            this.$refs.dialog.close();
-                            this.$refs.snackbar.open();
+                            if(response.data.status){
+                                this.itens.push(response.data.object);
+                                this.snackMessage = "Salvo com sucesso";
+                                this.$refs.dialog.close();
+                                this.$refs.snackbar.open();
+                            }
+                            else{
+                                this.snackMessage = response.data.message;
+                                this.$refs.snackbar.open();
+                            }
                         },
                         response => {
                             this.snackMessage = "Erro ao salvar";
