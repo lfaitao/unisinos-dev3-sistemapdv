@@ -220,6 +220,7 @@
             }
         },
         mounted() {
+           this.currentItem.path = [];
            this.loadData();
         }
     }

@@ -15,7 +15,7 @@ import java.util.List;
 public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
 
     List<Usuario> findByNomeOrCredencialLoginContaining(String nome, String login);
-    List<Usuario> findByCredencialLoginIgnoreCase(String login);
+    List<Usuario> findByNomeOrCredencialLoginIgnoreCase(String nome, String login);
     List<Usuario> findByPermissaoNome(String nome);
     Usuario findById(Long id);
 }

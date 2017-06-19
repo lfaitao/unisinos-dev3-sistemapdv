@@ -40,10 +40,11 @@ public class UsuarioController {
     @PostMapping("/usuarios/")
     @ResponseBody
     public Usuario post(@RequestBody Usuario usuario) {
-        List<Usuario> existe = usuarioRepository.findByCredencialLoginIgnoreCase(usuario.getCredencial().getLogin());
-        if(!existe.isEmpty()){
+        List<Usuario> existe = usuarioRepository.findByNomeOrCredencialLoginIgnoreCase(usuario.getNome(),usuario.getCredencial().getLogin());
+        if(existe.size() > 0){
             return null;
         }
+
         Usuario usuarioSalva = usuarioRepository.save(usuario);
         return usuarioSalva;
     }
