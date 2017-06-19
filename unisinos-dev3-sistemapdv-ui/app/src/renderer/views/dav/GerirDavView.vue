@@ -73,6 +73,7 @@
 
 <script>
     import Config from 'electron-config'
+    import caixaService from '../caixa/index'
     const cfg = new Config()
     const url = cfg.get('apiUrl') + '/vendas'
 
@@ -104,6 +105,16 @@
             imprimirDav() {
                 this.snackMessage = "Imprimindo...";
                 this.$refs.snackbar.open();
+                setTimeout(() => { this.isLimiteCaixa(); }, 4000);
+                
+
+            },
+            openAlert(message) {
+                this.snackMessage = message;
+                this.$refs["snackbar"].open();
+            },
+            isLimiteCaixa(){
+                 caixaService.isLimiteMinimo(this);
             }
         },
         mounted() {

@@ -21,7 +21,7 @@ public class Usuario {
             @JoinColumn(name = "ID_CREDENCIAL", nullable = false, updatable = false) })
     private Credencial credencial;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "usuario_permissao", joinColumns = {
             @JoinColumn(name = "ID_USUARIO", nullable = false, updatable = true) }, inverseJoinColumns = {
             @JoinColumn(name = "ID_PERMISSAO", nullable = false, updatable = true) })

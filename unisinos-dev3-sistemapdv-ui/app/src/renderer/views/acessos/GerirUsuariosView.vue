@@ -96,13 +96,15 @@
                         <label>Nome</label>
                         <md-input maxlength="300" v-model="currentItem.nome"></md-input>
                     </md-input-container>
-                     <md-input-container>
+                     <md-input-container :class="{'md-input-invalid': errors.has('usuario')}">
                         <label>Login</label>
-                        <md-input maxlength="300" v-model="currentItem.credencial.login"></md-input>
+                        <md-input v-model="currentItem.credencial.login" data-vv-name="usuario" v-validate data-vv-rules="required|min:5|max:45"></md-input>
+                        <span class="md-error">{{errors.first('usuario')}}</span>
                     </md-input-container>
-                    <md-input-container md-has-password>
+                    <md-input-container md-has-password :class="{'md-input-invalid': errors.has('senha')}">
                         <label>Senha</label>
-                        <md-input type="password" maxlength="300" v-model="currentItem.credencial.senha"></md-input>
+                        <md-input type="password" v-model="currentItem.credencial.senha" data-vv-name="senha" v-validate data-vv-rules="required|min:5|max:45"></md-input>
+                        <span class="md-error">{{errors.first('senha')}}</span>
                     </md-input-container>
                      <md-layout md-flex="33">
                      <md-input-container>
@@ -207,7 +209,7 @@
                             this.$refs.snackbar.open();
                         } 
                     );
-                    limpar();
+                    this.limpar();
                 }
                 else // Criar
                 {
@@ -228,7 +230,7 @@
                             this.$refs.snackbar.open();
                         } 
                     ); 
-                    limpar();
+                    this.limpar();
                 }
             },
             close() {

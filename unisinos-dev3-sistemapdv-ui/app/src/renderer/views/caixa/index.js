@@ -12,7 +12,7 @@ const BACKEND_URL = cfg.get('apiUrl') + '/caixa/'
 export default {
 
     /*
-     * Verifica se o caixa atingiu limite
+     * Verifica se o caixa atingiu limite maximo
      */
 
     isLimiteMaximo(context){
@@ -26,6 +26,26 @@ export default {
                 context.openAlert(response.message + " Caixa será bloqueado.");
                
                setTimeout(() => {this.bloquearCaixa(context)}, 3000);
+            }
+
+        })
+    },
+
+        /*
+     * Verifica se o caixa atingiu limite minimo
+     */
+
+    isLimiteMinimo(context){
+
+        let caixaNumero = ipcRenderer.sendSync("caixa-getNumero");
+
+        request.get({url: BACKEND_URL + caixaNumero + "/limiteMinimo"}, (err, res, body) => {
+            let response = JSON.parse(res.body)
+            
+            if(response.status == false){
+                context.openAlert(response.message + " Caixa será bloqueado.");
+               
+               setTimeout(() => {this.bloquearCaixa(context)}, 5000);
             }
 
         })

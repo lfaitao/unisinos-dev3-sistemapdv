@@ -238,7 +238,22 @@ public class CaixaController {
 
         if (caixa.getQtDinheiro() >= caixa.getQtDinheiroMaximo()) {
             feedback.setStatus(false);
-            feedback.setMessage("Limite do caixa atingido! Necessário realizar a sangria.");
+            feedback.setMessage("Limite máximo do caixa atingido! Necessário realizar a sangria.");
+        }
+
+        return feedback;
+    }
+
+    @RequestMapping("/{numeroCaixa}/limiteMinimo")
+    @ResponseBody
+    public FeedbackDTO verificarLimiteMinimo(@PathVariable Integer numeroCaixa) {
+        FeedbackDTO feedback = new FeedbackDTO(true, "Sucesso", null);
+
+        Caixa caixa = caixaRepository.findByNumeroCaixa(numeroCaixa);
+
+        if (caixa.getQtDinheiro() <= caixa.getQtDinheiroMinimo()) {
+            feedback.setStatus(false);
+            feedback.setMessage("Limite mínimo do caixa atingido! Necessário realizar suprimento.");
         }
 
         return feedback;
