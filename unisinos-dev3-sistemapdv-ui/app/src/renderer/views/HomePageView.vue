@@ -11,7 +11,7 @@
                     </md-card-header>
                     <md-card md-align="center">
                         <button-auth text="Gerenciar Caixa" path="/gerir-caixa"></button-auth>
-                        <button-auth text="Gerenciar Vendas" path="/iniciar-venda" :canNavigateIf="caixaAbertoStatus && !caixaBloqueadoStatus" @click.native="isCaixaAberto(MOMENTO_CLICANDO) && navigate()"></button-auth>
+                        <button-auth text="Gerenciar Vendas" path="/iniciar-venda" :canNavigateIf="caixaAbertoStatus && diaFiscalAbertoStatus && !caixaBloqueadoStatus" @click.native="isCaixaAberto(MOMENTO_CLICANDO) && navigate()"></button-auth>
                         <button-auth text="Gerenciar Pré-Vendas" path="/gerir-pre-venda" :canNavigateIf="!caixaBloqueadoStatus" @click.native="isCaixaBloqueado(MOMENTO_CLICANDO) && navigate()"></button-auth>
                         <button-auth text="Gerenciar Clientes" path="/gerir-clientes" :canNavigateIf="!caixaBloqueadoStatus" @click.native="isCaixaBloqueado(MOMENTO_CLICANDO) && navigate()"></button-auth>
                         <button-auth text="Gerenciar Produtos" path="/gerir-produtos" :canNavigateIf="!caixaBloqueadoStatus" @click.native="isCaixaBloqueado(MOMENTO_CLICANDO) && navigate()"></button-auth>
@@ -47,6 +47,7 @@
                 MOMENTO_CLICANDO: 2,
                 caixaAbertoStatus: false,
                 caixaBloqueadoStatus: false,
+                diaFiscalAbertoStatus: false,
                 error: ''
             }
         },
@@ -61,10 +62,15 @@
             isCaixaAberto(momento) {
                 this.caixaAbertoStatus = ipcRenderer.sendSync('caixa-getAberto');
                 this.caixaBloqueadoStatus = ipcRenderer.sendSync('caixa-getBloqueado');
+                this.diaFiscalAbertoStatus = ipcRenderer.sendSync('caixa-getDiaFiscalAberto');
 
-                if (momento == this.MOMENTO_CLICANDO) {
+                if (momento === this.MOMENTO_CLICANDO) {
                     if (!this.caixaBloqueadoStatus) {
-                        if (!this.caixaAbertoStatus) {
+                        if (this.caixaAbertoStatus) {
+                            if (!this.diaFiscalAbertoStatus) {
+                                this.openAlert("O dia fiscal do caixa precisa estar aberto para gerir vendas!")
+                            }
+                        } else {
                             this.openAlert("O caixa precisa estar aberto para gerir vendas!")
                         }
                     } else {
@@ -74,7 +80,7 @@
             },
             isCaixaBloqueado(momento) {
                 this.caixaBloqueadoStatus = ipcRenderer.sendSync('caixa-getBloqueado');
-                if (momento == this.MOMENTO_CLICANDO) {
+                if (momento === this.MOMENTO_CLICANDO) {
                     if (this.caixaBloqueadoStatus) {
                         this.openAlert("O caixa está bloqueado para operações!")
                     }

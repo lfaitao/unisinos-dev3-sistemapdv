@@ -72,9 +72,13 @@ export default {
                 // Seta se o caixa está aberto
                 context.caixaAbertoStatus = response.status
                 ipcRenderer.sendSync('caixa-setAberto', response.status)
-                context.openAlert(response.message)
+
+                // Seta se o dia fiscal foi aberto
+                context.diaFiscalAbertoStatus = response.object.diaFiscalAberto
+                ipcRenderer.sendSync('caixa-setDiaFiscalAberto', response.object.diaFiscalAberto)
 
                 // Callback
+                context.openAlert(response.message)
                 context.abrirCaixaCallback(response)
             })
         }
@@ -141,6 +145,7 @@ export default {
         if (context.caixaBloqueadoStatus) {
             context.openAlert("O caixa está bloqueado para operações!")
         }
+        return context.caixaBloqueadoStatus
     },
 
     /*
@@ -182,7 +187,6 @@ export default {
                 let response = JSON.parse(res.body)
 
                 if (response.status === true) {
-                    console.log("Ué")
                     context.closeDialog('dialog-realizarSangria')
                     context.valorSangria = 0
                     context.credentials = {
@@ -196,6 +200,50 @@ export default {
                 context.openAlert(response.message)
             })
         }
+    },
+
+    /*
+     * Abertura e Fechamento do Dia Fiscal
+     */
+    abrirDiaFiscal(context) {
+        request.get({
+            url: BACKEND_URL + 'abrirDiaFiscal/credenciais/' + context.credentials.username + '/' + context.credentials.password
+        }, (err, res, body) => {
+            let response = JSON.parse(res.body)
+
+            if (response.status === true) {
+                ipcRenderer.sendSync('caixa-setDiaFiscalAberto', response.status)
+                context.diaFiscalAbertoStatus = response.status
+            }
+
+            context.credentials = {
+                username: '',
+                password: ''
+            }
+            context.closeDialog('dialog-abrirDiaFiscal')
+            context.errors.clear()
+            context.openAlert(response.message)
+        })
+    },
+    fecharDiaFiscal(context) {
+        request.get({
+            url: BACKEND_URL + 'fecharDiaFiscal/credenciais/' + context.credentials.username + '/' + context.credentials.password
+        }, (err, res, body) => {
+            let response = JSON.parse(res.body)
+
+            if (response.status === true) {
+                ipcRenderer.sendSync('caixa-setDiaFiscalAberto', false)
+                context.diaFiscalAbertoStatus = false
+            }
+
+            context.credentials = {
+                username: '',
+                password: ''
+            }
+            context.closeDialog('dialog-fecharDiaFiscal')
+            context.errors.clear()
+            context.openAlert(response.message)
+        })
     }
 
 }

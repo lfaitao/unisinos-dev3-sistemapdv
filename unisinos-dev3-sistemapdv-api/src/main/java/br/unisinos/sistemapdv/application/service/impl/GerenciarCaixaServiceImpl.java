@@ -136,6 +136,47 @@ public class GerenciarCaixaServiceImpl implements GerenciarCaixaService {
     }
 
     /**
+     * Abre o dia fiscal e salva estado no banco.
+     * Se o dia fiscal já foi aberto neste dia, o dia fiscal não pode ser aberto novamente.
+     *
+     * @return feedback
+     */
+    @Override
+    public FeedbackDTO abrirDiaFiscal() {
+        FeedbackDTO feedback;
+
+        try {
+            Caixa caixa = caixaService.abrirDiaFiscal();
+            caixaRepository.save(caixa);
+            feedback = new FeedbackDTO(true, "Dia fiscal para o caixa " + caixa.getNumeroCaixa() + " aberto com sucesso!");
+        } catch (ValidationException e) {
+            feedback = e.getFeedback();
+        }
+
+        return feedback;
+    }
+
+    /**
+     * Fecha o dia fiscal e salva estado no banco.
+     *
+     * @return feedback
+     */
+    @Override
+    public FeedbackDTO fecharDiaFiscal() {
+        FeedbackDTO feedback;
+
+        try {
+            Caixa caixa = caixaService.fecharDiaFiscal();
+            caixaRepository.save(caixa);
+            feedback = new FeedbackDTO(true, "Dia fiscal para o caixa " + caixa.getNumeroCaixa() + " fechado com sucesso!");
+        } catch (ValidationException e) {
+            feedback = e.getFeedback();
+        }
+
+        return feedback;
+    }
+
+    /**
      * Busca o objeto do caixa referente ao numero passado.
      *
      * @param numeroCaixa

@@ -10,9 +10,13 @@ import br.unisinos.sistemapdv.domain.model.Credencial;
 import br.unisinos.sistemapdv.domain.model.Permissao;
 import br.unisinos.sistemapdv.domain.model.Usuario;
 import br.unisinos.sistemapdv.infrastructure.dto.CaixaDTO;
+import br.unisinos.sistemapdv.infrastructure.dto.CredencialDTO;
 import br.unisinos.sistemapdv.infrastructure.dto.FeedbackDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by lfaitao on 26/03/2017.
@@ -158,8 +162,73 @@ public class CaixaController {
     }
 
     /**
-     * GET //limiteMaximo  --> Verifica se foi atingido o  limite máximo de dinheiro armazenado.
+     * GET /abrirDiaFiscal  --> Abre o dia fiscal e persiste no banco.
      */
+    @RequestMapping("abrirDiaFiscal/credenciais/{login}/{senha}")
+    @ResponseBody
+    public FeedbackDTO abrirDiaFiscal(@PathVariable String login, @PathVariable String senha) {
+        FeedbackDTO feedback;
+
+        // Verifica se as credenciais estão corretas
+        Credencial credenciais = credencialRepository.findByLoginAndSenha(login, senha);
+        if(credenciais == null) {
+            feedback = new FeedbackDTO(false, "Credenciais informadas invalidas. Por favor, tente novamente.");
+            return feedback;
+        }
+
+        // Verifica o nível de permissão do usuario que está suprindo o caixa
+        Usuario usuario = credenciais.getUsuario();
+        boolean hasPermission = false;
+        for (Permissao permissao : usuario.getPermissao()) {
+            if ("Administrador".equals(permissao.getNome()) || "Gerente".equals(permissao.getNome())) {
+                hasPermission = true;
+                break;
+            }
+        }
+
+        if (!hasPermission) {
+            feedback = new FeedbackDTO(false, "A abertura do dia fiscal deve ser aprovada pelas credenciais de um Administrador ou Gerente. Por favor, tente novamente.");
+        } else {
+            feedback = gerenciarCaixaService.abrirDiaFiscal();
+        }
+
+        return feedback;
+    }
+
+    /**
+     * GET /fecharDiaFiscal  --> Fecha o dia fiscal e persiste no banco.
+     */
+    @RequestMapping("fecharDiaFiscal/credenciais/{login}/{senha}")
+    @ResponseBody
+    public FeedbackDTO fecharDiaFiscal(@PathVariable String login, @PathVariable String senha) {
+        FeedbackDTO feedback;
+
+        // Verifica se as credenciais estão corretas
+        Credencial credenciais = credencialRepository.findByLoginAndSenha(login, senha);
+        if(credenciais == null) {
+            feedback = new FeedbackDTO(false, "Credenciais informadas invalidas. Por favor, tente novamente.");
+            return feedback;
+        }
+
+        // Verifica o nível de permissão do usuario que está suprindo o caixa
+        Usuario usuario = credenciais.getUsuario();
+        boolean hasPermission = false;
+        for (Permissao permissao : usuario.getPermissao()) {
+            if ("Administrador".equals(permissao.getNome()) || "Gerente".equals(permissao.getNome())) {
+                hasPermission = true;
+                break;
+            }
+        }
+
+        if (!hasPermission) {
+            feedback = new FeedbackDTO(false, "O fechamento do dia fiscal deve ser aprovada pelas credenciais de um Administrador ou Gerente. Por favor, tente novamente.");
+        } else {
+            feedback = gerenciarCaixaService.fecharDiaFiscal();
+        }
+
+        return feedback;
+    }
+
     @RequestMapping("/{numeroCaixa}/limiteMaximo")
     @ResponseBody
     public FeedbackDTO verificarLimiteMaximo(@PathVariable Integer numeroCaixa) {
@@ -167,7 +236,7 @@ public class CaixaController {
 
         Caixa caixa = caixaRepository.findByNumeroCaixa(numeroCaixa);
 
-        if(caixa.getQtDinheiro() >= caixa.getQtDinheiroMaximo()){
+        if (caixa.getQtDinheiro() >= caixa.getQtDinheiroMaximo()) {
             feedback.setStatus(false);
             feedback.setMessage("Limite do caixa atingido! Necessário realizar a sangria.");
         }

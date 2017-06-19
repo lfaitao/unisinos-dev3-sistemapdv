@@ -116,7 +116,7 @@ public class PreVendaController {
 
             if(pvp.getPercentualDesconto() > 100){
                 feedback.setStatus(false);
-                feedback.setMessage(feedback.getMessage() + " " + " Percentual de desconto não deve ser superior a 100%" );
+                feedback.setMessage("Percentual de desconto não deve ser superior a 100%" );
             }
 
         });
