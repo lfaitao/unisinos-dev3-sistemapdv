@@ -35,6 +35,7 @@
     import {router} from '../main'
     import {ipcRenderer} from 'electron'
     import buttonAuth from '../components/common/buttonAuth'
+    import caixaService from './caixa/index'
 
     export default {
         components: {
@@ -78,11 +79,15 @@
                         this.openAlert("O caixa está bloqueado para operações!")
                     }
                 }
+            },
+            isLimiteCaixa(){
+                 caixaService.isLimiteMaximo(this);
             }
         },
         mounted() {
             this.isCaixaAberto(this.MOMENTO_INICIANDO)
             this.isCaixaBloqueado(this.MOMENTO_INICIANDO)
+            this.isLimiteCaixa();
         },
         name: 'home-page'
     }

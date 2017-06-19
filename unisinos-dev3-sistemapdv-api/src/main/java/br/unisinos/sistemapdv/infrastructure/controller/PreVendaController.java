@@ -114,6 +114,11 @@ public class PreVendaController {
                 feedback.setMessage("O produto " + pvp.getProduto().getDescricao() + " possui apenas " + estoqueDisponivel+ " itens disponiveis");
             }
 
+            if(pvp.getPercentualDesconto() > 100){
+                feedback.setStatus(false);
+                feedback.setMessage(feedback.getMessage() + " " + " Percentual de desconto não deve ser superior a 100%" );
+            }
+
         });
 
         return feedback;

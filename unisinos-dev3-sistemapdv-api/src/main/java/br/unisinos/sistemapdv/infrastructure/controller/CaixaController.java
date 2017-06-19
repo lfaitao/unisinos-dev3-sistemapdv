@@ -10,13 +10,9 @@ import br.unisinos.sistemapdv.domain.model.Credencial;
 import br.unisinos.sistemapdv.domain.model.Permissao;
 import br.unisinos.sistemapdv.domain.model.Usuario;
 import br.unisinos.sistemapdv.infrastructure.dto.CaixaDTO;
-import br.unisinos.sistemapdv.infrastructure.dto.CredencialDTO;
 import br.unisinos.sistemapdv.infrastructure.dto.FeedbackDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by lfaitao on 26/03/2017.
@@ -159,6 +155,24 @@ public class CaixaController {
     public CaixaDTO getCaixa(@PathVariable Integer numeroCaixa) {
         Caixa caixa = gerenciarCaixaService.getCaixa(numeroCaixa);
         return caixa == null ? null : new CaixaDTO(caixa);
+    }
+
+    /**
+     * GET //limiteMaximo  --> Verifica se foi atingido o  limite máximo de dinheiro armazenado.
+     */
+    @RequestMapping("/{numeroCaixa}/limiteMaximo")
+    @ResponseBody
+    public FeedbackDTO verificarLimiteMaximo(@PathVariable Integer numeroCaixa) {
+        FeedbackDTO feedback = new FeedbackDTO(true, "Sucesso", null);
+
+        Caixa caixa = caixaRepository.findByNumeroCaixa(numeroCaixa);
+
+        if(caixa.getQtDinheiro() >= caixa.getQtDinheiroMaximo()){
+            feedback.setStatus(false);
+            feedback.setMessage("Limite do caixa atingido! Necessário realizar a sangria.");
+        }
+
+        return feedback;
     }
 
 }
