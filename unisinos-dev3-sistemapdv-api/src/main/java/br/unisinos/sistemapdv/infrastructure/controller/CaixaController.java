@@ -229,4 +229,19 @@ public class CaixaController {
         return feedback;
     }
 
+    @RequestMapping("/{numeroCaixa}/limiteMaximo")
+    @ResponseBody
+    public FeedbackDTO verificarLimiteMaximo(@PathVariable Integer numeroCaixa) {
+        FeedbackDTO feedback = new FeedbackDTO(true, "Sucesso", null);
+
+        Caixa caixa = caixaRepository.findByNumeroCaixa(numeroCaixa);
+
+        if (caixa.getQtDinheiro() >= caixa.getQtDinheiroMaximo()) {
+            feedback.setStatus(false);
+            feedback.setMessage("Limite do caixa atingido! Necessário realizar a sangria.");
+        }
+
+        return feedback;
+    }
+
 }

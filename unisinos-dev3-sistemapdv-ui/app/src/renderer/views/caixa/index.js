@@ -12,6 +12,26 @@ const BACKEND_URL = cfg.get('apiUrl') + '/caixa/'
 export default {
 
     /*
+     * Verifica se o caixa atingiu limite
+     */
+
+    isLimiteMaximo(context){
+
+        let caixaNumero = ipcRenderer.sendSync("caixa-getNumero");
+
+        request.get({url: BACKEND_URL + caixaNumero + "/limiteMaximo"}, (err, res, body) => {
+            let response = JSON.parse(res.body)
+            
+            if(response.status == false){
+                context.openAlert(response.message + " Caixa será bloqueado.");
+               
+               setTimeout(() => {this.bloquearCaixa(context)}, 3000);
+            }
+
+        })
+    },
+
+    /*
      * Busca caixa pelo numero
      */
 
