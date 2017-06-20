@@ -9,7 +9,6 @@ let BLUE = '\x1b[34m'
 let END = '\x1b[0m'
 
 let isElectronOpen = false
-let isBackendUp = false
 
 function format(command, data, color) {
     return color + command + END +
@@ -47,14 +46,6 @@ function run(command, color, name) {
     children.push(child)
 }
 
-function runBackend() {
-    if (!isBackendUp) {
-        console.log(`${BLUE}Starting backend...\n${END}`)
-        run('java -jar ./tasks/unisinos-dev3-sistemapdv-api-0.1.0.jar', BLUE, 'electron')
-        isBackendUp = true
-    }
-}
-
 function exit(code) {
     children.forEach(child => {
         treeKill(child.pid)
@@ -63,4 +54,3 @@ function exit(code) {
 
 console.log(`${YELLOW}Starting webpack-dev-server...\n${END}`)
 run(`webpack-dev-server --hot --colors --config webpack.renderer.config.js --port ${config.port} --content-base app/dist`, YELLOW, 'webpack')
-// runBackend()
