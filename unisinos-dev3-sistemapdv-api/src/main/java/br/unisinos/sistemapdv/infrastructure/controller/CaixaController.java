@@ -1,90 +1,262 @@
 package br.unisinos.sistemapdv.infrastructure.controller;
 
 import br.unisinos.sistemapdv.application.repository.CaixaRepository;
+import br.unisinos.sistemapdv.application.repository.CredencialRepository;
+import br.unisinos.sistemapdv.application.repository.PermissaoRepository;
+import br.unisinos.sistemapdv.application.repository.UsuarioRepository;
+import br.unisinos.sistemapdv.application.service.GerenciarCaixaService;
 import br.unisinos.sistemapdv.domain.model.Caixa;
+import br.unisinos.sistemapdv.domain.model.Credencial;
+import br.unisinos.sistemapdv.domain.model.Permissao;
+import br.unisinos.sistemapdv.domain.model.Usuario;
+import br.unisinos.sistemapdv.infrastructure.dto.CaixaDTO;
+import br.unisinos.sistemapdv.infrastructure.dto.CredencialDTO;
+import br.unisinos.sistemapdv.infrastructure.dto.FeedbackDTO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by lfaitao on 26/03/2017.
  */
 @RestController
+@RequestMapping("/caixa")
 public class CaixaController {
 
     @Autowired
     private CaixaRepository caixaRepository;
 
+    @Autowired
+    private CredencialRepository credencialRepository;
+
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private PermissaoRepository permissaoRepository;
+
+    @Autowired
+    private GerenciarCaixaService gerenciarCaixaService;
+
     /**
-     * GET /create  --> Create a new user and save it in the database.
+     * GET /abrir/{numeroCaixa}  --> Abre o caixa e salva estado no banco.
      */
-    @RequestMapping("/create")
+    @RequestMapping("/abrir/{caixaNumero}")
     @ResponseBody
-    public String create(String email, String name) {
-        String userId = "";
-        try {
-            Caixa user = new Caixa(email, name);
-            caixaRepository.save(user);
-            userId = String.valueOf(user.getId());
+    public FeedbackDTO abrirCaixa(@PathVariable Integer caixaNumero) {
+        FeedbackDTO feedback;
+
+        if (caixaNumero == null || caixaNumero <= 0) {
+            feedback = new FeedbackDTO(false, "O número do caixa é obrigatório e deve ser maior que zero!");
+        } else {
+            feedback = gerenciarCaixaService.abrirCaixa(caixaNumero);
         }
-        catch (Exception ex) {
-            return "Error creating the user: " + ex.toString();
-        }
-        return "Caixa succesfully created with id = " + userId;
+
+        return feedback;
     }
 
     /**
-     * GET /delete  --> Delete the user having the passed id.
+     * GET /fechar  --> Fecha o caixa e salva estado no banco.
      */
-    @RequestMapping("/delete")
+    @RequestMapping("/fechar")
     @ResponseBody
-    public String delete(long id) {
-        try {
-            Caixa user = new Caixa(id);
-            caixaRepository.delete(user);
-        }
-        catch (Exception ex) {
-            return "Error deleting the user:" + ex.toString();
-        }
-        return "Caixa succesfully deleted!";
+    public FeedbackDTO fecharCaixa() {
+        FeedbackDTO feedback;
+
+        feedback = gerenciarCaixaService.fecharCaixa();
+
+        return feedback;
     }
 
     /**
-     * GET /get-by-email  --> Return the id for the user having the passed
-     * email.
+     * GET /suprir  --> Supre o caixa com o valor passado e salva estado no banco.
      */
-    @RequestMapping("/get-by-email")
+    @RequestMapping("/suprir/{valor}/credenciais/{login}/{senha}")
     @ResponseBody
-    public String getByEmail(String email) {
-        String userId = "";
-        try {
-            Caixa user = caixaRepository.findByEmail(email);
-            userId = String.valueOf(user.getId());
+    public FeedbackDTO suprirCaixa(@PathVariable Double valor, @PathVariable String login, @PathVariable String senha) {
+        FeedbackDTO feedback;
+
+        // Verifica se as credenciais estão corretas
+        Credencial credenciais = credencialRepository.findByLoginAndSenha(login, senha);
+        if(credenciais == null) {
+            feedback = new FeedbackDTO(false, "Credenciais informadas invalidas. Por favor, tente novamente.");
+            return feedback;
         }
-        catch (Exception ex) {
-            return "Caixa not found";
+
+        // Verifica o nível de permissão do usuario que está suprindo o caixa
+        Usuario usuario = credenciais.getUsuario();
+        boolean hasPermission = false;
+        for (Permissao permissao : usuario.getPermissao()) {
+            if ("Administrador".equals(permissao.getNome()) || "Gerente".equals(permissao.getNome())) {
+                hasPermission = true;
+                break;
+            }
         }
-        return "The user id is: " + userId;
+
+        if (!hasPermission) {
+            feedback = new FeedbackDTO(false, "O suprimento deve ser aprovado pelas credenciais de um Administrador ou Gerente. Por favor, tente novamente.");
+        } else if (valor <= 0) {
+            feedback = new FeedbackDTO(false, "O valor a ser suprido não pode ser inferior ou igual à zero. Por favor, tente novamente.");
+        } else {
+            feedback = gerenciarCaixaService.suprirCaixa(valor);
+        }
+
+        return feedback;
     }
 
     /**
-     * GET /update  --> Update the email and the name for the user in the
-     * database having the passed id.
+     * GET /sangrar  --> Sangra o caixa com o valor passado e salva estado no banco.
      */
-    @RequestMapping("/update")
+    @RequestMapping("/sangrar/{valor}/credenciais/{login}/{senha}")
     @ResponseBody
-    public String updateUsuario(long id, String email, String name) {
-        try {
-            Caixa user = caixaRepository.findOne(id);
-            user.setEmail(email);
-            user.setName(name);
-            caixaRepository.save(user);
+    public FeedbackDTO sangrarCaixa(@PathVariable Double valor, @PathVariable String login, @PathVariable String senha) {
+        FeedbackDTO feedback;
+
+        // Verifica se as credenciais estão corretas
+        Credencial credenciais = credencialRepository.findByLoginAndSenha(login, senha);
+        if(credenciais == null) {
+            feedback = new FeedbackDTO(false, "Credenciais informadas invalidas. Por favor, tente novamente.");
+            return feedback;
         }
-        catch (Exception ex) {
-            return "Error updating the user: " + ex.toString();
+
+        // Verifica o nível de permissão do usuario que está suprindo o caixa
+        Usuario usuario = credenciais.getUsuario();
+        boolean hasPermission = false;
+        for (Permissao permissao : usuario.getPermissao()) {
+            if ("Administrador".equals(permissao.getNome()) || "Gerente".equals(permissao.getNome())) {
+                hasPermission = true;
+                break;
+            }
         }
-        return "Caixa succesfully updated!";
+
+        if (!hasPermission) {
+            feedback = new FeedbackDTO(false, "A sangria deve ser aprovada pelas credenciais de um Administrador ou Gerente. Por favor, tente novamente.");
+        } else if (valor <= 0) {
+            feedback = new FeedbackDTO(false, "O valor a ser sangrado não pode ser inferior ou igual à zero. Por favor, tente novamente.");
+        } else {
+            feedback = gerenciarCaixaService.sangrarCaixa(valor);
+        }
+
+        return feedback;
+    }
+
+    /**
+     * GET /isAberto/{numeroCaixa}  --> Verifica no banco se o respectivo caixa está aberto.
+     */
+    @GetMapping(value="/isAberto/{numeroCaixa}")
+    @ResponseBody
+    public boolean isCaixaAberto(@PathVariable Integer numeroCaixa) {
+        return gerenciarCaixaService.isCaixaAberto(numeroCaixa);
+    }
+
+    /**
+     * GET /{numeroCaixa}  --> Retorna o objeto do caixa com as informações atuais no banco.
+     */
+    @GetMapping(value="/{numeroCaixa}")
+    @ResponseBody
+    public CaixaDTO getCaixa(@PathVariable Integer numeroCaixa) {
+        Caixa caixa = gerenciarCaixaService.getCaixa(numeroCaixa);
+        return caixa == null ? null : new CaixaDTO(caixa);
+    }
+
+    /**
+     * GET /abrirDiaFiscal  --> Abre o dia fiscal e persiste no banco.
+     */
+    @RequestMapping("abrirDiaFiscal/credenciais/{login}/{senha}")
+    @ResponseBody
+    public FeedbackDTO abrirDiaFiscal(@PathVariable String login, @PathVariable String senha) {
+        FeedbackDTO feedback;
+
+        // Verifica se as credenciais estão corretas
+        Credencial credenciais = credencialRepository.findByLoginAndSenha(login, senha);
+        if(credenciais == null) {
+            feedback = new FeedbackDTO(false, "Credenciais informadas invalidas. Por favor, tente novamente.");
+            return feedback;
+        }
+
+        // Verifica o nível de permissão do usuario que está suprindo o caixa
+        Usuario usuario = credenciais.getUsuario();
+        boolean hasPermission = false;
+        for (Permissao permissao : usuario.getPermissao()) {
+            if ("Administrador".equals(permissao.getNome()) || "Gerente".equals(permissao.getNome())) {
+                hasPermission = true;
+                break;
+            }
+        }
+
+        if (!hasPermission) {
+            feedback = new FeedbackDTO(false, "A abertura do dia fiscal deve ser aprovada pelas credenciais de um Administrador ou Gerente. Por favor, tente novamente.");
+        } else {
+            feedback = gerenciarCaixaService.abrirDiaFiscal();
+        }
+
+        return feedback;
+    }
+
+    /**
+     * GET /fecharDiaFiscal  --> Fecha o dia fiscal e persiste no banco.
+     */
+    @RequestMapping("fecharDiaFiscal/credenciais/{login}/{senha}")
+    @ResponseBody
+    public FeedbackDTO fecharDiaFiscal(@PathVariable String login, @PathVariable String senha) {
+        FeedbackDTO feedback;
+
+        // Verifica se as credenciais estão corretas
+        Credencial credenciais = credencialRepository.findByLoginAndSenha(login, senha);
+        if(credenciais == null) {
+            feedback = new FeedbackDTO(false, "Credenciais informadas invalidas. Por favor, tente novamente.");
+            return feedback;
+        }
+
+        // Verifica o nível de permissão do usuario que está suprindo o caixa
+        Usuario usuario = credenciais.getUsuario();
+        boolean hasPermission = false;
+        for (Permissao permissao : usuario.getPermissao()) {
+            if ("Administrador".equals(permissao.getNome()) || "Gerente".equals(permissao.getNome())) {
+                hasPermission = true;
+                break;
+            }
+        }
+
+        if (!hasPermission) {
+            feedback = new FeedbackDTO(false, "O fechamento do dia fiscal deve ser aprovada pelas credenciais de um Administrador ou Gerente. Por favor, tente novamente.");
+        } else {
+            feedback = gerenciarCaixaService.fecharDiaFiscal();
+        }
+
+        return feedback;
+    }
+
+    @RequestMapping("/{numeroCaixa}/limiteMaximo")
+    @ResponseBody
+    public FeedbackDTO verificarLimiteMaximo(@PathVariable Integer numeroCaixa) {
+        FeedbackDTO feedback = new FeedbackDTO(true, "Sucesso", null);
+
+        Caixa caixa = caixaRepository.findByNumeroCaixa(numeroCaixa);
+
+        if (caixa.getQtDinheiro() >= caixa.getQtDinheiroMaximo()) {
+            feedback.setStatus(false);
+            feedback.setMessage("Limite máximo do caixa atingido! Necessário realizar a sangria.");
+        }
+
+        return feedback;
+    }
+
+    @RequestMapping("/{numeroCaixa}/limiteMinimo")
+    @ResponseBody
+    public FeedbackDTO verificarLimiteMinimo(@PathVariable Integer numeroCaixa) {
+        FeedbackDTO feedback = new FeedbackDTO(true, "Sucesso", null);
+
+        Caixa caixa = caixaRepository.findByNumeroCaixa(numeroCaixa);
+
+        if (caixa.getQtDinheiro() <= caixa.getQtDinheiroMinimo()) {
+            feedback.setStatus(false);
+            feedback.setMessage("Limite mínimo do caixa atingido! Necessário realizar suprimento.");
+        }
+
+        return feedback;
     }
 
 }
